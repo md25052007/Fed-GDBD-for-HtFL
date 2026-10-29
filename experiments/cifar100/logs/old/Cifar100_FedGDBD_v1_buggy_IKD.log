@@ -1,0 +1,366 @@
+==================================================
+goal = practical
+device = cuda
+device_id = 0
+dataset = Cifar100
+num_classes = 100
+model_family = HtFE-img-4
+batch_size = 10
+local_learning_rate = 0.01
+learning_rate_decay = False
+learning_rate_decay_gamma = 0.99
+global_rounds = 50
+top_cnt = 100
+local_epochs = 5
+algorithm = FedGDBD
+join_ratio = 1.0
+random_join_ratio = False
+num_clients = 20
+prev = 0
+times = 1
+eval_gap = 1
+save_folder_name = temp
+auto_break = False
+feature_dim = 512
+vocab_size = 80
+max_len = 200
+models_folder_name = 
+few_shot = 0
+client_drop_rate = 0.0
+train_slow_rate = 0.0
+send_slow_rate = 0.0
+time_select = False
+time_threthold = 10000
+lamda = 1.0
+noise_dim = 512
+generator_learning_rate = 0.005
+hidden_dim = 512
+server_epochs = 100
+alpha = 1.0
+beta = 1.0
+mentee_learning_rate = 0.01
+T_start = 0.95
+T_end = 0.98
+server_learning_rate = 0.01
+margin_threthold = 100.0
+generator_path = stylegan/stylegan-xl-models/imagenet64.pkl
+stable_diffusion_prompt = a cat
+server_batch_size = 100
+gen_batch_size = 4
+mu = 50.0
+sub_feature_dim = 128
+meta_study_batches = 1
+meta_quiz_batches = 1
+warm_up_rounds = 50
+gdbd_T = 20.0
+gdbd_alpha = 0.7
+gdbd_v = 5
+gdbd_cluster_rounds = 100
+gdbd_update_epochs = 5
+gdbd_server_epochs = 5
+gdbd_pretrain_epochs = 5
+==================================================
+
+============= Running time: 0th =============
+Creating server and clients ...
+FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600)
+torchvision.models.googlenet(pretrained=False, aux_logits=False, num_classes=args.num_classes)
+mobilenet_v2(pretrained=False, num_classes=args.num_classes)
+torchvision.models.resnet18(pretrained=False, num_classes=args.num_classes)
+
+Join ratio / total clients: 1.0 / 20
+Finished creating server and clients.
+
+Pre-training local models ...
+Pre-training done in 329.0s
+
+-------------Round number: 0-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.3880794701986755, AUC: 0.9642838454276549
+Client 1: Acc: 0.3403141361256545, AUC: 0.9538131306209211
+Client 2: Acc: 0.3555878084179971, AUC: 0.9442480505136254
+Client 3: Acc: 0.3390501319261214, AUC: 0.9466278479478054
+Client 4: Acc: 0.21363636363636362, AUC: 0.9152848039624898
+Client 5: Acc: 0.24027777777777778, AUC: 0.9415572975121587
+Client 6: Acc: 0.28076923076923077, AUC: 0.9438352791557919
+Client 7: Acc: 0.37270341207349084, AUC: 0.9599510164227959
+Client 8: Acc: 0.3603988603988604, AUC: 0.9610322160575405
+Client 9: Acc: 0.25155666251556663, AUC: 0.9421420713245114
+Client 10: Acc: 0.2894356005788712, AUC: 0.9421164761984605
+Client 11: Acc: 0.39166666666666666, AUC: 0.9521152425616711
+Client 12: Acc: 0.362089914945322, AUC: 0.9575964016472248
+Client 13: Acc: 0.2812920592193809, AUC: 0.9519077604935925
+Client 14: Acc: 0.2711864406779661, AUC: 0.9402149288676149
+Client 15: Acc: 0.3997445721583653, AUC: 0.9594825086034355
+Client 16: Acc: 0.3835125448028674, AUC: 0.9473889269027219
+Client 17: Acc: 0.3978819969742814, AUC: 0.9626699036432147
+Client 18: Acc: 0.3438735177865613, AUC: 0.9555905078513878
+Client 19: Acc: 0.3773006134969325, AUC: 0.9157653067237546
+Averaged Test Accuracy: 0.3326
+Averaged Test AUC: 0.9483
+Std Test Accuracy: 0.0566
+Std Test AUC: 0.0131
+------------------------- time cost ------------------------- 776.4948306083679
+
+-------------Round number: 1-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.45827814569536424, AUC: 0.9581264334055878
+Client 1: Acc: 0.42670157068062825, AUC: 0.9155460213964983
+Client 2: Acc: 0.4005805515239477, AUC: 0.8998236263345666
+Client 3: Acc: 0.3970976253298153, AUC: 0.8805927080131519
+Client 4: Acc: 0.29393939393939394, AUC: 0.9246317166151876
+Client 5: Acc: 0.3333333333333333, AUC: 0.8650851493328346
+Client 6: Acc: 0.33589743589743587, AUC: 0.9191150824484159
+Client 7: Acc: 0.4238845144356955, AUC: 0.8937693459000836
+Client 8: Acc: 0.49715099715099714, AUC: 0.9707597193352179
+Client 9: Acc: 0.273972602739726, AUC: 0.900500619625973
+Client 10: Acc: 0.3357452966714906, AUC: 0.8970241959387076
+Client 11: Acc: 0.4142857142857143, AUC: 0.8963292863441674
+Client 12: Acc: 0.47509113001215064, AUC: 0.9478109879938238
+Client 13: Acc: 0.3566621803499327, AUC: 0.8789714922648775
+Client 14: Acc: 0.3414043583535109, AUC: 0.9206012913640033
+Client 15: Acc: 0.48659003831417624, AUC: 0.9054610951652001
+Client 16: Acc: 0.46236559139784944, AUC: 0.947580502780633
+Client 17: Acc: 0.4508320726172466, AUC: 0.929015205323737
+Client 18: Acc: 0.3715415019762846, AUC: 0.914338478881486
+Client 19: Acc: 0.42024539877300615, AUC: 0.870539178339152
+Averaged Test Accuracy: 0.3983
+Averaged Test AUC: 0.9122
+Std Test Accuracy: 0.0633
+Std Test AUC: 0.0281
+------------------------- time cost ------------------------- 761.7021367549896
+
+-------------Round number: 2-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4741721854304636, AUC: 0.958789845740418
+Client 1: Acc: 0.4463350785340314, AUC: 0.8988099589131633
+Client 2: Acc: 0.3991291727140784, AUC: 0.8851796182080706
+Client 3: Acc: 0.3733509234828496, AUC: 0.865815785200745
+Client 4: Acc: 0.32272727272727275, AUC: 0.9189310691858902
+Client 5: Acc: 0.37916666666666665, AUC: 0.8466615226337448
+Client 6: Acc: 0.3141025641025641, AUC: 0.8854099011150292
+Client 7: Acc: 0.431758530183727, AUC: 0.8804089802343464
+Client 8: Acc: 0.4943019943019943, AUC: 0.9746138547183181
+Client 9: Acc: 0.33374844333748444, AUC: 0.8652448894466298
+Client 10: Acc: 0.34442836468885674, AUC: 0.8594132224077707
+Client 11: Acc: 0.3964285714285714, AUC: 0.8873557141711904
+Client 12: Acc: 0.5224787363304981, AUC: 0.9574027861160114
+Client 13: Acc: 0.43741588156123823, AUC: 0.8591971990628631
+Client 14: Acc: 0.33292978208232443, AUC: 0.8961531815288946
+Client 15: Acc: 0.4904214559386973, AUC: 0.8962808652478504
+Client 16: Acc: 0.5113500597371565, AUC: 0.9501485451991397
+Client 17: Acc: 0.4735249621785174, AUC: 0.9136739903446013
+Client 18: Acc: 0.3715415019762846, AUC: 0.8918023400153517
+Client 19: Acc: 0.40950920245398775, AUC: 0.8554349005885571
+Averaged Test Accuracy: 0.4136
+Averaged Test AUC: 0.8978
+Std Test Accuracy: 0.0648
+Std Test AUC: 0.0366
+------------------------- time cost ------------------------- 758.0174839496613
+
+-------------Round number: 3-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.45165562913907287, AUC: 0.950854840231622
+Client 1: Acc: 0.4816753926701571, AUC: 0.9038178411122546
+Client 2: Acc: 0.3991291727140784, AUC: 0.8603834694696486
+Client 3: Acc: 0.3627968337730871, AUC: 0.847946434077831
+Client 4: Acc: 0.30454545454545456, AUC: 0.9039582231868734
+Client 5: Acc: 0.40694444444444444, AUC: 0.8631906351321861
+Client 6: Acc: 0.3153846153846154, AUC: 0.8798002709541171
+Client 7: Acc: 0.41338582677165353, AUC: 0.8633968264008357
+Client 8: Acc: 0.4843304843304843, AUC: 0.9662967714170626
+Client 9: Acc: 0.39103362391033625, AUC: 0.880519830075435
+Client 10: Acc: 0.3589001447178003, AUC: 0.8528916238647096
+Client 11: Acc: 0.3726190476190476, AUC: 0.87405981584553
+Client 12: Acc: 0.4957472660996355, AUC: 0.9478546458130973
+Client 13: Acc: 0.43741588156123823, AUC: 0.8626644015332339
+Client 14: Acc: 0.3414043583535109, AUC: 0.8753046917059721
+Client 15: Acc: 0.4521072796934866, AUC: 0.8762696984146071
+Client 16: Acc: 0.4886499402628435, AUC: 0.9357150971552979
+Client 17: Acc: 0.49924357034795763, AUC: 0.9042473041205076
+Client 18: Acc: 0.40843214756258234, AUC: 0.8740296306185479
+Client 19: Acc: 0.37883435582822084, AUC: 0.860102896745695
+Averaged Test Accuracy: 0.4127
+Averaged Test AUC: 0.8896
+Std Test Accuracy: 0.0587
+Std Test AUC: 0.0344
+------------------------- time cost ------------------------- 762.4899723529816
+
+-------------Round number: 4-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.3933774834437086, AUC: 0.9290624591602618
+Client 1: Acc: 0.47643979057591623, AUC: 0.8973610415439723
+Client 2: Acc: 0.40638606676342526, AUC: 0.8348015747856916
+Client 3: Acc: 0.34564643799472294, AUC: 0.8298569248010912
+Client 4: Acc: 0.24242424242424243, AUC: 0.8797759041285212
+Client 5: Acc: 0.40694444444444444, AUC: 0.8619582592904352
+Client 6: Acc: 0.3128205128205128, AUC: 0.8723160434057868
+Client 7: Acc: 0.38320209973753283, AUC: 0.8410169474659938
+Client 8: Acc: 0.43447293447293445, AUC: 0.9454724926393175
+Client 9: Acc: 0.38854296388542964, AUC: 0.8716532000682812
+Client 10: Acc: 0.36034732272069464, AUC: 0.8481301038177647
+Client 11: Acc: 0.3535714285714286, AUC: 0.8582920975629309
+Client 12: Acc: 0.3973268529769137, AUC: 0.928284974264107
+Client 13: Acc: 0.44010767160161507, AUC: 0.853210054860633
+Client 14: Acc: 0.3523002421307506, AUC: 0.8719832774804662
+Client 15: Acc: 0.4329501915708812, AUC: 0.8621705870278263
+Client 16: Acc: 0.4217443249701314, AUC: 0.9166351230430572
+Client 17: Acc: 0.5083207261724659, AUC: 0.9075192129016505
+Client 18: Acc: 0.4005270092226614, AUC: 0.8598588715577471
+Client 19: Acc: 0.36809815950920244, AUC: 0.8408930995756808
+Averaged Test Accuracy: 0.3913
+Averaged Test AUC: 0.8759
+Std Test Accuracy: 0.0563
+Std Test AUC: 0.0332
+------------------------- time cost ------------------------- 757.1056809425354
+
+-------------Round number: 5-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.3483443708609272, AUC: 0.912066234911724
+Client 1: Acc: 0.47643979057591623, AUC: 0.8783201868746399
+Client 2: Acc: 0.40493468795355586, AUC: 0.8392997086071544
+Client 3: Acc: 0.3153034300791557, AUC: 0.824877382649885
+Client 4: Acc: 0.1984848484848485, AUC: 0.845079954735602
+Client 5: Acc: 0.4083333333333333, AUC: 0.8556682761254522
+Client 6: Acc: 0.31794871794871793, AUC: 0.8632474813885072
+Client 7: Acc: 0.3648293963254593, AUC: 0.8330984321901305
+Client 8: Acc: 0.39173789173789175, AUC: 0.9268348659769996
+Client 9: Acc: 0.386052303860523, AUC: 0.8605394086552073
+Client 10: Acc: 0.3719247467438495, AUC: 0.8359735251192711
+Client 11: Acc: 0.29642857142857143, AUC: 0.8329982291738245
+Client 12: Acc: 0.3487241798298906, AUC: 0.8899380560043251
+Client 13: Acc: 0.4199192462987887, AUC: 0.8357907806127077
+Client 14: Acc: 0.3583535108958838, AUC: 0.8725579212559554
+Client 15: Acc: 0.388250319284802, AUC: 0.8436843606884171
+Client 16: Acc: 0.3237753882915173, AUC: 0.8866522798041321
+Client 17: Acc: 0.49924357034795763, AUC: 0.8941322956957362
+Client 18: Acc: 0.4044795783926219, AUC: 0.8683513203346352
+Client 19: Acc: 0.3113496932515337, AUC: 0.8137551414631847
+Averaged Test Accuracy: 0.3663
+Averaged Test AUC: 0.8610
+Std Test Accuracy: 0.0642
+Std Test AUC: 0.0295
+------------------------- time cost ------------------------- 764.7046720981598
+
+-------------Round number: 6-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.29403973509933773, AUC: 0.8817085818050687
+Client 1: Acc: 0.4725130890052356, AUC: 0.8676646470737915
+Client 2: Acc: 0.4020319303338171, AUC: 0.8366538802089367
+Client 3: Acc: 0.3245382585751979, AUC: 0.8219330947756327
+Client 4: Acc: 0.16515151515151516, AUC: 0.7569609548190814
+Client 5: Acc: 0.4083333333333333, AUC: 0.8430434748721787
+Client 6: Acc: 0.31794871794871793, AUC: 0.8765553961707807
+Client 7: Acc: 0.34120734908136485, AUC: 0.83042452027665
+Client 8: Acc: 0.33475783475783477, AUC: 0.894038456004268
+Client 9: Acc: 0.3823163138231631, AUC: 0.8508093329210901
+Client 10: Acc: 0.3748191027496382, AUC: 0.8361995005819577
+Client 11: Acc: 0.29285714285714287, AUC: 0.8175539980301885
+Client 12: Acc: 0.22235722964763063, AUC: 0.8326469324972268
+Client 13: Acc: 0.4185733512786003, AUC: 0.8302481786357311
+Client 14: Acc: 0.3583535108958838, AUC: 0.8707779756893312
+Client 15: Acc: 0.37420178799489145, AUC: 0.8503671200636894
+Client 16: Acc: 0.24850657108721624, AUC: 0.8614845269136282
+Client 17: Acc: 0.5037821482602118, AUC: 0.8908081966323617
+Client 18: Acc: 0.4031620553359684, AUC: 0.8706610053556055
+Client 19: Acc: 0.3220858895705521, AUC: 0.8071703356915917
+Averaged Test Accuracy: 0.3467
+Averaged Test AUC: 0.8469
+Std Test Accuracy: 0.0789
+Std Test AUC: 0.0318
+------------------------- time cost ------------------------- 751.7541375160217
+
+-------------Round number: 7-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.26490066225165565, AUC: 0.8795253442277695
+Client 1: Acc: 0.4803664921465969, AUC: 0.8547414608240792
+Client 2: Acc: 0.41364296081277213, AUC: 0.8448077710886814
+Client 3: Acc: 0.2849604221635884, AUC: 0.812862897041509
+Client 4: Acc: 0.13787878787878788, AUC: 0.7473960101473874
+Client 5: Acc: 0.4097222222222222, AUC: 0.8313885186743983
+Client 6: Acc: 0.3217948717948718, AUC: 0.875792474382218
+Client 7: Acc: 0.2952755905511811, AUC: 0.8194641108698604
+Client 8: Acc: 0.2150997150997151, AUC: 0.8547552230284107
+Client 9: Acc: 0.39227895392278955, AUC: 0.8431077178582255
+Client 10: Acc: 0.36903039073806077, AUC: 0.8309226498599479
+Client 11: Acc: 0.275, AUC: 0.8297398231177994
+Client 12: Acc: 0.1822600243013366, AUC: 0.8261958577610203
+Client 13: Acc: 0.41722745625841184, AUC: 0.8228125738582237
+Client 14: Acc: 0.3523002421307506, AUC: 0.8719188466695341
+Client 15: Acc: 0.32567049808429116, AUC: 0.846669401946042
+Client 16: Acc: 0.21863799283154123, AUC: 0.8367127941067125
+Client 17: Acc: 0.49924357034795763, AUC: 0.8858849480197505
+Client 18: Acc: 0.40843214756258234, AUC: 0.8697505781796012
+Client 19: Acc: 0.3067484662576687, AUC: 0.8097102845611447
+Averaged Test Accuracy: 0.3272
+Averaged Test AUC: 0.8403
+Std Test Accuracy: 0.0948
+Std Test AUC: 0.0306
+------------------------- time cost ------------------------- 770.3108003139496
+
+-------------Round number: 8-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.2119205298013245, AUC: 0.8327513634658058
+Client 1: Acc: 0.46596858638743455, AUC: 0.8477530091075498
+Client 2: Acc: 0.41654571843251087, AUC: 0.8464653741648018
+Client 3: Acc: 0.29023746701846964, AUC: 0.808159216239082
+Client 4: Acc: 0.11515151515151516, AUC: 0.7397521936537087
+Client 5: Acc: 0.4041666666666667, AUC: 0.8198094856746477
+Client 6: Acc: 0.3243589743589744, AUC: 0.888285692228
+Client 7: Acc: 0.3241469816272966, AUC: 0.8038636688945656
+Traceback (most recent call last):
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\system\main.py", line 475, in <module>
+    run(args)
+    ~~~^^^^^^
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\system\main.py", line 334, in run
+    server.train()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\system\flcore\servers\servergdbd.py", line 82, in train
+    self.evaluate()
+    ~~~~~~~~~~~~~^^
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\system\flcore\servers\serverbase.py", line 197, in evaluate
+    stats = self.test_metrics()
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\system\flcore\servers\serverbase.py", line 172, in test_metrics
+    ct, ns, auc = c.test_metrics()
+                  ~~~~~~~~~~~~~~^^
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\system\flcore\clients\clientgdbd.py", line 161, in test_metrics
+    acc, num, auc = super().test_metrics()
+                    ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\system\flcore\clients\clientbase.py", line 108, in test_metrics
+    auc = metrics.roc_auc_score(y_true, y_prob, average='micro')
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\.venv\Lib\site-packages\sklearn\utils\_param_validation.py", line 218, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\.venv\Lib\site-packages\sklearn\metrics\_ranking.py", line 710, in roc_auc_score
+    y_score = check_array(y_score, ensure_2d=False)
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\.venv\Lib\site-packages\sklearn\utils\validation.py", line 1090, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\.venv\Lib\site-packages\sklearn\utils\validation.py", line 137, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\siddh\Desktop\FedGDBD-repro\FedGDBD-repro\.venv\Lib\site-packages\sklearn\utils\validation.py", line 186, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
