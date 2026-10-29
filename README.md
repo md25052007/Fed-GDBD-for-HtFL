@@ -6,7 +6,7 @@ An independent re-implementation and partial reproduction of
 
 The authors did not release code. Fed-GDBD is written from the paper's equations on top of [HtFLlib](https://github.com/TsingZ0/HtFLlib) (Apache-2.0), whose heterogeneous-model setup, Dirichlet partitioning and baselines match the paper's experiments.
 
-**TL;DR:** 20 clients, 4 different model architectures, no shared weights or raw data — each client distills a single server-side decision boundary into its own classifier head, once per round. See [Architecture](#architecture) for the diagram.
+**TL;DR:** 20 clients, 4 different model architectures, no raw data or feature-extractor weights shared — each client distils a single server-side decision boundary into its model once per round (FedGDBD-S: into its classifier head only). See [Architecture](#architecture) for the diagram.
 
 IT307 Machine Learning project, NIT Karnataka.
 
@@ -45,7 +45,7 @@ Hardware: CIFAR-10 on an RTX 3050 6 GB laptop, CIFAR-100 on an RTX 5060 8 GB lap
 
 ## Architecture
 
-Clients never share raw data, model weights, or architecture details — only class-wise feature prototypes. The server never sees a client's model, only the prototypes it uploads.
+Clients never share raw data or feature-extractor weights. They upload their classifier head once (round 0, to initialise g) and class prototypes every round; the server sends back only g.
 
 ```mermaid
 flowchart LR
@@ -95,7 +95,7 @@ flowchart LR
     EVAL --> OUT
 ```
 
-Each round repeats stages 1–3 (pre-training is round-0 only): clients train locally and cluster features, the server rebuilds the global decision boundary `g` from this round's prototypes, then clients distil `g` back into their own heads. `g` is the only thing that ever crosses the heterogeneity gap — it's a single linear layer trained once on everyone's prototypes, so a CNN client and a ResNet18 client can learn from each other without ever exchanging weights.
+Each round repeats stages 1–3 (pre-training is round-0 only): clients train locally and cluster features, the server updates the global decision boundary `g` using this round's prototypes, then clients distil `g` back into their own models (FedGDBD-S: heads only). `g` is the only thing that ever crosses the heterogeneity gap — it's a single linear layer retrained every round on everyone's prototypes, so a CNN client and a ResNet18 client can learn from each other without ever exchanging feature-extractor weights.
 
 ## Repository layout
 
