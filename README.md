@@ -6,6 +6,8 @@ An independent re-implementation and partial reproduction of
 
 The authors did not release code. Fed-GDBD is written from the paper's equations on top of [HtFLlib](https://github.com/TsingZ0/HtFLlib) (Apache-2.0), whose heterogeneous-model setup, Dirichlet partitioning and baselines match the paper's experiments.
 
+**TL;DR:** 20 clients, 4 different model architectures, no shared weights or raw data — each client distills a single server-side decision boundary into its own classifier head, once per round. See [Architecture](#architecture) for the diagram.
+
 IT307 Machine Learning project, NIT Karnataka.
 
 ## Results
@@ -40,6 +42,60 @@ Hardware: CIFAR-10 on an RTX 3050 6 GB laptop, CIFAR-100 on an RTX 5060 8 GB lap
    - let the distillation term update only the head (`head(rep.detach())`); cross-entropy still trains the full model.
 
    It stays within ±0.5 pt of its best for all 50 rounds and restores the collapsed clients (CIFAR-100 CNN: 3.9 → 45.6 %). It adds no communication.
+
+## Architecture
+
+Clients never share raw data, model weights, or architecture details — only class-wise feature prototypes. The server never sees a client's model, only the prototypes it uploads.
+
+```mermaid
+flowchart LR
+    subgraph CLIENTS["1. Heterogeneous clients (20, Dir β=0.1)"]
+        direction TB
+        ARCH["4 local architectures<br/>CNN / GoogLeNet / MobileNetV2 / ResNet18<br/>(client i → arch i mod 4)"]
+        PRETRAIN["Pre-train, round 0 only<br/>cross-entropy, 5 epochs"]
+        LOCAL["Local train (Eq. 11)<br/>CE + T² · L_IKD<br/>teacher = client's best past model"]
+        CLUSTER["k-means++ clustering (Eq. 3-4)<br/>v = 5 prototypes / class"]
+        ARCH --> PRETRAIN --> LOCAL --> CLUSTER
+    end
+
+    PROTOS[("Uploaded prototypes<br/>features + labels only —<br/>no raw data, no weights")]
+
+    subgraph SERVER["2. Server: global decision boundary"]
+        direction TB
+        INITG["Init g (Eq. 5)<br/>sample-weighted avg of client heads<br/>— round 0 only"]
+        TRAING["Train g (Eq. 12)<br/>cross-entropy on the union of<br/>every client's uploaded prototypes"]
+        INITG --> TRAING
+    end
+
+    subgraph DISTILL["3. Global decision-boundary distillation (Eq. 7, 13)"]
+        direction TB
+        STUD["Student: model.head( model.base(x) )"]
+        TEACH["Teacher: g( rep.detach() )<br/>FedGDBD-S: rescaled to the student's<br/>logit scale, head-only update"]
+        KD["L = (1-α)·CE + α·T²·KL(g ‖ head)"]
+        STUD --> KD
+        TEACH --> KD
+    end
+
+    EVAL[("Per-client test accuracy<br/>best-so-far model becomes next<br/>round's IKD teacher")]
+
+    subgraph OUT["4. Results"]
+        direction TB
+        LOGS["Per-round, per-client logs"]
+        SUMM["summarize_logs.py<br/>best / last accuracy, per architecture"]
+        RTAB["Results table vs. the paper"]
+        DECK["Final presentation deck"]
+        LOGS --> SUMM --> RTAB
+        SUMM --> DECK
+    end
+
+    CLIENTS -->|prototypes| PROTOS --> SERVER
+    SERVER -->|broadcast g| DISTILL
+    CLIENTS -.->|rep, local model| DISTILL
+    DISTILL -->|updated local model| EVAL
+    EVAL --> OUT
+```
+
+Each round repeats stages 1–3 (pre-training is round-0 only): clients train locally and cluster features, the server rebuilds the global decision boundary `g` from this round's prototypes, then clients distil `g` back into their own heads. `g` is the only thing that ever crosses the heterogeneity gap — it's a single linear layer trained once on everyone's prototypes, so a CNN client and a ResNet18 client can learn from each other without ever exchanging weights.
 
 ## Repository layout
 
