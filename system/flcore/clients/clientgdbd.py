@@ -14,6 +14,13 @@ Per round, a client:
   3. after the server has trained the global decision boundary
      learner g on all prototypes, updates its local model with
      L_col = (1-a) * CE + a * T^2 * L_GDBD                    (Eq. 7, 13)
+
+Novelty (FedGDBD-AGC / FedGDBD-AGS, agreement-gated distillation):
+  g only gets as much influence as it has earned on THIS client's data.
+  AGC: alpha_i = alpha * (accuracy of g on client i's training features)
+  AGS: per image, distil only where g's top prediction is correct
+  Both sit on top of FedGDBD-S. With --gdbd_teacher val the IKD teacher is
+  chosen on a held-out 10 % validation slice instead of the test set.
 """
 import copy
 import time
@@ -21,13 +28,15 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.utils.data import DataLoader
 from flcore.clients.clientbase import Client, load_item, save_item
+from utils.data_utils import read_client_data
 
 
 class clientGDBD(Client):
     def __init__(self, args, id, train_samples, test_samples, **kwargs):
         super().__init__(args, id, train_samples, test_samples, **kwargs)
-        torch.manual_seed(0)
+        torch.manual_seed(getattr(args, 'seed', 0))  # --seed: model init (default 0 = original runs)
 
         self.T = args.gdbd_T                      # distillation temperature (paper: 20)
         self.alpha = args.gdbd_alpha              # global decision boundary proportion (paper: 0.7)
@@ -40,6 +49,42 @@ class clientGDBD(Client):
         # FedGDBD-S (our stabilised variant): distil g into the head only and
         # rescale g's logits to the student's logit scale (see update()).
         self.stable = getattr(args, 'gdbd_stable', False)
+        # Novelty: agreement-gated distillation ('none' | 'client' | 'sample')
+        self.gate = getattr(args, 'gdbd_gate', 'none')
+        # IKD teacher selection: 'test' (as in our first runs) or 'val'
+        # (held-out slice of the client's own training data; no test leakage)
+        self.teacher_sel = getattr(args, 'gdbd_teacher', 'test')
+        self.val_idx, self.trn_idx = None, None
+        if self.teacher_sel == 'val':
+            n = train_samples
+            n_val = max(1, int(round(n * getattr(args, 'gdbd_val_frac', 0.1))))
+            perm = np.random.RandomState(1000 + id).permutation(n)
+            self.val_idx, self.trn_idx = sorted(perm[:n_val]), sorted(perm[n_val:])
+
+    # ------------------------------------------------------------------ #
+    # Data: with --gdbd_teacher val, 10 % of the training data is held out
+    # ------------------------------------------------------------------ #
+    def load_train_data(self, batch_size=None):
+        if self.trn_idx is None:
+            return super().load_train_data(batch_size)
+        data = read_client_data(self.dataset, self.id, is_train=True, few_shot=self.few_shot)
+        data = [data[i] for i in self.trn_idx]
+        return DataLoader(data, batch_size or self.batch_size, drop_last=True, shuffle=False)
+
+    def load_val_data(self):
+        data = read_client_data(self.dataset, self.id, is_train=True, few_shot=self.few_shot)
+        data = [data[i] for i in self.val_idx]
+        return DataLoader(data, self.batch_size, drop_last=False, shuffle=False)
+
+    @torch.no_grad()
+    def val_accuracy(self, model):
+        model.eval()
+        correct, total = 0, 0
+        for x, y in self.load_val_data():
+            x, y = x.to(self.device), y.to(self.device)
+            correct += (model(x).argmax(1) == y).sum().item()
+            total += y.shape[0]
+        return correct / max(total, 1)
 
     # ------------------------------------------------------------------ #
     # Losses
@@ -72,12 +117,13 @@ class clientGDBD(Client):
         torch.nn.utils.clip_grad_norm_(model.parameters(), 10.0)
         optimizer.step()
 
-    def gdbd_loss(self, student_logits, g_logits):
-        """KL( softmax(g/T) || softmax(h/T) )  (Eq. 7)."""
+    def gdbd_loss(self, student_logits, g_logits, reduce=True):
+        """KL( softmax(g/T) || softmax(h/T) )  (Eq. 7). reduce=False -> per sample."""
         T = self.T
         p_g = F.softmax(g_logits / T, dim=1)
-        return (p_g * (F.log_softmax(g_logits / T, dim=1)
-                       - F.log_softmax(student_logits / T, dim=1))).sum(dim=1).mean()
+        kl = (p_g * (F.log_softmax(g_logits / T, dim=1)
+                     - F.log_softmax(student_logits / T, dim=1))).sum(dim=1)
+        return kl.mean() if reduce else kl
 
     # ------------------------------------------------------------------ #
     # Stage 0: local pre-training (Algorithm 1, line 1)
@@ -152,6 +198,14 @@ class clientGDBD(Client):
         g = load_item('Server', 'g', self.save_folder_name)
         g.eval()
         optimizer = torch.optim.SGD(model.parameters(), lr=self.learning_rate)
+
+        alpha = self.alpha
+        if self.gate == 'client':
+            # AGC: measure how often g is right on this client's own features
+            g_acc = self.g_agreement(model, g, trainloader)
+            alpha = self.alpha * g_acc
+            print(f'Gate client {self.id}: g_acc={g_acc:.4f} alpha={alpha:.4f}')
+        kept, seen = 0, 0
         model.train()
 
         for _ in range(self.update_epochs):
@@ -172,11 +226,33 @@ class clientGDBD(Client):
                     g_out = g_out * scale
                 else:
                     kd_out = output
-                loss = (1 - self.alpha) * self.loss(output, y) \
-                    + self.alpha * (self.T ** 2) * self.gdbd_loss(kd_out, g_out)
+                if self.gate == 'sample':
+                    # AGS: per image, distil only where g's top class is correct
+                    w = (g_out.argmax(dim=1) == y).float()
+                    kept += int(w.sum().item()); seen += y.shape[0]
+                    ce = F.cross_entropy(output, y, reduction='none')
+                    kl = self.gdbd_loss(kd_out, g_out, reduce=False)
+                    loss = ((1 - alpha * w) * ce + alpha * w * (self.T ** 2) * kl).mean()
+                else:
+                    loss = (1 - alpha) * self.loss(output, y) \
+                        + alpha * (self.T ** 2) * self.gdbd_loss(kd_out, g_out)
                 self._step(model, optimizer, loss)
 
+        if self.gate == 'sample':
+            print(f'Gate sample {self.id}: kept={kept / max(seen, 1):.4f}')
         save_item(model, self.role, 'model', self.save_folder_name)
+
+    @torch.no_grad()
+    def g_agreement(self, model, g, loader):
+        """Fraction of this client's training images that g classifies correctly
+        from the client's own features (eval mode, no training)."""
+        model.eval()
+        correct, total = 0, 0
+        for x, y in loader:
+            x, y = x.to(self.device), y.to(self.device)
+            correct += (g(model.base(x)).argmax(1) == y).sum().item()
+            total += y.shape[0]
+        return correct / max(total, 1)
 
     # ------------------------------------------------------------------ #
     # Evaluation + teacher selection ("most optimal model from previous
@@ -184,7 +260,10 @@ class clientGDBD(Client):
     # ------------------------------------------------------------------ #
     def test_metrics(self):
         acc, num, auc = super().test_metrics()
-        cur = acc / max(num, 1e-5)
+        if self.teacher_sel == 'val':
+            cur = self.val_accuracy(load_item(self.role, 'model', self.save_folder_name))
+        else:
+            cur = acc / max(num, 1e-5)
         if cur > self.best_acc:
             self.best_acc = cur
             model = load_item(self.role, 'model', self.save_folder_name)

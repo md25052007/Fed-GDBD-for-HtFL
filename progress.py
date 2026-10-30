@@ -10,12 +10,15 @@ PAPER = {  # Table 1, practical setting
     ('Cifar10', 'FedGDBD'): 87.90, ('Cifar10', 'FedProto'): 82.75, ('Cifar10', 'LG-FedAvg'): 86.64,
     ('Cifar100', 'FedGDBD'): 45.09, ('Cifar100', 'FedProto'): 35.38, ('Cifar100', 'LG-FedAvg'): 43.30,
     ('Cifar10', 'FedGDBD-S'): 87.90, ('Cifar100', 'FedGDBD-S'): 45.09,
+    ('Cifar10', 'FedGDBD-AGC'): 87.90, ('Cifar100', 'FedGDBD-AGC'): 45.09,
+    ('Cifar10', 'FedGDBD-AGS'): 87.90, ('Cifar100', 'FedGDBD-AGS'): 45.09,
 }
 
 here = os.path.dirname(os.path.abspath(__file__))
-logs = sorted(glob.glob(os.path.join(here, 'logs', '*.log')))
+logdir = sys.argv[1] if len(sys.argv) > 1 else 'logs'   # e.g. logs_novelty
+logs = sorted(glob.glob(os.path.join(here, logdir, '*.log')))
 if not logs:
-    print('No logs yet. Start run_experiments.bat first.')
+    print(f'No logs in {logdir} yet. Start the run first.')
     sys.exit()
 
 rows = []

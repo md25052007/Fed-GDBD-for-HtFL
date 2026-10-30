@@ -43,6 +43,36 @@ Hardware: CIFAR-10 on an RTX 3050 6 GB laptop, CIFAR-100 on an RTX 5060 8 GB lap
 
    It stays within ±0.5 pt of its best for all 50 rounds and restores the collapsed clients (CIFAR-100 CNN: 3.9 → 45.6 %). It adds no communication.
 
+## Novelty: agreement-gated distillation (in progress, run 1 of 2)
+
+**Idea.** In FedGDBD-S every client distils the global learner *g* with the same weight α = 0.7, even where *g* reads that client's features badly. Agreement gating lets *g* influence a client only as much as it has earned on that client's own data. Both variants sit on top of FedGDBD-S:
+
+- **FedGDBD-AGC (per client):** α_i = 0.7 × (accuracy of *g* on client *i*'s training features), measured each round before distillation.
+- **FedGDBD-AGS (per image):** distil only on images where *g*'s top class is correct; the rest get cross-entropy only.
+
+All three runs below also pick the IKD teacher on a 10 % validation slice of each client's training data (`--gdbd_teacher val`) instead of the test set, so no test data influences training. They train on 10 % less data and run 20 rounds, so compare them **only with each other**, not with the 50-round results above. The success bar fixed before running: ≥ +0.5 pt over the control on **both** datasets.
+
+**Run 1 (`--seed 0`), best-round test accuracy, %:**
+
+| Run | CIFAR-10 | CIFAR-100 |
+|---|---|---|
+| FedGDBD-S (control) | 86.96 | 42.07 |
+| FedGDBD-AGC | 86.92 (−0.04) | **42.93 (+0.86)** |
+| FedGDBD-AGS | **87.36 (+0.40)** | 42.24 (+0.17) |
+
+Neither variant clears the bar on both datasets: AGS is best on CIFAR-10, AGC on CIFAR-100, and the gaps are within what one seed can produce.
+
+**What the gate found.** Accuracy of *g* on each architecture's own training features (AGC, mean over rounds):
+
+| | CNN | GoogLeNet | MobileNetV2 | ResNet18 |
+|---|---|---|---|---|
+| CIFAR-10 | 0.97 | 0.91 | **0.53** | 0.94 |
+| CIFAR-100 | 0.75 | 0.81 | **0.42** | 0.80 |
+
+Without being told about architectures, the gate singles out MobileNetV2 as the one *g* misreads, and that is where gating helps most: MobileNetV2 clients 80.2 → **82.5 %** on CIFAR-10 (AGS) and 36.3 → **37.8 %** on CIFAR-100 (AGC). The other architectures move by under 1 point.
+
+**Status.** Run 2 (`--seed 1`: different model initialisation, client order and k-means seeding; same data split) is pending, to tell whether the small overall gains are real. Logs: `experiments/novelty/run1_seed0/`; summary: `python analysis/novelty_summary.py experiments/novelty/run1_seed0/cifar10/logs`. Launch: `run_novelty_cifar10.bat` / `run_novelty_cifar100.bat` (seed 0) and `run_novelty_cifar10_seed1.bat` / `run_novelty_cifar100_seed1.bat` (seed 1).
+
 ## Architecture
 
 Clients never share raw data or feature-extractor weights. They upload their classifier head once (round 0, to initialise g) and class prototypes every round; the server sends back only g.
@@ -106,6 +136,7 @@ system/main.py                        HtFLlib entry point, + FedGDBD / FedGDBD-S
 dataset/generate_Cifar10.py, ..100    Dirichlet split from PFLlib (data itself is NOT in the repo)
 experiments/cifar10|cifar100/logs     full per-round, per-client logs of every run
 experiments/cifar10|cifar100/results  HtFLlib .h5 accuracy curves
+experiments/novelty/run1_seed0/       novelty runs (control, AGC, AGS) on both datasets
 analysis/summarize_logs.py            parses logs → best/last accuracy, per-architecture curves (JSON)
 presentation/                         final slides (.pptx) and the pptxgenjs script that builds them
 *.bat, progress.py                    Windows setup / launch / progress-monitor scripts

@@ -47,6 +47,11 @@ logger.setLevel(logging.ERROR)
 
 warnings.simplefilter("ignore")
 torch.manual_seed(0)
+# fixed client order each round (np.random.choice in select_clients), so runs
+# that differ only in method see clients in the same order
+np.random.seed(0)
+import random
+random.seed(0)
 
 def run(args):
 
@@ -325,8 +330,10 @@ def run(args):
         elif args.algorithm == "FedL2G-logit":
             server = FedL2G_logit(args, i)
 
-        elif args.algorithm in ("FedGDBD", "FedGDBD-S"):
-            args.gdbd_stable = (args.algorithm == "FedGDBD-S")
+        elif args.algorithm in ("FedGDBD", "FedGDBD-S", "FedGDBD-AGC", "FedGDBD-AGS"):
+            # FedGDBD = faithful Eq. 13; the others build on FedGDBD-S
+            args.gdbd_stable = (args.algorithm != "FedGDBD")
+            args.gdbd_gate = {"FedGDBD-AGC": "client", "FedGDBD-AGS": "sample"}.get(args.algorithm, "none")
             server = FedGDBD(args, i)
             
         else:
@@ -442,11 +449,19 @@ if __name__ == "__main__":
     parser.add_argument("--gdbd_update_epochs", type=int, default=5)
     parser.add_argument("--gdbd_server_epochs", type=int, default=5)
     parser.add_argument("--gdbd_pretrain_epochs", type=int, default=5)
+    parser.add_argument("--gdbd_teacher", type=str, default="test", choices=["test", "val"],
+                        help="IKD teacher chosen by test accuracy (original runs) or a held-out validation slice")
+    parser.add_argument("--gdbd_val_frac", type=float, default=0.1)
+    parser.add_argument("--seed", type=int, default=0,
+                        help="Seed for model initialisation, client order and k-means seeding (0 = original runs). The data split is fixed.")
 
 
     args = parser.parse_args()
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.device_id
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
+    random.seed(args.seed)
 
     if args.device == "cuda" and not torch.cuda.is_available():
         print("\ncuda is not avaiable.\n")

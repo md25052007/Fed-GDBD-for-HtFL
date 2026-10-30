@@ -175,3 +175,7 @@ system/temp/
 /results/
 # keep the experiment logs and results of this reproduction
 !experiments/**/*.log
+
+# novelty runs (live)
+/logs_novelty/
+/logs_novelty_seed*/

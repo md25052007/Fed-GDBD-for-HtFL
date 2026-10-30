@@ -1,0 +1,1120 @@
+==================================================
+goal = novelty
+device = cuda
+device_id = 0
+dataset = Cifar100
+num_classes = 100
+model_family = HtFE-img-4
+batch_size = 10
+local_learning_rate = 0.01
+learning_rate_decay = False
+learning_rate_decay_gamma = 0.99
+global_rounds = 20
+top_cnt = 100
+local_epochs = 5
+algorithm = FedGDBD-AGC
+join_ratio = 1.0
+random_join_ratio = False
+num_clients = 20
+prev = 0
+times = 1
+eval_gap = 1
+save_folder_name = temp
+auto_break = False
+feature_dim = 512
+vocab_size = 80
+max_len = 200
+models_folder_name = 
+few_shot = 0
+client_drop_rate = 0.0
+train_slow_rate = 0.0
+send_slow_rate = 0.0
+time_select = False
+time_threthold = 10000
+lamda = 1.0
+noise_dim = 512
+generator_learning_rate = 0.005
+hidden_dim = 512
+server_epochs = 100
+alpha = 1.0
+beta = 1.0
+mentee_learning_rate = 0.01
+T_start = 0.95
+T_end = 0.98
+server_learning_rate = 0.01
+margin_threthold = 100.0
+generator_path = stylegan/stylegan-xl-models/imagenet64.pkl
+stable_diffusion_prompt = a cat
+server_batch_size = 100
+gen_batch_size = 4
+mu = 50.0
+sub_feature_dim = 128
+meta_study_batches = 1
+meta_quiz_batches = 1
+warm_up_rounds = 50
+gdbd_T = 20.0
+gdbd_alpha = 0.7
+gdbd_v = 5
+gdbd_cluster_rounds = 100
+gdbd_update_epochs = 5
+gdbd_server_epochs = 5
+gdbd_pretrain_epochs = 5
+gdbd_teacher = val
+gdbd_val_frac = 0.1
+==================================================
+
+============= Running time: 0th =============
+Creating server and clients ...
+FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600)
+torchvision.models.googlenet(pretrained=False, aux_logits=False, num_classes=args.num_classes)
+mobilenet_v2(pretrained=False, num_classes=args.num_classes)
+torchvision.models.resnet18(pretrained=False, num_classes=args.num_classes)
+
+Join ratio / total clients: 1.0 / 20
+Finished creating server and clients.
+
+Pre-training local models ...
+Pre-training done in 360.9s
+
+-------------Round number: 0-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.39072847682119205, AUC: 0.9632727343608445
+Client 1: Acc: 0.38089005235602097, AUC: 0.9569517507245366
+Client 2: Acc: 0.17706821480406387, AUC: 0.9015545100929991
+Client 3: Acc: 0.3865435356200528, AUC: 0.9510589637085555
+Client 4: Acc: 0.21666666666666667, AUC: 0.9132092736362707
+Client 5: Acc: 0.25972222222222224, AUC: 0.9448542718855218
+Client 6: Acc: 0.1423076923076923, AUC: 0.9115770957437624
+Client 7: Acc: 0.37926509186351703, AUC: 0.9670449683211375
+Client 8: Acc: 0.36182336182336183, AUC: 0.9605666981418802
+Client 9: Acc: 0.29140722291407223, AUC: 0.9437673039848257
+Client 10: Acc: 0.14182344428364688, AUC: 0.907784822957364
+Client 11: Acc: 0.3904761904761905, AUC: 0.955603469502279
+Client 12: Acc: 0.3511543134872418, AUC: 0.9559329977221431
+Client 13: Acc: 0.31090174966352624, AUC: 0.9537241524691913
+Client 14: Acc: 0.162227602905569, AUC: 0.9220569139619496
+Client 15: Acc: 0.4163473818646232, AUC: 0.9625179075373094
+Client 16: Acc: 0.37753882915173237, AUC: 0.9449972202249279
+Client 17: Acc: 0.3585476550680787, AUC: 0.9535861358936927
+Client 18: Acc: 0.18972332015810275, AUC: 0.9140688145723896
+Client 19: Acc: 0.35429447852760737, AUC: 0.921382078434235
+Averaged Test Accuracy: 0.3034
+Averaged Test AUC: 0.9408
+Std Test Accuracy: 0.0933
+Std Test AUC: 0.0211
+Gate client 18: g_acc=0.0088 alpha=0.0062
+Gate client 1: g_acc=0.3825 alpha=0.2678
+Gate client 19: g_acc=0.5686 alpha=0.3980
+Gate client 8: g_acc=0.3439 alpha=0.2407
+Gate client 10: g_acc=0.0274 alpha=0.0192
+Gate client 17: g_acc=0.3826 alpha=0.2678
+Gate client 6: g_acc=0.0738 alpha=0.0517
+Gate client 13: g_acc=0.4245 alpha=0.2971
+Gate client 4: g_acc=0.2051 alpha=0.1435
+Gate client 2: g_acc=0.0157 alpha=0.0110
+Gate client 5: g_acc=0.3005 alpha=0.2104
+Gate client 14: g_acc=0.0239 alpha=0.0167
+Gate client 9: g_acc=0.2394 alpha=0.1675
+Gate client 7: g_acc=0.6195 alpha=0.4337
+Gate client 16: g_acc=0.4213 alpha=0.2949
+Gate client 11: g_acc=0.5398 alpha=0.3779
+Gate client 3: g_acc=0.5196 alpha=0.3637
+Gate client 0: g_acc=0.2926 alpha=0.2048
+Gate client 15: g_acc=0.6256 alpha=0.4379
+Gate client 12: g_acc=0.2887 alpha=0.2021
+------------------------- time cost ------------------------- 865.580796957016
+
+-------------Round number: 1-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4251655629139073, AUC: 0.9645825209686444
+Client 1: Acc: 0.40575916230366493, AUC: 0.9506484141876539
+Client 2: Acc: 0.29027576197387517, AUC: 0.9263930760904775
+Client 3: Acc: 0.3944591029023747, AUC: 0.8316841513343557
+Client 4: Acc: 0.2803030303030303, AUC: 0.9290407982487873
+Client 5: Acc: 0.3333333333333333, AUC: 0.9283384286538221
+Client 6: Acc: 0.2423076923076923, AUC: 0.9341011030754621
+Client 7: Acc: 0.4094488188976378, AUC: 0.8542579402779457
+Client 8: Acc: 0.452991452991453, AUC: 0.9702371479832701
+Client 9: Acc: 0.33250311332503113, AUC: 0.9445884930516815
+Client 10: Acc: 0.25615050651230103, AUC: 0.9179839595500113
+Client 11: Acc: 0.4095238095238095, AUC: 0.8604001394328774
+Client 12: Acc: 0.4775212636695018, AUC: 0.9603761557708606
+Client 13: Acc: 0.35935397039030953, AUC: 0.9181172085606294
+Client 14: Acc: 0.21307506053268765, AUC: 0.928822800524282
+Client 15: Acc: 0.44572158365261816, AUC: 0.8655993739007788
+Client 16: Acc: 0.45758661887694146, AUC: 0.9539568204667572
+Client 17: Acc: 0.4720121028744327, AUC: 0.9536534341933945
+Client 18: Acc: 0.2924901185770751, AUC: 0.9458199086376374
+Client 19: Acc: 0.39263803680981596, AUC: 0.8219332828263819
+Averaged Test Accuracy: 0.3678
+Averaged Test AUC: 0.9183
+Std Test Accuracy: 0.0799
+Std Test AUC: 0.0443
+Gate client 11: g_acc=0.6619 alpha=0.4634
+Gate client 1: g_acc=0.6282 alpha=0.4397
+Gate client 18: g_acc=0.0328 alpha=0.0230
+Gate client 17: g_acc=0.6376 alpha=0.4463
+Gate client 2: g_acc=0.0184 alpha=0.0129
+Gate client 12: g_acc=0.4572 alpha=0.3200
+Gate client 19: g_acc=0.7166 alpha=0.5016
+Gate client 16: g_acc=0.5080 alpha=0.3556
+Gate client 10: g_acc=0.1151 alpha=0.0805
+Gate client 0: g_acc=0.4778 alpha=0.3345
+Gate client 3: g_acc=0.7152 alpha=0.5006
+Gate client 4: g_acc=0.3534 alpha=0.2474
+Gate client 15: g_acc=0.7204 alpha=0.5043
+Gate client 8: g_acc=0.5302 alpha=0.3711
+Gate client 13: g_acc=0.6845 alpha=0.4791
+Gate client 9: g_acc=0.5468 alpha=0.3827
+Gate client 5: g_acc=0.5258 alpha=0.3680
+Gate client 14: g_acc=0.0387 alpha=0.0271
+Gate client 7: g_acc=0.7537 alpha=0.5276
+Gate client 6: g_acc=0.0576 alpha=0.0403
+------------------------- time cost ------------------------- 860.5078179836273
+
+-------------Round number: 2-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4503311258278146, AUC: 0.9643446437534414
+Client 1: Acc: 0.4594240837696335, AUC: 0.9132602996052464
+Client 2: Acc: 0.3889695210449927, AUC: 0.9418992918732766
+Client 3: Acc: 0.3997361477572559, AUC: 0.8309315912376668
+Client 4: Acc: 0.2909090909090909, AUC: 0.9148871636474942
+Client 5: Acc: 0.3375, AUC: 0.8466914710375357
+Client 6: Acc: 0.26794871794871794, AUC: 0.9413387573964498
+Client 7: Acc: 0.400262467191601, AUC: 0.8417891830171988
+Client 8: Acc: 0.48005698005698005, AUC: 0.9716311293550928
+Client 9: Acc: 0.33872976338729766, AUC: 0.8715210647844963
+Client 10: Acc: 0.30390738060781475, AUC: 0.9326948310112038
+Client 11: Acc: 0.4095238095238095, AUC: 0.8737970836482741
+Client 12: Acc: 0.4908869987849332, AUC: 0.954842648346101
+Client 13: Acc: 0.4158815612382234, AUC: 0.8373808897910925
+Client 14: Acc: 0.2651331719128329, AUC: 0.9384336360574715
+Client 15: Acc: 0.45338441890166026, AUC: 0.8565914623004213
+Client 16: Acc: 0.4755077658303465, AUC: 0.9504309491227266
+Client 17: Acc: 0.4689863842662632, AUC: 0.9049849498946704
+Client 18: Acc: 0.3702239789196311, AUC: 0.9551222971783622
+Client 19: Acc: 0.3911042944785276, AUC: 0.8121880858340642
+Averaged Test Accuracy: 0.3935
+Averaged Test AUC: 0.9033
+Std Test Accuracy: 0.0703
+Std Test AUC: 0.0501
+Gate client 15: g_acc=0.7502 alpha=0.5252
+Gate client 13: g_acc=0.8055 alpha=0.5638
+Gate client 12: g_acc=0.6248 alpha=0.4373
+Gate client 5: g_acc=0.6959 alpha=0.4871
+Gate client 11: g_acc=0.7177 alpha=0.5024
+Gate client 2: g_acc=0.1114 alpha=0.0779
+Gate client 8: g_acc=0.6386 alpha=0.4470
+Gate client 6: g_acc=0.1848 alpha=0.1293
+Gate client 3: g_acc=0.7632 alpha=0.5343
+Gate client 17: g_acc=0.7629 alpha=0.5340
+Gate client 4: g_acc=0.5393 alpha=0.3775
+Gate client 10: g_acc=0.1478 alpha=0.1035
+Gate client 16: g_acc=0.6658 alpha=0.4660
+Gate client 18: g_acc=0.0750 alpha=0.0525
+Gate client 9: g_acc=0.7065 alpha=0.4945
+Gate client 1: g_acc=0.7413 alpha=0.5189
+Gate client 0: g_acc=0.6212 alpha=0.4348
+Gate client 7: g_acc=0.7712 alpha=0.5399
+Gate client 14: g_acc=0.1658 alpha=0.1160
+Gate client 19: g_acc=0.7691 alpha=0.5384
+------------------------- time cost ------------------------- 950.1836516857147
+
+-------------Round number: 3-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4185430463576159, AUC: 0.9611233514036022
+Client 1: Acc: 0.4973821989528796, AUC: 0.9135226473224335
+Client 2: Acc: 0.41944847605224966, AUC: 0.9488613609707894
+Client 3: Acc: 0.3970976253298153, AUC: 0.8237710365045179
+Client 4: Acc: 0.2727272727272727, AUC: 0.908059149808461
+Client 5: Acc: 0.37916666666666665, AUC: 0.8297782220351663
+Client 6: Acc: 0.2948717948717949, AUC: 0.9501834668180822
+Client 7: Acc: 0.40288713910761154, AUC: 0.8320574946424865
+Client 8: Acc: 0.4658119658119658, AUC: 0.9690352031282705
+Client 9: Acc: 0.40597758405977585, AUC: 0.8761736836298452
+Client 10: Acc: 0.33719247467438496, AUC: 0.9383641453901841
+Client 11: Acc: 0.4107142857142857, AUC: 0.8839078855447903
+Client 12: Acc: 0.46537059538274606, AUC: 0.953424302359606
+Client 13: Acc: 0.4468371467025572, AUC: 0.8440675125987481
+Client 14: Acc: 0.3341404358353511, AUC: 0.9454938287067807
+Client 15: Acc: 0.454661558109834, AUC: 0.8561237446847855
+Client 16: Acc: 0.4826762246117085, AUC: 0.9495377862476608
+Client 17: Acc: 0.5310136157337367, AUC: 0.9156417778319678
+Client 18: Acc: 0.3544137022397892, AUC: 0.95948760818024
+Client 19: Acc: 0.3911042944785276, AUC: 0.810425926432833
+Averaged Test Accuracy: 0.4086
+Averaged Test AUC: 0.9041
+Std Test Accuracy: 0.0652
+Std Test AUC: 0.0526
+Gate client 18: g_acc=0.1466 alpha=0.1026
+Gate client 0: g_acc=0.7108 alpha=0.4976
+Gate client 13: g_acc=0.8560 alpha=0.5992
+Gate client 2: g_acc=0.2768 alpha=0.1937
+Gate client 3: g_acc=0.7775 alpha=0.5442
+Gate client 17: g_acc=0.8472 alpha=0.5930
+Gate client 7: g_acc=0.7878 alpha=0.5515
+Gate client 12: g_acc=0.6347 alpha=0.4443
+Gate client 14: g_acc=0.2378 alpha=0.1665
+Gate client 16: g_acc=0.7013 alpha=0.4909
+Gate client 11: g_acc=0.7381 alpha=0.5166
+Gate client 10: g_acc=0.1930 alpha=0.1351
+Gate client 9: g_acc=0.8264 alpha=0.5785
+Gate client 15: g_acc=0.7559 alpha=0.5291
+Gate client 1: g_acc=0.8325 alpha=0.5828
+Gate client 19: g_acc=0.8069 alpha=0.5648
+Gate client 8: g_acc=0.7011 alpha=0.4907
+Gate client 6: g_acc=0.1976 alpha=0.1383
+Gate client 5: g_acc=0.7856 alpha=0.5499
+Gate client 4: g_acc=0.6629 alpha=0.4640
+------------------------- time cost ------------------------- 985.0077857971191
+
+-------------Round number: 4-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4463576158940397, AUC: 0.9643497383377215
+Client 1: Acc: 0.518324607329843, AUC: 0.9141154043380546
+Client 2: Acc: 0.409288824383164, AUC: 0.9461159525513114
+Client 3: Acc: 0.40105540897097625, AUC: 0.8235207369185481
+Client 4: Acc: 0.3212121212121212, AUC: 0.9133850673864449
+Client 5: Acc: 0.4041666666666667, AUC: 0.8187084482946752
+Client 6: Acc: 0.3243589743589744, AUC: 0.951257811514222
+Client 7: Acc: 0.3963254593175853, AUC: 0.8318049363371454
+Client 8: Acc: 0.4757834757834758, AUC: 0.9693845132275016
+Client 9: Acc: 0.41594022415940224, AUC: 0.8750158903056894
+Client 10: Acc: 0.3314037626628075, AUC: 0.9385589810025546
+Client 11: Acc: 0.4083333333333333, AUC: 0.8857934790077647
+Client 12: Acc: 0.47509113001215064, AUC: 0.9486513805094584
+Client 13: Acc: 0.46837146702557203, AUC: 0.8437464680479342
+Client 14: Acc: 0.35108958837772397, AUC: 0.9426483615653395
+Client 15: Acc: 0.45338441890166026, AUC: 0.855783292853604
+Client 16: Acc: 0.4922341696535245, AUC: 0.9516653137260103
+Client 17: Acc: 0.5325264750378215, AUC: 0.913999789481856
+Client 18: Acc: 0.32674571805006586, AUC: 0.953347101388783
+Client 19: Acc: 0.3911042944785276, AUC: 0.8150979620055423
+Averaged Test Accuracy: 0.4176
+Averaged Test AUC: 0.9034
+Std Test Accuracy: 0.0633
+Std Test AUC: 0.0527
+Gate client 7: g_acc=0.8024 alpha=0.5617
+Gate client 1: g_acc=0.8408 alpha=0.5885
+Gate client 2: g_acc=0.3486 alpha=0.2441
+Gate client 19: g_acc=0.8120 alpha=0.5684
+Gate client 5: g_acc=0.8026 alpha=0.5618
+Gate client 18: g_acc=0.1760 alpha=0.1232
+Gate client 8: g_acc=0.7608 alpha=0.5326
+Gate client 17: g_acc=0.8528 alpha=0.5970
+Gate client 15: g_acc=0.7858 alpha=0.5500
+Gate client 16: g_acc=0.7276 alpha=0.5093
+Gate client 6: g_acc=0.2519 alpha=0.1763
+Gate client 13: g_acc=0.8665 alpha=0.6066
+Gate client 11: g_acc=0.7664 alpha=0.5365
+Gate client 4: g_acc=0.6994 alpha=0.4896
+Gate client 10: g_acc=0.2613 alpha=0.1829
+Gate client 9: g_acc=0.8236 alpha=0.5765
+Gate client 12: g_acc=0.7153 alpha=0.5007
+Gate client 3: g_acc=0.7926 alpha=0.5549
+Gate client 14: g_acc=0.3356 alpha=0.2349
+Gate client 0: g_acc=0.6956 alpha=0.4869
+------------------------- time cost ------------------------- 949.8697371482849
+
+-------------Round number: 5-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.44503311258278144, AUC: 0.9658485650328112
+Client 1: Acc: 0.518324607329843, AUC: 0.9163182858573953
+Client 2: Acc: 0.42670537010159654, AUC: 0.9239892292717005
+Client 3: Acc: 0.40369393139841686, AUC: 0.8225294626565851
+Client 4: Acc: 0.3212121212121212, AUC: 0.9158917109571378
+Client 5: Acc: 0.3972222222222222, AUC: 0.8253157929604689
+Client 6: Acc: 0.29615384615384616, AUC: 0.9387959476421017
+Client 7: Acc: 0.400262467191601, AUC: 0.8327278840304033
+Client 8: Acc: 0.4772079772079772, AUC: 0.9706321664219734
+Client 9: Acc: 0.41718555417185554, AUC: 0.8698334771156335
+Client 10: Acc: 0.3386396526772793, AUC: 0.915846141130498
+Client 11: Acc: 0.40595238095238095, AUC: 0.883939336677432
+Client 12: Acc: 0.3560145808019441, AUC: 0.9343983738502502
+Client 13: Acc: 0.46029609690444145, AUC: 0.845646368933251
+Client 14: Acc: 0.3389830508474576, AUC: 0.9102088547239776
+Client 15: Acc: 0.4559386973180077, AUC: 0.8619980462902127
+Client 16: Acc: 0.4874551971326165, AUC: 0.9482863575929356
+Client 17: Acc: 0.5385779122541604, AUC: 0.912161339108087
+Client 18: Acc: 0.36100131752305664, AUC: 0.9452898029087835
+Client 19: Acc: 0.3941717791411043, AUC: 0.8104672235167361
+Averaged Test Accuracy: 0.4116
+Averaged Test AUC: 0.8980
+Std Test Accuracy: 0.0639
+Std Test AUC: 0.0488
+Gate client 12: g_acc=0.7432 alpha=0.5203
+Gate client 6: g_acc=0.3081 alpha=0.2157
+Gate client 10: g_acc=0.2973 alpha=0.2081
+Gate client 8: g_acc=0.7587 alpha=0.5311
+Gate client 17: g_acc=0.8607 alpha=0.6025
+Gate client 7: g_acc=0.8054 alpha=0.5638
+Gate client 4: g_acc=0.7270 alpha=0.5089
+Gate client 2: g_acc=0.4719 alpha=0.3303
+Gate client 18: g_acc=0.2020 alpha=0.1414
+Gate client 11: g_acc=0.7854 alpha=0.5498
+Gate client 14: g_acc=0.3802 alpha=0.2661
+Gate client 0: g_acc=0.7246 alpha=0.5072
+Gate client 19: g_acc=0.8206 alpha=0.5744
+Gate client 9: g_acc=0.8255 alpha=0.5778
+Gate client 5: g_acc=0.8082 alpha=0.5658
+Gate client 1: g_acc=0.8403 alpha=0.5882
+Gate client 16: g_acc=0.7147 alpha=0.5003
+Gate client 13: g_acc=0.8690 alpha=0.6083
+Gate client 15: g_acc=0.7967 alpha=0.5577
+Gate client 3: g_acc=0.8093 alpha=0.5665
+------------------------- time cost ------------------------- 916.9980282783508
+
+-------------Round number: 6-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4688741721854305, AUC: 0.9627736866050974
+Client 1: Acc: 0.5170157068062827, AUC: 0.9208470633253397
+Client 2: Acc: 0.42380261248185774, AUC: 0.8940107064268414
+Client 3: Acc: 0.40369393139841686, AUC: 0.8216686694149605
+Client 4: Acc: 0.3333333333333333, AUC: 0.9158850673864448
+Client 5: Acc: 0.40555555555555556, AUC: 0.831216378678763
+Client 6: Acc: 0.3153846153846154, AUC: 0.894475607488428
+Client 7: Acc: 0.40551181102362205, AUC: 0.8301898887748393
+Client 8: Acc: 0.47863247863247865, AUC: 0.970321933878439
+Client 9: Acc: 0.41594022415940224, AUC: 0.8713798437313461
+Client 10: Acc: 0.3111432706222865, AUC: 0.898364774956723
+Client 11: Acc: 0.4035714285714286, AUC: 0.883487296433725
+Client 12: Acc: 0.36816524908869985, AUC: 0.9340531452636501
+Client 13: Acc: 0.4616419919246299, AUC: 0.8498897614691684
+Client 14: Acc: 0.3644067796610169, AUC: 0.8845560797073089
+Client 15: Acc: 0.45849297573435505, AUC: 0.8661107848118217
+Client 16: Acc: 0.47909199522102747, AUC: 0.9436186510500391
+Client 17: Acc: 0.5325264750378215, AUC: 0.9116048045946127
+Client 18: Acc: 0.3544137022397892, AUC: 0.9218960843732359
+Client 19: Acc: 0.39570552147239263, AUC: 0.8084914503155687
+Averaged Test Accuracy: 0.4147
+Averaged Test AUC: 0.8912
+Std Test Accuracy: 0.0617
+Std Test AUC: 0.0451
+Gate client 18: g_acc=0.2583 alpha=0.1808
+Gate client 14: g_acc=0.4477 alpha=0.3134
+Gate client 6: g_acc=0.3348 alpha=0.2343
+Gate client 4: g_acc=0.7472 alpha=0.5230
+Gate client 5: g_acc=0.8036 alpha=0.5625
+Gate client 3: g_acc=0.8000 alpha=0.5600
+Gate client 8: g_acc=0.7915 alpha=0.5541
+Gate client 1: g_acc=0.8500 alpha=0.5950
+Gate client 12: g_acc=0.7545 alpha=0.5282
+Gate client 17: g_acc=0.8629 alpha=0.6040
+Gate client 19: g_acc=0.8343 alpha=0.5840
+Gate client 11: g_acc=0.7938 alpha=0.5557
+Gate client 2: g_acc=0.5324 alpha=0.3727
+Gate client 10: g_acc=0.3516 alpha=0.2461
+Gate client 0: g_acc=0.7384 alpha=0.5169
+Gate client 15: g_acc=0.8005 alpha=0.5603
+Gate client 9: g_acc=0.8264 alpha=0.5785
+Gate client 7: g_acc=0.8127 alpha=0.5689
+Gate client 16: g_acc=0.7436 alpha=0.5205
+Gate client 13: g_acc=0.8710 alpha=0.6097
+------------------------- time cost ------------------------- 823.2447147369385
+
+-------------Round number: 7-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4649006622516556, AUC: 0.9636303741772801
+Client 1: Acc: 0.5091623036649214, AUC: 0.9172814273183302
+Client 2: Acc: 0.41219158200290273, AUC: 0.8528906260921487
+Client 3: Acc: 0.40369393139841686, AUC: 0.8176596303958966
+Client 4: Acc: 0.32727272727272727, AUC: 0.9139823394644331
+Client 5: Acc: 0.4041666666666667, AUC: 0.8330945644718794
+Client 6: Acc: 0.29615384615384616, AUC: 0.8747246378977148
+Client 7: Acc: 0.40813648293963256, AUC: 0.826784161424664
+Client 8: Acc: 0.4829059829059829, AUC: 0.9713607942477839
+Client 9: Acc: 0.41469489414694893, AUC: 0.8689540451341233
+Client 10: Acc: 0.32850940665701883, AUC: 0.8672908746974521
+Client 11: Acc: 0.40714285714285714, AUC: 0.8869734189972285
+Client 12: Acc: 0.48116646415552855, AUC: 0.9456015667959938
+Client 13: Acc: 0.47106325706594887, AUC: 0.849588962888688
+Client 14: Acc: 0.3498789346246973, AUC: 0.8497897204549644
+Client 15: Acc: 0.4559386973180077, AUC: 0.8644247458856756
+Client 16: Acc: 0.4946236559139785, AUC: 0.9460467495029401
+Client 17: Acc: 0.5385779122541604, AUC: 0.9089745299632214
+Client 18: Acc: 0.3451910408432148, AUC: 0.8912255149164542
+Client 19: Acc: 0.3895705521472393, AUC: 0.8145452986715361
+Averaged Test Accuracy: 0.4196
+Averaged Test AUC: 0.8838
+Std Test Accuracy: 0.0655
+Std Test AUC: 0.0467
+Gate client 5: g_acc=0.8031 alpha=0.5622
+Gate client 18: g_acc=0.3402 alpha=0.2381
+Gate client 13: g_acc=0.8625 alpha=0.6038
+Gate client 16: g_acc=0.7396 alpha=0.5177
+Gate client 12: g_acc=0.7581 alpha=0.5307
+Gate client 11: g_acc=0.8049 alpha=0.5634
+Gate client 7: g_acc=0.8176 alpha=0.5723
+Gate client 0: g_acc=0.7414 alpha=0.5190
+Gate client 19: g_acc=0.8440 alpha=0.5908
+Gate client 2: g_acc=0.5805 alpha=0.4064
+Gate client 8: g_acc=0.7720 alpha=0.5404
+Gate client 6: g_acc=0.3886 alpha=0.2720
+Gate client 15: g_acc=0.8128 alpha=0.5690
+Gate client 4: g_acc=0.7461 alpha=0.5222
+Gate client 1: g_acc=0.8549 alpha=0.5984
+Gate client 10: g_acc=0.4065 alpha=0.2845
+Gate client 9: g_acc=0.8269 alpha=0.5788
+Gate client 14: g_acc=0.4577 alpha=0.3204
+Gate client 17: g_acc=0.8522 alpha=0.5966
+Gate client 3: g_acc=0.8103 alpha=0.5672
+------------------------- time cost ------------------------- 946.3835980892181
+
+-------------Round number: 8-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.45827814569536424, AUC: 0.9613226604007709
+Client 1: Acc: 0.5130890052356021, AUC: 0.9190725648248057
+Client 2: Acc: 0.43541364296081275, AUC: 0.8581052360388013
+Client 3: Acc: 0.4129287598944591, AUC: 0.823116539346585
+Client 4: Acc: 0.3181818181818182, AUC: 0.9102614529129681
+Client 5: Acc: 0.40555555555555556, AUC: 0.8329774792679886
+Client 6: Acc: 0.308974358974359, AUC: 0.8532400351310607
+Client 7: Acc: 0.4068241469816273, AUC: 0.8297201560733088
+Client 8: Acc: 0.4829059829059829, AUC: 0.9697831596375439
+Client 9: Acc: 0.410958904109589, AUC: 0.8709132973070045
+Client 10: Acc: 0.35311143270622286, AUC: 0.8498677582368871
+Client 11: Acc: 0.4107142857142857, AUC: 0.8855738078059506
+Client 12: Acc: 0.47144592952612396, AUC: 0.9449636183099536
+Client 13: Acc: 0.4629878869448183, AUC: 0.8525786605350193
+Client 14: Acc: 0.35472154963680386, AUC: 0.8279689057380197
+Client 15: Acc: 0.45721583652618136, AUC: 0.8591746389219513
+Client 16: Acc: 0.4994026284348865, AUC: 0.947470981416246
+Client 17: Acc: 0.540090771558245, AUC: 0.9061933138688433
+Client 18: Acc: 0.39920948616600793, AUC: 0.8472602907500083
+Client 19: Acc: 0.3895705521472393, AUC: 0.8077564430104044
+Averaged Test Accuracy: 0.4249
+Averaged Test AUC: 0.8783
+Std Test Accuracy: 0.0608
+Std Test AUC: 0.0484
+Gate client 6: g_acc=0.4376 alpha=0.3063
+Gate client 1: g_acc=0.8573 alpha=0.6001
+Gate client 5: g_acc=0.8046 alpha=0.5632
+Gate client 9: g_acc=0.8319 alpha=0.5824
+Gate client 4: g_acc=0.7444 alpha=0.5211
+Gate client 12: g_acc=0.7779 alpha=0.5445
+Gate client 7: g_acc=0.8220 alpha=0.5754
+Gate client 15: g_acc=0.8100 alpha=0.5670
+Gate client 10: g_acc=0.4618 alpha=0.3233
+Gate client 16: g_acc=0.7538 alpha=0.5276
+Gate client 18: g_acc=0.3907 alpha=0.2735
+Gate client 19: g_acc=0.8320 alpha=0.5824
+Gate client 0: g_acc=0.7626 alpha=0.5338
+Gate client 11: g_acc=0.8168 alpha=0.5718
+Gate client 17: g_acc=0.8562 alpha=0.5993
+Gate client 14: g_acc=0.4946 alpha=0.3462
+Gate client 3: g_acc=0.8127 alpha=0.5689
+Gate client 2: g_acc=0.5849 alpha=0.4094
+Gate client 13: g_acc=0.8595 alpha=0.6017
+Gate client 8: g_acc=0.8026 alpha=0.5619
+------------------------- time cost ------------------------- 859.7374196052551
+
+-------------Round number: 9-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.46622516556291393, AUC: 0.9619371115656367
+Client 1: Acc: 0.5130890052356021, AUC: 0.9218543764583141
+Client 2: Acc: 0.42670537010159654, AUC: 0.8419432283659904
+Client 3: Acc: 0.4023746701846966, AUC: 0.8218270679589175
+Client 4: Acc: 0.3196969696969697, AUC: 0.9113757524742374
+Client 5: Acc: 0.4013888888888889, AUC: 0.8344756204015463
+Client 6: Acc: 0.30256410256410254, AUC: 0.8371817783356245
+Client 7: Acc: 0.4068241469816273, AUC: 0.824769505319033
+Client 8: Acc: 0.48005698005698005, AUC: 0.9691388360270918
+Client 9: Acc: 0.4122042341220423, AUC: 0.8719606907008138
+Client 10: Acc: 0.3429811866859624, AUC: 0.8497332666618984
+Client 11: Acc: 0.4023809523809524, AUC: 0.8880482117089261
+Client 12: Acc: 0.49817739975698666, AUC: 0.9495795807927725
+Client 13: Acc: 0.4670255720053836, AUC: 0.8548400338712431
+Client 14: Acc: 0.36803874092009686, AUC: 0.8284414921157236
+Client 15: Acc: 0.45977011494252873, AUC: 0.8596133430031934
+Client 16: Acc: 0.5041816009557945, AUC: 0.9473975922976664
+Client 17: Acc: 0.5370650529500757, AUC: 0.907308833469398
+Client 18: Acc: 0.3939393939393939, AUC: 0.8365095053008731
+Client 19: Acc: 0.38650306748466257, AUC: 0.8094329430402485
+Averaged Test Accuracy: 0.4252
+Averaged Test AUC: 0.8769
+Std Test Accuracy: 0.0633
+Std Test AUC: 0.0503
+Gate client 2: g_acc=0.6011 alpha=0.4208
+Gate client 16: g_acc=0.7764 alpha=0.5435
+Gate client 15: g_acc=0.8190 alpha=0.5733
+Gate client 17: g_acc=0.8567 alpha=0.5997
+Gate client 19: g_acc=0.8480 alpha=0.5936
+Gate client 1: g_acc=0.8558 alpha=0.5991
+Gate client 7: g_acc=0.8239 alpha=0.5767
+Gate client 5: g_acc=0.8031 alpha=0.5622
+Gate client 10: g_acc=0.5005 alpha=0.3504
+Gate client 18: g_acc=0.4162 alpha=0.2913
+Gate client 8: g_acc=0.7952 alpha=0.5567
+Gate client 9: g_acc=0.8333 alpha=0.5833
+Gate client 6: g_acc=0.4510 alpha=0.3157
+Gate client 12: g_acc=0.8063 alpha=0.5644
+Gate client 11: g_acc=0.8190 alpha=0.5733
+Gate client 13: g_acc=0.8640 alpha=0.6048
+Gate client 3: g_acc=0.8157 alpha=0.5710
+Gate client 4: g_acc=0.7646 alpha=0.5352
+Gate client 0: g_acc=0.7759 alpha=0.5431
+Gate client 14: g_acc=0.5131 alpha=0.3591
+------------------------- time cost ------------------------- 857.8099265098572
+
+-------------Round number: 10-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.46357615894039733, AUC: 0.9625390522035406
+Client 1: Acc: 0.5143979057591623, AUC: 0.9199588882437489
+Client 2: Acc: 0.4339622641509434, AUC: 0.8428962070416736
+Client 3: Acc: 0.40369393139841686, AUC: 0.8245668793109983
+Client 4: Acc: 0.31212121212121213, AUC: 0.9080591034310043
+Client 5: Acc: 0.4027777777777778, AUC: 0.8357691303466765
+Client 6: Acc: 0.3153846153846154, AUC: 0.835914154696206
+Client 7: Acc: 0.4041994750656168, AUC: 0.8276814757894386
+Client 8: Acc: 0.38746438746438744, AUC: 0.945463801905714
+Client 9: Acc: 0.41594022415940224, AUC: 0.8753434792866623
+Client 10: Acc: 0.35311143270622286, AUC: 0.8516644345190402
+Client 11: Acc: 0.4023809523809524, AUC: 0.8846531070340593
+Client 12: Acc: 0.4908869987849332, AUC: 0.9409521097061422
+Client 13: Acc: 0.46433378196500674, AUC: 0.8546446826717239
+Client 14: Acc: 0.3704600484261501, AUC: 0.8330986982903509
+Client 15: Acc: 0.4610472541507024, AUC: 0.8630802297048144
+Client 16: Acc: 0.5029868578255675, AUC: 0.9478874682687584
+Client 17: Acc: 0.5385779122541604, AUC: 0.9071418708034938
+Client 18: Acc: 0.38603425559947296, AUC: 0.830034300556675
+Client 19: Acc: 0.3911042944785276, AUC: 0.8127466182012834
+Averaged Test Accuracy: 0.4216
+Averaged Test AUC: 0.8758
+Std Test Accuracy: 0.0610
+Std Test AUC: 0.0470
+Gate client 15: g_acc=0.8128 alpha=0.5690
+Gate client 13: g_acc=0.8690 alpha=0.6083
+Gate client 3: g_acc=0.8162 alpha=0.5713
+Gate client 10: g_acc=0.5113 alpha=0.3579
+Gate client 12: g_acc=0.8014 alpha=0.5609
+Gate client 2: g_acc=0.6000 alpha=0.4200
+Gate client 18: g_acc=0.4912 alpha=0.3438
+Gate client 16: g_acc=0.7818 alpha=0.5472
+Gate client 17: g_acc=0.8579 alpha=0.6005
+Gate client 7: g_acc=0.8302 alpha=0.5812
+Gate client 5: g_acc=0.8026 alpha=0.5618
+Gate client 6: g_acc=0.5000 alpha=0.3500
+Gate client 9: g_acc=0.8375 alpha=0.5862
+Gate client 14: g_acc=0.5113 alpha=0.3579
+Gate client 11: g_acc=0.8270 alpha=0.5789
+Gate client 4: g_acc=0.7775 alpha=0.5443
+Gate client 0: g_acc=0.7537 alpha=0.5276
+Gate client 8: g_acc=0.7714 alpha=0.5400
+Gate client 1: g_acc=0.8563 alpha=0.5994
+Gate client 19: g_acc=0.8469 alpha=0.5928
+------------------------- time cost ------------------------- 849.0674204826355
+
+-------------Round number: 11-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4410596026490066, AUC: 0.9376130676529781
+Client 1: Acc: 0.5222513089005235, AUC: 0.9179897401968481
+Client 2: Acc: 0.42525399129172714, AUC: 0.8405670133221685
+Client 3: Acc: 0.40633245382585753, AUC: 0.8193139897945629
+Client 4: Acc: 0.31212121212121213, AUC: 0.9058042778566194
+Client 5: Acc: 0.40555555555555556, AUC: 0.8358374056927298
+Client 6: Acc: 0.3128205128205128, AUC: 0.832078145026863
+Client 7: Acc: 0.40813648293963256, AUC: 0.8270250990558098
+Client 8: Acc: 0.41595441595441596, AUC: 0.9348789598077348
+Client 9: Acc: 0.42092154420921546, AUC: 0.8710973232994483
+Client 10: Acc: 0.35021707670043417, AUC: 0.8504687235003205
+Client 11: Acc: 0.4, AUC: 0.884969021278545
+Client 12: Acc: 0.49210206561360875, AUC: 0.940837309401183
+Client 13: Acc: 0.4697173620457604, AUC: 0.8542229937830691
+Client 14: Acc: 0.37409200968523004, AUC: 0.8371318642279367
+Client 15: Acc: 0.45977011494252873, AUC: 0.860805196259755
+Client 16: Acc: 0.4970131421744325, AUC: 0.9476137441584099
+Client 17: Acc: 0.5355521936459909, AUC: 0.9097333523923229
+Client 18: Acc: 0.38998682476943347, AUC: 0.8406919804119157
+Client 19: Acc: 0.3895705521472393, AUC: 0.8061866073129199
+Averaged Test Accuracy: 0.4222
+Averaged Test AUC: 0.8734
+Std Test Accuracy: 0.0601
+Std Test AUC: 0.0445
+Gate client 19: g_acc=0.8463 alpha=0.5924
+Gate client 9: g_acc=0.8380 alpha=0.5866
+Gate client 2: g_acc=0.6092 alpha=0.4264
+Gate client 4: g_acc=0.7489 alpha=0.5242
+Gate client 14: g_acc=0.5252 alpha=0.3677
+Gate client 8: g_acc=0.8016 alpha=0.5611
+Gate client 0: g_acc=0.7803 alpha=0.5462
+Gate client 11: g_acc=0.8261 alpha=0.5783
+Gate client 7: g_acc=0.8298 alpha=0.5808
+Gate client 5: g_acc=0.8103 alpha=0.5672
+Gate client 13: g_acc=0.8660 alpha=0.6062
+Gate client 16: g_acc=0.8089 alpha=0.5662
+Gate client 6: g_acc=0.5071 alpha=0.3550
+Gate client 18: g_acc=0.5000 alpha=0.3500
+Gate client 10: g_acc=0.5199 alpha=0.3639
+Gate client 17: g_acc=0.8612 alpha=0.6029
+Gate client 15: g_acc=0.8147 alpha=0.5703
+Gate client 3: g_acc=0.8250 alpha=0.5775
+Gate client 12: g_acc=0.8207 alpha=0.5745
+Gate client 1: g_acc=0.8602 alpha=0.6021
+------------------------- time cost ------------------------- 854.5008571147919
+
+-------------Round number: 12-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4543046357615894, AUC: 0.948438314995045
+Client 1: Acc: 0.5157068062827225, AUC: 0.9190735771824214
+Client 2: Acc: 0.42670537010159654, AUC: 0.8444199303114328
+Client 3: Acc: 0.40369393139841686, AUC: 0.8165819225666344
+Client 4: Acc: 0.3090909090909091, AUC: 0.9045725969520735
+Client 5: Acc: 0.4013888888888889, AUC: 0.8378471053123832
+Client 6: Acc: 0.32051282051282054, AUC: 0.8368348425079195
+Client 7: Acc: 0.40288713910761154, AUC: 0.8270718861864209
+Client 8: Acc: 0.45584045584045585, AUC: 0.9409900828071136
+Client 9: Acc: 0.42216687422166876, AUC: 0.8716670636991227
+Client 10: Acc: 0.35311143270622286, AUC: 0.85615519441368
+Client 11: Acc: 0.4023809523809524, AUC: 0.8839305755972422
+Client 12: Acc: 0.4617253948967193, AUC: 0.9317818350991299
+Client 13: Acc: 0.4697173620457604, AUC: 0.8555582397705108
+Client 14: Acc: 0.3801452784503632, AUC: 0.8363039164635587
+Client 15: Acc: 0.45849297573435505, AUC: 0.8657436342682695
+Client 16: Acc: 0.4767025089605735, AUC: 0.9448823785099013
+Client 17: Acc: 0.5355521936459909, AUC: 0.9094838793754616
+Client 18: Acc: 0.3952569169960474, AUC: 0.831994971105617
+Client 19: Acc: 0.39570552147239263, AUC: 0.8085188945801878
+Averaged Test Accuracy: 0.4225
+Averaged Test AUC: 0.8741
+Std Test Accuracy: 0.0568
+Std Test AUC: 0.0447
+Gate client 0: g_acc=0.7906 alpha=0.5534
+Gate client 17: g_acc=0.8663 alpha=0.6064
+Gate client 1: g_acc=0.8583 alpha=0.6008
+Gate client 16: g_acc=0.8213 alpha=0.5749
+Gate client 6: g_acc=0.5252 alpha=0.3677
+Gate client 12: g_acc=0.8221 alpha=0.5755
+Gate client 14: g_acc=0.5216 alpha=0.3651
+Gate client 10: g_acc=0.5274 alpha=0.3692
+Gate client 4: g_acc=0.7837 alpha=0.5486
+Gate client 13: g_acc=0.8680 alpha=0.6076
+Gate client 18: g_acc=0.5245 alpha=0.3672
+Gate client 7: g_acc=0.8307 alpha=0.5815
+Gate client 9: g_acc=0.8412 alpha=0.5888
+Gate client 3: g_acc=0.8289 alpha=0.5802
+Gate client 19: g_acc=0.8469 alpha=0.5928
+Gate client 2: g_acc=0.6081 alpha=0.4257
+Gate client 8: g_acc=0.8058 alpha=0.5641
+Gate client 15: g_acc=0.8213 alpha=0.5749
+Gate client 5: g_acc=0.8062 alpha=0.5643
+Gate client 11: g_acc=0.8265 alpha=0.5786
+------------------------- time cost ------------------------- 867.5055449008942
+
+-------------Round number: 13-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4741721854304636, AUC: 0.9561761911027293
+Client 1: Acc: 0.5157068062827225, AUC: 0.919767042149241
+Client 2: Acc: 0.4296081277213353, AUC: 0.8467283249987196
+Client 3: Acc: 0.4076517150395778, AUC: 0.819547324386646
+Client 4: Acc: 0.3212121212121212, AUC: 0.9057708860876904
+Client 5: Acc: 0.4, AUC: 0.8388763405661553
+Client 6: Acc: 0.3269230769230769, AUC: 0.8452708711042045
+Client 7: Acc: 0.4068241469816273, AUC: 0.8256524678032521
+Client 8: Acc: 0.4472934472934473, AUC: 0.9521527562046713
+Client 9: Acc: 0.42092154420921546, AUC: 0.870702687606608
+Client 10: Acc: 0.36034732272069464, AUC: 0.8604201057743711
+Client 11: Acc: 0.4, AUC: 0.8848432095902334
+Client 12: Acc: 0.511543134872418, AUC: 0.9378087243489431
+Client 13: Acc: 0.47106325706594887, AUC: 0.8559262718060215
+Client 14: Acc: 0.37772397094430993, AUC: 0.8350313191184042
+Client 15: Acc: 0.45721583652618136, AUC: 0.862653882324762
+Client 16: Acc: 0.5077658303464755, AUC: 0.9481685673367005
+Client 17: Acc: 0.5340393343419062, AUC: 0.9070882009296505
+Client 18: Acc: 0.39920948616600793, AUC: 0.8302490395789776
+Client 19: Acc: 0.3895705521472393, AUC: 0.8068130018617429
+Averaged Test Accuracy: 0.4288
+Averaged Test AUC: 0.8760
+Std Test Accuracy: 0.0596
+Std Test AUC: 0.0466
+Gate client 17: g_acc=0.8640 alpha=0.6048
+Gate client 13: g_acc=0.8765 alpha=0.6135
+Gate client 15: g_acc=0.8199 alpha=0.5739
+Gate client 8: g_acc=0.8037 alpha=0.5626
+Gate client 0: g_acc=0.8059 alpha=0.5641
+Gate client 6: g_acc=0.5219 alpha=0.3653
+Gate client 2: g_acc=0.6103 alpha=0.4272
+Gate client 4: g_acc=0.7854 alpha=0.5498
+Gate client 1: g_acc=0.8583 alpha=0.6008
+Gate client 5: g_acc=0.8160 alpha=0.5712
+Gate client 16: g_acc=0.8120 alpha=0.5684
+Gate client 7: g_acc=0.8341 alpha=0.5839
+Gate client 11: g_acc=0.8310 alpha=0.5817
+Gate client 10: g_acc=0.5387 alpha=0.3771
+Gate client 19: g_acc=0.8503 alpha=0.5952
+Gate client 18: g_acc=0.5299 alpha=0.3709
+Gate client 12: g_acc=0.8189 alpha=0.5732
+Gate client 14: g_acc=0.5311 alpha=0.3718
+Gate client 3: g_acc=0.8255 alpha=0.5778
+Gate client 9: g_acc=0.8384 alpha=0.5869
+------------------------- time cost ------------------------- 859.2668716907501
+
+-------------Round number: 14-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.45695364238410596, AUC: 0.9597155184138211
+Client 1: Acc: 0.518324607329843, AUC: 0.9185402204662231
+Client 2: Acc: 0.4281567489114659, AUC: 0.8426041482015412
+Client 3: Acc: 0.40369393139841686, AUC: 0.8192237237208728
+Client 4: Acc: 0.31363636363636366, AUC: 0.904718651158045
+Client 5: Acc: 0.39861111111111114, AUC: 0.8364947897181693
+Client 6: Acc: 0.3217948717948718, AUC: 0.8482015918554381
+Client 7: Acc: 0.40813648293963256, AUC: 0.828726205712793
+Client 8: Acc: 0.4886039886039886, AUC: 0.9589188817583879
+Client 9: Acc: 0.41967621419676215, AUC: 0.8707038154952188
+Client 10: Acc: 0.35745296671490595, AUC: 0.8608022458940087
+Client 11: Acc: 0.4011904761904762, AUC: 0.8864148715041572
+Client 12: Acc: 0.5103280680437424, AUC: 0.9349229909622274
+Client 13: Acc: 0.46433378196500674, AUC: 0.8540472572967877
+Client 14: Acc: 0.3728813559322034, AUC: 0.8334350724263311
+Client 15: Acc: 0.45721583652618136, AUC: 0.8624128113223497
+Client 16: Acc: 0.47192353643966545, AUC: 0.9455497869401425
+Client 17: Acc: 0.5370650529500757, AUC: 0.9087863675237594
+Client 18: Acc: 0.3926218708827404, AUC: 0.8310537805088051
+Client 19: Acc: 0.3834355828220859, AUC: 0.8102116948399269
+Averaged Test Accuracy: 0.4258
+Averaged Test AUC: 0.8763
+Std Test Accuracy: 0.0606
+Std Test AUC: 0.0469
+Gate client 9: g_acc=0.8412 alpha=0.5888
+Gate client 16: g_acc=0.8222 alpha=0.5756
+Gate client 13: g_acc=0.8680 alpha=0.6076
+Gate client 19: g_acc=0.8440 alpha=0.5908
+Gate client 6: g_acc=0.5167 alpha=0.3617
+Gate client 7: g_acc=0.8410 alpha=0.5887
+Gate client 17: g_acc=0.8624 alpha=0.6037
+Gate client 3: g_acc=0.8299 alpha=0.5809
+Gate client 12: g_acc=0.8284 alpha=0.5799
+Gate client 10: g_acc=0.5355 alpha=0.3748
+Gate client 1: g_acc=0.8597 alpha=0.6018
+Gate client 8: g_acc=0.8148 alpha=0.5704
+Gate client 18: g_acc=0.5196 alpha=0.3637
+Gate client 15: g_acc=0.8261 alpha=0.5782
+Gate client 14: g_acc=0.5405 alpha=0.3784
+Gate client 5: g_acc=0.8149 alpha=0.5705
+Gate client 2: g_acc=0.6178 alpha=0.4325
+Gate client 11: g_acc=0.8336 alpha=0.5835
+Gate client 0: g_acc=0.8005 alpha=0.5603
+Gate client 4: g_acc=0.8090 alpha=0.5663
+------------------------- time cost ------------------------- 847.5913727283478
+
+-------------Round number: 15-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4649006622516556, AUC: 0.9576257376625781
+Client 1: Acc: 0.5117801047120419, AUC: 0.9173796952280958
+Client 2: Acc: 0.4296081277213353, AUC: 0.8426698646322383
+Client 3: Acc: 0.4050131926121372, AUC: 0.8136324133419323
+Client 4: Acc: 0.32727272727272727, AUC: 0.9067038150096
+Client 5: Acc: 0.39444444444444443, AUC: 0.8342070882435465
+Client 6: Acc: 0.3269230769230769, AUC: 0.8523898418770214
+Client 7: Acc: 0.4068241469816273, AUC: 0.8293468158204556
+Client 8: Acc: 0.36182336182336183, AUC: 0.9257731719349321
+Client 9: Acc: 0.41967621419676215, AUC: 0.8769290243664826
+Client 10: Acc: 0.3589001447178003, AUC: 0.8588195238145708
+Client 11: Acc: 0.4, AUC: 0.8839964984310223
+Client 12: Acc: 0.4933171324422843, AUC: 0.9307369703853541
+Client 13: Acc: 0.4616419919246299, AUC: 0.8551149692081021
+Client 14: Acc: 0.37530266343825663, AUC: 0.8357094563644405
+Client 15: Acc: 0.4623243933588761, AUC: 0.8638261049020336
+Client 16: Acc: 0.4970131421744325, AUC: 0.9466130784801752
+Client 17: Acc: 0.5385779122541604, AUC: 0.9090835342514708
+Client 18: Acc: 0.3926218708827404, AUC: 0.8282530555335942
+Client 19: Acc: 0.3895705521472393, AUC: 0.8054716188761034
+Averaged Test Accuracy: 0.4218
+Averaged Test AUC: 0.8743
+Std Test Accuracy: 0.0587
+Std Test AUC: 0.0448
+Gate client 0: g_acc=0.8089 alpha=0.5662
+Gate client 14: g_acc=0.5414 alpha=0.3790
+Gate client 12: g_acc=0.8423 alpha=0.5896
+Gate client 6: g_acc=0.5243 alpha=0.3670
+Gate client 18: g_acc=0.5225 alpha=0.3658
+Gate client 17: g_acc=0.8652 alpha=0.6056
+Gate client 11: g_acc=0.8292 alpha=0.5804
+Gate client 8: g_acc=0.8159 alpha=0.5711
+Gate client 9: g_acc=0.8431 alpha=0.5901
+Gate client 10: g_acc=0.5366 alpha=0.3756
+Gate client 5: g_acc=0.8149 alpha=0.5705
+Gate client 15: g_acc=0.8261 alpha=0.5782
+Gate client 4: g_acc=0.8236 alpha=0.5765
+Gate client 13: g_acc=0.8725 alpha=0.6108
+Gate client 16: g_acc=0.8360 alpha=0.5852
+Gate client 2: g_acc=0.6162 alpha=0.4314
+Gate client 1: g_acc=0.8641 alpha=0.6049
+Gate client 19: g_acc=0.8360 alpha=0.5852
+Gate client 7: g_acc=0.8434 alpha=0.5904
+Gate client 3: g_acc=0.8230 alpha=0.5761
+------------------------- time cost ------------------------- 866.9911224842072
+
+-------------Round number: 16-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.43178807947019865, AUC: 0.9566983195403003
+Client 1: Acc: 0.5143979057591623, AUC: 0.915502965913625
+Client 2: Acc: 0.432510885341074, AUC: 0.8418860975204597
+Client 3: Acc: 0.4023746701846966, AUC: 0.8115313999358248
+Client 4: Acc: 0.32727272727272727, AUC: 0.9066884872601126
+Client 5: Acc: 0.3888888888888889, AUC: 0.8359114778183064
+Client 6: Acc: 0.3230769230769231, AUC: 0.855491195651452
+Client 7: Acc: 0.4041994750656168, AUC: 0.8306494011977922
+Client 8: Acc: 0.4829059829059829, AUC: 0.959892899826423
+Client 9: Acc: 0.41718555417185554, AUC: 0.8695436724031238
+Client 10: Acc: 0.36034732272069464, AUC: 0.8619519664001016
+Client 11: Acc: 0.4, AUC: 0.8837700130557274
+Client 12: Acc: 0.5103280680437424, AUC: 0.9432777554008152
+Client 13: Acc: 0.4616419919246299, AUC: 0.8537462574459289
+Client 14: Acc: 0.3765133171912833, AUC: 0.8412983850665962
+Client 15: Acc: 0.4623243933588761, AUC: 0.8664994030642411
+Client 16: Acc: 0.4934289127837515, AUC: 0.9456291019777272
+Client 17: Acc: 0.5325264750378215, AUC: 0.909188423425551
+Client 18: Acc: 0.38998682476943347, AUC: 0.8313394446021628
+Client 19: Acc: 0.3911042944785276, AUC: 0.8080142527689481
+Averaged Test Accuracy: 0.4257
+Averaged Test AUC: 0.8770
+Std Test Accuracy: 0.0589
+Std Test AUC: 0.0472
+Gate client 18: g_acc=0.5196 alpha=0.3637
+Gate client 3: g_acc=0.8338 alpha=0.5837
+Gate client 4: g_acc=0.8191 alpha=0.5734
+Gate client 19: g_acc=0.8446 alpha=0.5912
+Gate client 15: g_acc=0.8336 alpha=0.5836
+Gate client 17: g_acc=0.8685 alpha=0.6080
+Gate client 10: g_acc=0.5505 alpha=0.3854
+Gate client 8: g_acc=0.8471 alpha=0.5930
+Gate client 1: g_acc=0.8684 alpha=0.6079
+Gate client 0: g_acc=0.8153 alpha=0.5707
+Gate client 2: g_acc=0.6178 alpha=0.4325
+Gate client 12: g_acc=0.8559 alpha=0.5991
+Gate client 16: g_acc=0.8813 alpha=0.6169
+Gate client 5: g_acc=0.8180 alpha=0.5726
+Gate client 14: g_acc=0.5450 alpha=0.3815
+Gate client 13: g_acc=0.8750 alpha=0.6125
+Gate client 9: g_acc=0.8421 alpha=0.5895
+Gate client 11: g_acc=0.8336 alpha=0.5835
+Gate client 7: g_acc=0.8395 alpha=0.5877
+Gate client 6: g_acc=0.5243 alpha=0.3670
+------------------------- time cost ------------------------- 861.2344172000885
+
+-------------Round number: 17-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.45165562913907287, AUC: 0.957409576666627
+Client 1: Acc: 0.5170157068062827, AUC: 0.9179354449486503
+Client 2: Acc: 0.4281567489114659, AUC: 0.8432119799702023
+Client 3: Acc: 0.4023746701846966, AUC: 0.8159948810372435
+Client 4: Acc: 0.3196969696969697, AUC: 0.9063158907718137
+Client 5: Acc: 0.3888888888888889, AUC: 0.8361787629380221
+Client 6: Acc: 0.3230769230769231, AUC: 0.8534138890549146
+Client 7: Acc: 0.4068241469816273, AUC: 0.8293891843114773
+Client 8: Acc: 0.42592592592592593, AUC: 0.947366754861215
+Client 9: Acc: 0.41967621419676215, AUC: 0.8710553642766128
+Client 10: Acc: 0.36034732272069464, AUC: 0.8696441652266073
+Client 11: Acc: 0.4, AUC: 0.8815621492704826
+Client 12: Acc: 0.4848116646415553, AUC: 0.9435438555880763
+Client 13: Acc: 0.46837146702557203, AUC: 0.8531936330274883
+Client 14: Acc: 0.37530266343825663, AUC: 0.8375304558462108
+Client 15: Acc: 0.4623243933588761, AUC: 0.8658945013519961
+Client 16: Acc: 0.4994026284348865, AUC: 0.9447694832646207
+Client 17: Acc: 0.5325264750378215, AUC: 0.9081842893309956
+Client 18: Acc: 0.38735177865612647, AUC: 0.8258993776811584
+Client 19: Acc: 0.3895705521472393, AUC: 0.8096893271227082
+Averaged Test Accuracy: 0.4229
+Averaged Test AUC: 0.8764
+Std Test Accuracy: 0.0577
+Std Test AUC: 0.0462
+Gate client 2: g_acc=0.6076 alpha=0.4253
+Gate client 5: g_acc=0.8247 alpha=0.5773
+Gate client 11: g_acc=0.8389 alpha=0.5873
+Gate client 6: g_acc=0.5200 alpha=0.3640
+Gate client 9: g_acc=0.8495 alpha=0.5947
+Gate client 15: g_acc=0.8280 alpha=0.5796
+Gate client 16: g_acc=0.8911 alpha=0.6238
+Gate client 12: g_acc=0.8725 alpha=0.6108
+Gate client 4: g_acc=0.8360 alpha=0.5852
+Gate client 17: g_acc=0.8663 alpha=0.6064
+Gate client 1: g_acc=0.8621 alpha=0.6035
+Gate client 10: g_acc=0.5376 alpha=0.3763
+Gate client 13: g_acc=0.8725 alpha=0.6108
+Gate client 7: g_acc=0.8405 alpha=0.5883
+Gate client 18: g_acc=0.5304 alpha=0.3713
+Gate client 19: g_acc=0.8389 alpha=0.5872
+Gate client 0: g_acc=0.8271 alpha=0.5790
+Gate client 14: g_acc=0.5347 alpha=0.3743
+Gate client 8: g_acc=0.8624 alpha=0.6037
+Gate client 3: g_acc=0.8358 alpha=0.5850
+------------------------- time cost ------------------------- 857.8723340034485
+
+-------------Round number: 18-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4596026490066225, AUC: 0.9556394168428728
+Client 1: Acc: 0.5170157068062827, AUC: 0.9129993536139887
+Client 2: Acc: 0.42525399129172714, AUC: 0.8394199067994834
+Client 3: Acc: 0.4076517150395778, AUC: 0.8141345332102149
+Client 4: Acc: 0.3242424242424242, AUC: 0.9051370685737078
+Client 5: Acc: 0.39166666666666666, AUC: 0.8376240413393192
+Client 6: Acc: 0.3282051282051282, AUC: 0.8560486522024983
+Client 7: Acc: 0.40551181102362205, AUC: 0.8299910847857611
+Client 8: Acc: 0.49715099715099714, AUC: 0.9653080262450315
+Client 9: Acc: 0.40971357409713577, AUC: 0.8737040618605546
+Client 10: Acc: 0.3589001447178003, AUC: 0.8676260406067456
+Client 11: Acc: 0.39880952380952384, AUC: 0.8886001311298932
+Client 12: Acc: 0.46780072904009723, AUC: 0.9418390009683163
+Client 13: Acc: 0.4616419919246299, AUC: 0.8542331121939092
+Client 14: Acc: 0.3765133171912833, AUC: 0.8429583741429681
+Client 15: Acc: 0.45977011494252873, AUC: 0.8675818171372651
+Client 16: Acc: 0.48984468339307047, AUC: 0.9448329381783476
+Client 17: Acc: 0.529500756429652, AUC: 0.9074540877521278
+Client 18: Acc: 0.38866930171277997, AUC: 0.8285932503985173
+Client 19: Acc: 0.38496932515337423, AUC: 0.807300107857148
+Averaged Test Accuracy: 0.4245
+Averaged Test AUC: 0.8776
+Std Test Accuracy: 0.0575
+Std Test AUC: 0.0472
+Gate client 1: g_acc=0.8650 alpha=0.6055
+Gate client 13: g_acc=0.8755 alpha=0.6128
+Gate client 15: g_acc=0.8223 alpha=0.5756
+Gate client 9: g_acc=0.8486 alpha=0.5940
+Gate client 2: g_acc=0.6189 alpha=0.4332
+Gate client 6: g_acc=0.5205 alpha=0.3643
+Gate client 17: g_acc=0.8663 alpha=0.6064
+Gate client 18: g_acc=0.5431 alpha=0.3802
+Gate client 11: g_acc=0.8358 alpha=0.5851
+Gate client 12: g_acc=0.8667 alpha=0.6067
+Gate client 0: g_acc=0.8320 alpha=0.5824
+Gate client 5: g_acc=0.8201 alpha=0.5741
+Gate client 8: g_acc=0.8720 alpha=0.6104
+Gate client 7: g_acc=0.8420 alpha=0.5894
+Gate client 16: g_acc=0.9031 alpha=0.6322
+Gate client 19: g_acc=0.8394 alpha=0.5876
+Gate client 3: g_acc=0.8328 alpha=0.5830
+Gate client 4: g_acc=0.8455 alpha=0.5919
+Gate client 14: g_acc=0.5455 alpha=0.3818
+Gate client 10: g_acc=0.5403 alpha=0.3782
+------------------------- time cost ------------------------- 869.5287630558014
+
+-------------Round number: 19-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4794701986754967, AUC: 0.9583925036071873
+Client 1: Acc: 0.5222513089005235, AUC: 0.9131864234571807
+Client 2: Acc: 0.4310595065312046, AUC: 0.8454853514277891
+Client 3: Acc: 0.41160949868073876, AUC: 0.813999586792522
+Client 4: Acc: 0.3303030303030303, AUC: 0.9068887451187726
+Client 5: Acc: 0.3888888888888889, AUC: 0.8396281487716674
+Client 6: Acc: 0.3243589743589744, AUC: 0.8549836962657474
+Client 7: Acc: 0.39763779527559057, AUC: 0.835079722347997
+Client 8: Acc: 0.49145299145299143, AUC: 0.9638308269995514
+Client 9: Acc: 0.41344956413449563, AUC: 0.8723387840273615
+Client 10: Acc: 0.36034732272069464, AUC: 0.8680884843077685
+Client 11: Acc: 0.4011904761904762, AUC: 0.8872776804324424
+Client 12: Acc: 0.5054678007290401, AUC: 0.9442451023196865
+Client 13: Acc: 0.4629878869448183, AUC: 0.8556113202584802
+Client 14: Acc: 0.3813559322033898, AUC: 0.837858087704191
+Client 15: Acc: 0.45849297573435505, AUC: 0.866753794590536
+Client 16: Acc: 0.4982078853046595, AUC: 0.9457675608590079
+Client 17: Acc: 0.5370650529500757, AUC: 0.9078652870677058
+Client 18: Acc: 0.3952569169960474, AUC: 0.8262616390978549
+Client 19: Acc: 0.3834355828220859, AUC: 0.8045435275066142
+Averaged Test Accuracy: 0.4293
+Averaged Test AUC: 0.8780
+Std Test Accuracy: 0.0609
+Std Test AUC: 0.0476
+Gate client 8: g_acc=0.8878 alpha=0.6215
+Gate client 15: g_acc=0.8289 alpha=0.5802
+Gate client 4: g_acc=0.8517 alpha=0.5962
+Gate client 13: g_acc=0.8735 alpha=0.6115
+Gate client 0: g_acc=0.8507 alpha=0.5955
+Gate client 19: g_acc=0.8457 alpha=0.5920
+Gate client 6: g_acc=0.5262 alpha=0.3683
+Gate client 1: g_acc=0.8655 alpha=0.6059
+Gate client 12: g_acc=0.8563 alpha=0.5994
+Gate client 16: g_acc=0.9227 alpha=0.6459
+Gate client 7: g_acc=0.8420 alpha=0.5894
+Gate client 11: g_acc=0.8376 alpha=0.5863
+Gate client 10: g_acc=0.5452 alpha=0.3816
+Gate client 5: g_acc=0.8237 alpha=0.5766
+Gate client 14: g_acc=0.5410 alpha=0.3787
+Gate client 18: g_acc=0.5382 alpha=0.3768
+Gate client 2: g_acc=0.6232 alpha=0.4363
+Gate client 9: g_acc=0.8495 alpha=0.5947
+Gate client 3: g_acc=0.8451 alpha=0.5916
+Gate client 17: g_acc=0.8691 alpha=0.6084
+------------------------- time cost ------------------------- 853.512086391449
+
+-------------Round number: 20-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4357615894039735, AUC: 0.9454044324655262
+Client 1: Acc: 0.5222513089005235, AUC: 0.9122391682234476
+Client 2: Acc: 0.4310595065312046, AUC: 0.8433951816759824
+Client 3: Acc: 0.40897097625329815, AUC: 0.8143186781101791
+Client 4: Acc: 0.33484848484848484, AUC: 0.9063701987737801
+Client 5: Acc: 0.38333333333333336, AUC: 0.837072246383589
+Client 6: Acc: 0.3282051282051282, AUC: 0.8571951019066403
+Client 7: Acc: 0.40288713910761154, AUC: 0.8300352537854346
+Client 8: Acc: 0.49002849002849, AUC: 0.964622165437297
+Client 9: Acc: 0.40722291407222916, AUC: 0.8725377937066979
+Client 10: Acc: 0.36324167872648333, AUC: 0.8720408971162404
+Client 11: Acc: 0.3976190476190476, AUC: 0.8838182491009873
+Client 12: Acc: 0.4957472660996355, AUC: 0.9423091557896061
+Client 13: Acc: 0.46029609690444145, AUC: 0.8544022159063578
+Client 14: Acc: 0.3837772397094431, AUC: 0.8378891039148766
+Client 15: Acc: 0.4610472541507024, AUC: 0.8683983479518874
+Client 16: Acc: 0.4994026284348865, AUC: 0.9444123781576623
+Client 17: Acc: 0.529500756429652, AUC: 0.9091920299301037
+Client 18: Acc: 0.3965744400527009, AUC: 0.8285665198000443
+Client 19: Acc: 0.38650306748466257, AUC: 0.8069238838191848
+Averaged Test Accuracy: 0.4264
+Averaged Test AUC: 0.8770
+Std Test Accuracy: 0.0577
+Std Test AUC: 0.0464
+Gate client 2: g_acc=0.6270 alpha=0.4389
+Gate client 4: g_acc=0.8629 alpha=0.6040
+Gate client 1: g_acc=0.8641 alpha=0.6049
+Gate client 19: g_acc=0.8383 alpha=0.5868
+Gate client 5: g_acc=0.8247 alpha=0.5773
+Gate client 11: g_acc=0.8420 alpha=0.5894
+Gate client 0: g_acc=0.8542 alpha=0.5979
+Gate client 18: g_acc=0.5436 alpha=0.3805
+Gate client 14: g_acc=0.5459 alpha=0.3822
+Gate client 8: g_acc=0.8926 alpha=0.6248
+Gate client 7: g_acc=0.8434 alpha=0.5904
+Gate client 15: g_acc=0.8265 alpha=0.5786
+Gate client 6: g_acc=0.5186 alpha=0.3630
+Gate client 16: g_acc=0.9298 alpha=0.6508
+Gate client 13: g_acc=0.8775 alpha=0.6142
+Gate client 12: g_acc=0.8577 alpha=0.6004
+Gate client 9: g_acc=0.8449 alpha=0.5914
+Gate client 10: g_acc=0.5409 alpha=0.3786
+Gate client 17: g_acc=0.8775 alpha=0.6143
+Gate client 3: g_acc=0.8319 alpha=0.5823
+------------------------- time cost ------------------------- 631.8604943752289
+
+Best accuracy.
+0.4293043710021322
+
+Average time cost per round.
+868.4336982131005
+File path: ../results/Cifar100_FedGDBD-AGC_novelty_0.h5
+Deleted.
+
+Average time cost: 18599.76s.
+Length:  21
+std for best accuracy: 0.0
+mean for best accuracy: 0.4293043710021322
+All done!
