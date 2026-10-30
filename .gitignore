@@ -179,3 +179,5 @@ system/temp/
 # novelty runs (live)
 /logs_novelty/
 /logs_novelty_seed*/
+
+/Claude outputs/
