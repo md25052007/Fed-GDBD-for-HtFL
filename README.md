@@ -79,57 +79,59 @@ Logs and `.h5` curves: `experiments/novelty/run1_seed0/` and `experiments/novelt
 
 ## Architecture
 
-Clients never share raw data or feature-extractor weights. They upload their classifier head once (round 0, to initialise g) and class prototypes every round; the server sends back only g.
+One communication round, with our novelty in step 4. Clients never share raw data or feature-extractor weights: they upload their classifier head once (round 0, to initialise `g`) and class prototypes every round, and the server sends back only `g`, one linear layer. Steps 0 and 3a run once, before the first round.
 
 ```mermaid
-flowchart LR
-    subgraph CLIENTS["1. Heterogeneous clients (20, Dir β=0.1)"]
-        direction TB
-        ARCH["4 local architectures<br/>CNN / GoogLeNet / MobileNetV2 / ResNet18<br/>(client i → arch i mod 4)"]
-        PRETRAIN["Pre-train, round 0 only<br/>cross-entropy, 5 epochs"]
-        LOCAL["Local train (Eq. 11)<br/>CE + T² · L_IKD<br/>teacher = client's best past model"]
-        CLUSTER["k-means++ clustering (Eq. 3-4)<br/>v = 5 prototypes / class"]
-        ARCH --> PRETRAIN --> LOCAL --> CLUSTER
+flowchart TB
+    subgraph C["Each client i  (20 clients, Dir β = 0.1, model = arch i mod 4)"]
+        direction LR
+        P0["0 · Pre-train<br/>5 epochs cross-entropy<br/><i>round 0 only</i>"]
+        L["1 · Local training<br/>CE + T²·IKD<br/>teacher = best past self"]
+        K["2 · Prototypes<br/>k-means++ on features z<br/>v = 5 per class"]
+        P0 --> L --> K
     end
 
-    PROTOS[("Uploaded prototypes<br/>features + labels only —<br/>no raw data, no weights")]
-
-    subgraph SERVER["2. Server: global decision boundary"]
-        direction TB
-        INITG["Init g (Eq. 5)<br/>sample-weighted avg of client heads<br/>— round 0 only"]
-        TRAING["Train g (Eq. 12)<br/>cross-entropy on the union of<br/>every client's uploaded prototypes"]
-        INITG --> TRAING
+    subgraph S["Server"]
+        direction LR
+        G0["3a · Init g  (Eq. 5)<br/>sample-weighted avg of heads<br/><i>round 0 only</i>"]
+        G["3b · Train g  (Eq. 12)<br/>CE on all clients' prototypes<br/>one linear layer 512 → C"]
+        G0 --> G
     end
 
-    subgraph DISTILL["3. Global decision-boundary distillation (Eq. 7, 13)"]
-        direction TB
-        STUD["Student: model.head( model.base(x) )"]
-        TEACH["Teacher: g( rep.detach() )<br/>FedGDBD-S: rescaled to the student's<br/>logit scale, head-only update"]
-        KD["L = (1-α)·CE + α·T²·KL(g ‖ head)"]
-        STUD --> KD
-        TEACH --> KD
+    subgraph U["4 · Global distillation update on client i  (Eq. 13)"]
+        direction LR
+        FIX["FedGDBD-S fix<br/>logit-scale matching + head-only KD"]
+        GATE{"Gate: does g agree<br/>with the label?"}
+        AGC["AGC · per client<br/>α_i = α · acc_i(g)"]
+        AGS["AGS · per image<br/>distil only if argmax g(z) = y"]
+        LOSS["(1 − a)·CE + a·T²·KL(g ‖ h)<br/>a = α_i (AGC) or α·w (AGS)"]
+        FIX --> GATE
+        GATE --> AGC --> LOSS
+        GATE --> AGS --> LOSS
     end
 
-    EVAL[("Per-client test accuracy<br/>best-so-far model becomes next<br/>round's IKD teacher")]
+    E[("5 · Evaluate<br/>test accuracy per client<br/>best model → next IKD teacher<br/><i>then the next round starts at 1</i>")]
 
-    subgraph OUT["4. Results"]
-        direction TB
-        LOGS["Per-round, per-client logs"]
-        SUMM["summarize_logs.py<br/>best / last accuracy, per architecture"]
-        RTAB["Results table vs. the paper"]
-        DECK["Final presentation deck"]
-        LOGS --> SUMM --> RTAB
-        SUMM --> DECK
-    end
+    K -- "prototypes ↑<br/>(no data, no weights)" --> G
+    G -- "g ↓" --> FIX
+    LOSS --> E
 
-    CLIENTS -->|prototypes| PROTOS --> SERVER
-    SERVER -->|broadcast g| DISTILL
-    CLIENTS -.->|rep, local model| DISTILL
-    DISTILL -->|updated local model| EVAL
-    EVAL --> OUT
+    classDef base fill:#ffffff,stroke:#6E7377,color:#26292B
+    classDef server fill:#F1F2F0,stroke:#6E7377,color:#26292B
+    classDef novel fill:#ffffff,stroke:#B8892B,stroke-width:2px,color:#26292B
+    classDef agc fill:#ffffff,stroke:#6250D6,stroke-width:2px,color:#26292B
+    class P0,L,K,E,LOSS,FIX base
+    class G0,G server
+    class GATE,AGS novel
+    class AGC agc
+    style C fill:#F8F8F7,stroke:#AEB3B6,color:#26292B
+    style S fill:#F8F8F7,stroke:#AEB3B6,color:#26292B
+    style U fill:#F8F8F7,stroke:#B8892B,stroke-dasharray:4 3,color:#26292B
 ```
 
-Each round repeats stages 1–3 (pre-training is round-0 only): clients train locally and cluster features, the server updates the global decision boundary `g` using this round's prototypes, then clients distil `g` back into their own models (FedGDBD-S: heads only). `g` is the only thing that ever crosses the heterogeneity gap — it's a single linear layer retrained every round on everyone's prototypes, so a CNN client and a ResNet18 client can learn from each other without ever exchanging feature-extractor weights.
+- **Fed-GDBD (paper):** step 4 is the plain loss with a fixed α = 0.7, distilling into the whole model.
+- **FedGDBD-S (our fix during reproduction):** adds logit-scale matching and head-only distillation. It keeps Eq. 13 stable.
+- **AGC / AGS (our novelty):** on top of FedGDBD-S, a gate checks whether `g` classifies the client's own features correctly. AGC scales α per client by g's accuracy on that client; AGS distils only the images where g's top class equals the label.
 
 ## Repository layout
 
@@ -142,11 +144,16 @@ experiments/cifar10|cifar100/logs     full per-round, per-client logs of every r
 experiments/cifar10|cifar100/results  HtFLlib .h5 accuracy curves
 experiments/novelty/run1_seed0|run2_seed1/  novelty runs (control, AGC, AGS), two seeds, both datasets
 analysis/summarize_logs.py            parses logs → best/last accuracy, per-architecture curves (JSON)
+analysis/novelty_summary.py           novelty runs → best/last, per-architecture accuracy, gate statistics
+REPRODUCTION.md                       step-by-step guide to reproduce every result
 presentation/                         final slides (.pptx) and the pptxgenjs script that builds them
 *.bat, progress.py                    Windows setup / launch / progress-monitor scripts
 ```
 
 ## How to run (Windows)
+
+For a full step-by-step guide to every run (data download, expected numbers, run times, troubleshooting), see **[REPRODUCTION.md](REPRODUCTION.md)**. To view our results without training, run `python progress.py experiments\cifar10\logs`.
+
 
 1. `setup.bat`: creates `.venv` and installs PyTorch (CUDA 12.8 build) and the requirements.
 2. `run_cifar10.bat` or `run_cifar100.bat`: downloads CIFAR, builds the 20-client Dir(0.1) split, and starts FedGDBD, FedProto and LG-FedAvg in parallel.
