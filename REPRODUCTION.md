@@ -7,7 +7,7 @@ This guide rebuilds every number in the README and the final presentation:
 
 If you only want to **see** our results without training anything, jump to [Step 0](#step-0-see-our-results-without-training-1-minute).
 
-Everything below was run on Windows 11 laptops: an RTX 3050 6 GB (CIFAR-10) and an RTX 5060 8 GB (CIFAR-100), with three runs sharing one GPU. Linux and macOS commands are given at the end of each step.
+Everything below was run on Windows laptops: an RTX 3050 6 GB (CIFAR-10) and an RTX 5060 8 GB (CIFAR-100), with three runs sharing one GPU. Linux and macOS commands are given at the end of each step.
 
 ---
 

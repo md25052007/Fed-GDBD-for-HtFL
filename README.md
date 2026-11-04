@@ -41,7 +41,7 @@ Hardware: CIFAR-10 on an RTX 3050 6 GB laptop, CIFAR-100 on an RTX 5060 8 GB lap
    - rescale g's logits per sample to the student's logit standard deviation;
    - let the distillation term update only the head (`head(rep.detach())`); cross-entropy still trains the full model.
 
-   It stays within ±0.5 pt of its best for all 50 rounds and restores the collapsed clients (CIFAR-100 CNN: 3.9 → 45.6 %). It adds no communication.
+   It shows no downward trend over 50 rounds (from round 3 on it stays within 0.53 pt of its best on CIFAR-10 and 1.1 pt on CIFAR-100) and restores the collapsed clients (CIFAR-100 CNN: 3.9 → 45.6 %). It adds no communication.
 
 ## Novelty: agreement-gated distillation (2 seeds)
 
