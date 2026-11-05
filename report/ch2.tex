@@ -1,0 +1,77 @@
+\chapter{Literature Review}
+\label{ch:lit}
+
+\section{Overview}
+
+This chapter covers the work Fed-GDBD builds on and competes with: federated averaging and why it fails under model heterogeneity, the main families of heterogeneous FL methods, knowledge distillation, and prototype-based learning. It ends with the gap our extension targets and the objectives of the project. Table~\ref{tab:lit} at the end of Section~\ref{sec:htfl} summarises the methods side by side.
+
+\section{Federated learning and FedAvg}
+
+McMahan et al. \cite{mcmahan2017fedavg} introduced federated averaging (FedAvg). In each round the server sends the global model to the clients, each client runs a few epochs of SGD on its local data, and the server replaces the global model by the average of the returned models, weighted by the number of local samples. FedAvg needs two things that our setting does not offer. Every client must run the same architecture, otherwise the averaging step has nothing to combine. And the clients' data should not be too different: under strong label skew, each local model drifts toward its own classes, and the average of drifted models is poor.
+
+A common way to simulate label skew is the Dirichlet split of Hsu et al. \cite{hsu2019noniid}. For every class, the share each client receives is drawn from a Dirichlet distribution with concentration $\beta$. With a small $\beta$ the shares are very uneven, so most clients end up with a few dominant classes. Fed-GDBD calls $\beta = 0.1$ the ``practical'' setting, and this is the setting we reproduce. In the personalised view of FL used by the paper and by HtFLlib, each client is evaluated on a held-out part of its own data, so the goal is a good model for each client's distribution rather than one global model.
+
+\section{Heterogeneous federated learning}
+\label{sec:htfl}
+
+When clients run different architectures, the common approach is to split each model into a feature extractor and a classifier head and to share something tied to the classes rather than to the weights. HtFLlib \cite{zhang2025htfllib} implements the main methods of this kind on a common benchmark; we built on it.
+
+\textbf{LG-FedAvg} \cite{liang2020lgfedavg} keeps each client's feature extractor local and averages only the heads, which have the same shape (feature dimension $\times$ number of classes) on every client. Its weakness is that one averaged head has to serve feature spaces that may look nothing alike.
+
+\textbf{FedProto} \cite{tan2022fedproto} shares class prototypes instead of weights. Each client computes the mean feature of each class, the server averages these into global prototypes, and each client adds a loss that pulls its features toward the global prototype of their class. A single mean per class says nothing about how spread out the class is, which matters when classes overlap.
+
+\textbf{FedTGP} \cite{zhang2024fedtgp} makes the global prototypes trainable on the server, using a contrastive loss with an adaptive margin to push the prototypes of different classes apart. It still keeps one point per class.
+
+\textbf{FedGH} \cite{yi2023fedgh} trains a shared global header on the server from the clients' class-mean features and sends it back to replace the clients' heads.
+
+\textbf{Fed-GDBD} \cite{zhang2025gdbd} combines several of these ideas, described in Section~\ref{sec:lit-gdbd}.
+
+\begin{table}[htbp]
+\centering
+\caption[Heterogeneous FL methods compared]{Heterogeneous FL methods compared on what clients share, how they cope with different architectures, and their main limitation.}
+\label{tab:lit}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+Method & Clients share & Handling different models & Limitation \\
+\midrule
+FedAvg \cite{mcmahan2017fedavg} & full model weights & does not; all clients need the same architecture & unusable with mixed models; drifts under non-IID data \\
+LG-FedAvg \cite{liang2020lgfedavg} & classifier head; extractors stay local & heads have one shape, so only they are averaged & one averaged head for very different feature spaces \\
+FedProto \cite{tan2022fedproto} & one mean prototype per class & aligns local features with global class means & one point per class loses the spread \\
+FedTGP \cite{zhang2024fedtgp} & class prototypes; server trains global prototypes & adaptive-margin contrastive learning on the server & still one point per class; extra server training \\
+FedGH \cite{yi2023fedgh} & class-mean features; server trains a global header & the shared header replaces each local head & built from means only; overrides local heads \\
+Fed-GDBD \cite{zhang2025gdbd} & $v$ k-means prototypes per class & server trains a boundary $g$ on prototypes; clients distil $g$, plus self-distillation & distils $g$ everywhere with a fixed weight, even where $g$ is wrong \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Knowledge distillation}
+
+Knowledge distillation (KD) \cite{hinton2015kd} trains a student to match the predictions of a teacher instead of, or in addition to, the hard labels. Both sets of logits are divided by a temperature $T$ before the softmax. A large $T$ flattens the distributions so that the small probabilities of the wrong classes become visible; they carry information about which classes look alike, which a one-hot label does not. The KD loss is the KL divergence from the teacher's softened distribution to the student's, multiplied by $T^2$ so that its gradients stay comparable to those of cross-entropy as $T$ changes.
+
+Zhao et al. \cite{zhao2022dkd} split this loss into a part about the target class and a part about the non-target classes, and showed that the non-target part (NCKD) carries much of the useful knowledge. NCKD removes the true class from both distributions and matches only the relative probabilities of the wrong classes. Fed-GDBD's local self-distillation, which it calls irrelevant-class KD (IKD), is built on this idea.
+
+\section{Prototypes and clustering}
+
+A prototype is a representative feature vector for a class. Prototypes are attractive in HtFL because they are small, they contain no raw pixels, and they live in the shared feature space that every client's head reads from. Fed-GDBD uses several prototypes per class, found with k-means. Plain k-means starts from random centres and can converge to poor solutions; k-means++ \cite{arthur2007kmeanspp} picks the first centre at random and each further centre with probability proportional to its squared distance from the nearest centre already chosen, which spreads the starting centres out and gives better and more stable clusterings.
+
+\section{Fed-GDBD}
+\label{sec:lit-gdbd}
+
+Zhang et al. \cite{zhang2025gdbd} propose federated learning with global decision boundary distillation. Each client first trains its model locally. In every round, each client trains on its data with cross-entropy plus IKD from its best earlier model, clusters the features of each of its classes into $v = 5$ prototypes with k-means++, and uploads them. The server trains a linear classifier $g$ with the same shape as a client head on all uploaded prototypes; $g$ is initialised once as the sample-weighted average of the clients' heads. Each client then distils $g$ into its head on its own features with weight $\alpha = 0.7$ and temperature $T = 20$. On CIFAR-10 and CIFAR-100 with 20 clients and four architectures, the paper reports 87.90\% and 45.09\% in the practical setting, ahead of FedProto, FedTGP, LG-FedAvg and FedGH. Chapter~\ref{ch:method} gives the equations.
+
+\section{The gap}
+
+Every method in Table~\ref{tab:lit} that sends something back to the clients applies it in the same way to all of them. In Fed-GDBD this is the distillation of $g$ with a fixed $\alpha$. Yet $g$ is one linear layer trained on prototypes from feature extractors of different depth, width and design. Nothing guarantees that it reads all of them equally well, and the paper does not measure how well it does. If $g$ is often wrong on one client's features, distilling it with full weight pulls that client toward a boundary that does not fit its data. A cheap way to detect this is already available on the client: $g$'s prediction is computed for the distillation anyway, and the client knows its own labels.
+
+\section{Objectives}
+
+The objectives of the project were:
+\begin{enumerate}
+\item Re-implement Fed-GDBD from the paper on HtFLlib, recording every detail we had to assume.
+\item Reproduce the paper's main experiment (practical setting, CIFAR-10 and CIFAR-100, 20 clients, four architectures) against FedProto and LG-FedAvg, and compare with the published numbers.
+\item Investigate any behaviour that differs from the paper and fix it without changing the paper's hyper-parameters.
+\item Design, implement and test an extension that adapts the distillation of $g$ to how well $g$ fits each client, using only information the client already has.
+\item Publish code, logs and analysis scripts so that every number can be checked.
+\end{enumerate}

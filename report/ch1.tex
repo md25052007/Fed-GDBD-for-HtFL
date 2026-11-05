@@ -1,0 +1,35 @@
+\chapter{Introduction}
+\label{ch:intro}
+
+\section{Overview}
+
+In federated learning (FL), a set of clients trains a shared model while each client keeps its data on its own device. The usual algorithm, FedAvg \cite{mcmahan2017fedavg}, sends the current model to the clients, lets each train on its local data for a few epochs, and averages the returned weights. This works when every client runs the same network and holds roughly the same kind of data.
+
+Real deployments rarely look like that. Clients differ in the classes they see, so the data is not independent and identically distributed (non-IID), and they differ in compute and requirements, so they may pick different architectures. Once two clients run, say, a 4-layer CNN and a ResNet18, their weight tensors have different shapes and there is nothing to average. Methods for this setting, heterogeneous federated learning (HtFL), have to share something that does not depend on the architecture: class prototypes, predictions, or a small common classifier \cite{zhang2025htfllib}.
+
+Fed-GDBD \cite{zhang2025gdbd} is a recent HtFL method of this kind. Each client clusters the features of each of its classes into a few prototypes and uploads them. The server trains one linear classifier, the global decision boundary $g$, on the prototypes of all clients and sends it back. Each client distils $g$ into its own classifier head, and also distils from its own best earlier model to avoid forgetting. The paper reports clear gains over prototype-sharing and head-sharing baselines. The authors did not release code, so everything specific to Fed-GDBD in our implementation is written from the paper's equations.
+
+\section{Motivation}
+
+We had two reasons for this project. The first is the reproduction itself: a method run only by its authors is hard to trust or build on, and rebuilding it from the paper tests whether the paper says enough. It did not quite; several details were missing, and the literal client update was unstable for some architectures. The second reason came out of the reproduction. Fed-GDBD distils $g$ into every client with the same weight $\alpha = 0.7$, but $g$ is one linear layer fitted to the features of four very different networks. When we measured it, $g$ classified about 97\% of a CNN client's CIFAR-10 training images correctly and only about half of a MobileNetV2 client's (Section~\ref{sec:res-gate}), so for the second kind of client about half of what distillation teaches is a wrong label. That raised a simple question: what if a client distils $g$ only where $g$ is right on that client's data?
+
+\section{Research questions and contributions}
+
+The project addresses two questions:
+\begin{enumerate}
+\item Can Fed-GDBD be reproduced from the paper alone, and how close do we get to the published numbers on CIFAR-10 and CIFAR-100 in the paper's main (practical, $\beta=0.1$) setting?
+\item Does gating the global distillation by $g$'s agreement with the client's own labels improve accuracy over the stabilised Fed-GDBD?
+\end{enumerate}
+
+Our contributions are:
+\begin{enumerate}
+\item An independent implementation of Fed-GDBD on HtFLlib, with every assumption listed (Table~\ref{tab:assumptions}).
+\item A reproduction against FedProto and LG-FedAvg on two datasets; the baselines match the paper within 0.51 pt except FedProto on CIFAR-100.
+\item A diagnosis of an instability in the literal client update (Eq.~\ref{eq:update}) and a two-line fix, FedGDBD-S, that keeps the paper's hyper-parameters.
+\item Two agreement-gated variants of the distillation step, AGC (per client) and AGS (per image), tested over two seeds against a success criterion fixed in advance.
+\item A public repository with all code, per-round logs, the scripts behind every table and figure, and a reproduction guide.
+\end{enumerate}
+
+\section{Organisation of the report}
+
+Chapter~\ref{ch:lit} reviews the related work and states our objectives. Chapter~\ref{ch:method} describes Fed-GDBD, the stability fix and our extension. Chapter~\ref{ch:impl} covers the implementation, assumptions, setup and protocols. Chapter~\ref{ch:results} presents all results, followed by discussion, limitations, future work and the conclusion. Appendix~\ref{app:repro} gives the commands to reproduce every run and Appendix~\ref{app:clients} the per-client accuracies.

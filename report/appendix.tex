@@ -1,0 +1,44 @@
+\chapter{Reproducing the Results}
+\label{app:repro}
+
+The repository is \url{https://github.com/md25052007/Fed-GDBD-for-HtFL}; its \texttt{REPRODUCTION.md} gives these steps in more detail, with troubleshooting. All commands run from the repository folder on Windows.
+
+\begin{enumerate}
+\item \textbf{Set up.} \texttt{setup.bat} creates a virtual environment and installs PyTorch with CUDA and the requirements.
+\item \textbf{Data.} The launchers download CIFAR-10 and CIFAR-100 and build the split (\texttt{python generate\_Cifar10.py noniid - dir} in \texttt{dataset/}). If the download stalls, place \texttt{cifar-10-python.tar.gz} or \texttt{cifar-100-python.tar.gz} in \texttt{dataset/Cifar10/rawdata/} or \texttt{dataset/Cifar100/rawdata/}.
+\item \textbf{Reproduction runs.} \texttt{run\_cifar10.bat} and \texttt{run\_cifar100.bat} start the faithful Fed-GDBD, FedProto and LG-FedAvg; \texttt{start\_fedgdbd\_s\_cifar10.bat} and \texttt{start\_fedgdbd\_s\_cifar100.bat} start FedGDBD-S. Each run executes
+\begin{quote}\small\ttfamily
+python main.py -data Cifar10 -ncl 10 -m HtFE-img-4 -fd 512 -nc 20 -jr 1 -lbs 10 -lr 0.01 -ls 5 -gr 50 -t 1 -go practical -did 0 -algo FedGDBD-S
+\end{quote}
+with \texttt{-algo} set to \texttt{FedGDBD}, \texttt{FedGDBD-S}, \texttt{FedProto} (with \texttt{-lam 10}) or \texttt{LG-FedAvg}.
+\item \textbf{Extension runs.} \texttt{run\_novelty\_cifar10.bat} and \texttt{run\_novelty\_cifar100.bat} (seed 0), \texttt{run\_novelty\_cifar10\_seed1.bat} and \texttt{run\_novelty\_cifar100\_seed1.bat} (seed 1) start the control, AGC and AGS with \texttt{-gr 20 --gdbd\_teacher val --seed} $s$.
+\item \textbf{Tables and figures.} From the saved logs, without training:
+\begin{quote}\small\ttfamily
+python progress.py experiments\textbackslash cifar10\textbackslash logs\\
+python analysis\textbackslash novelty\_summary.py experiments\textbackslash novelty\textbackslash run2\_seed1\textbackslash cifar100\textbackslash logs\\
+python analysis\textbackslash report\_assets.py\\
+python analysis\textbackslash report\_tables.py
+\end{quote}
+The last two regenerate every figure and results table of Chapter~\ref{ch:results}.
+\end{enumerate}
+
+\chapter{Per-client Results}
+\label{app:clients}
+
+Tables~\ref{tab:clients10} and~\ref{tab:clients100} give each client's test accuracy at the best round of each reproduction run. They show how much the clients differ under the skewed split, and where the per-architecture means in Table~\ref{tab:archmethods} come from.
+
+\vspace{0.8em}
+\noindent\begin{minipage}{\textwidth}
+\begin{spacing}{1.0}\centering
+\captionof{table}[Per-client accuracy, CIFAR-10]{CIFAR-10: test accuracy (\%) of each client at the best round of each reproduction run.}
+\label{tab:clients10}
+\footnotesize
+\renewcommand{\arraystretch}{0.9}
+\TabClientsTen
+
+\vspace{1.0em}
+\captionof{table}[Per-client accuracy, CIFAR-100]{CIFAR-100: test accuracy (\%) of each client at the best round of each reproduction run.}
+\label{tab:clients100}
+\TabClientsHundred
+\end{spacing}
+\end{minipage}

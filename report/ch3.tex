@@ -1,0 +1,223 @@
+\chapter{Methodology}
+\label{ch:method}
+
+This chapter first fixes the notation, then describes Fed-GDBD step by step as we implemented it (Section~\ref{sec:m-gdbd}). Section~\ref{sec:m-fix} describes the stability fix we had to make during the reproduction, and Sections~\ref{sec:m-agc} to~\ref{sec:m-alg} describe our extension, agreement-gated distillation. Figure~\ref{fig:pipeline} shows the whole pipeline.
+
+\section{Setting and notation}
+
+There are $N = 20$ clients. Client $i$ holds a training set $D_i$ with $n_i$ images and a separate test set, and its labels follow a skewed distribution. Its model has a feature extractor $f_i$ and a linear head $h_i$; for an image $x$ the feature is $z = f_i(x) \in \mathbb{R}^{512}$ and the logits are $h_i(z) \in \mathbb{R}^C$, where $C$ is the number of classes (10 or 100). The extractors differ between clients: client $i$ runs architecture $i \bmod 4$, that is, a 4-layer CNN, GoogLeNet \cite{szegedy2015googlenet}, MobileNetV2 \cite{sandler2018mobilenetv2} or ResNet18 \cite{he2016resnet}. Every head has the same shape, $512 \times C$ plus a bias.
+
+The server holds the global decision boundary $g$, a linear layer of the same shape as a head. $\sigma(\cdot)$ is the softmax, $T$ the distillation temperature, $\alpha$ the distillation weight, CE the cross-entropy loss and $\mathrm{sg}(\cdot)$ a stop-gradient (\texttt{detach} in PyTorch).
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\small, node distance=0.55cm,
+  box/.style={draw=ink!70, rounded corners=3pt, align=center, minimum width=3.9cm, minimum height=0.95cm, fill=white},
+  srv/.style={box, fill=black!6},
+  agc/.style={box, draw=violet, line width=0.9pt, minimum width=3.3cm},
+  ags/.style={box, draw=gold, line width=0.9pt, minimum width=3.3cm},
+  arr/.style={-{Stealth[length=2mm]}, draw=ink!70}]
+\node[box] (pre) {Pre-train, 5 epochs CE\\(once)};
+\node[box, below=0.9cm of pre] (loc) {Local training\\CE $+\,T^2\cdot$IKD \;(Eq.~\ref{eq:local})};
+\node[box, below=of loc] (pro) {k-means++ prototypes\\$v=5$ per class (Eq.~\ref{eq:protos})};
+\node[srv, right=2.1cm of pre] (ini) {Server: initialise $g$\\weighted head average (Eq.~\ref{eq:ginit})};
+\node[srv, right=2.1cm of pro] (trg) {Server: train $g$ on\\all prototypes (Eq.~\ref{eq:gtrain})};
+\node[box, below=1.0cm of pro] (fix) {Distillation update toward $g$\\(Eq.~\ref{eq:update}) with the FedGDBD-S fix};
+\node[agc, below left=0.55cm and -1.6cm of fix] (a) {5a\; AGC: $\alpha_i=\alpha\cdot\mathrm{acc}_i$};
+\node[ags, below right=0.55cm and -1.6cm of fix] (b) {5b\; AGS: distil only\\where $\arg\max g(z)=y$};
+\node[box, below=1.9cm of fix] (ev) {Evaluate on local test set;\\best model becomes IKD teacher};
+\draw[arr] (pre) -- (loc);
+\draw[arr] (loc) -- (pro);
+\draw[arr] (pre) -- node[above, font=\scriptsize]{heads (once)} (ini);
+\draw[arr] (ini) -- node[right, font=\scriptsize]{warm start} (trg);
+\draw[arr] (pro) -- node[above, font=\scriptsize]{prototypes} (trg);
+\draw[arr] (trg) |- node[pos=0.25, right, font=\scriptsize]{$g$} (fix);
+\draw[arr] (fix) -- (a); \draw[arr] (fix) -- (b);
+\draw[arr] (a) -- (ev); \draw[arr] (b) -- (ev);
+\draw[arr] (ev.west) -- ++(-2.2,0) |- node[pos=0.25, left, font=\scriptsize]{next round} (loc.west);
+\begin{scope}[on background layer]
+\node[draw=gold, dashed, rounded corners=4pt, inner sep=7pt, fit=(loc)(pro)(trg)(fix)(a)(b)(ev)] {};
+\end{scope}
+\end{tikzpicture}
+\caption[Pipeline of the implemented method]{The pipeline we implemented. Pre-training and the initialisation of $g$ happen once; everything inside the dashed box repeats every round. Shaded boxes run on the server. Steps 5a and 5b are our extension; Fed-GDBD itself uses a fixed $\alpha$ at step 5.}
+\label{fig:pipeline}
+\end{figure}
+
+\section{Fed-GDBD}
+\label{sec:m-gdbd}
+
+\subsection{Pre-training}
+Each client first trains its own model with plain cross-entropy on its training set. The paper's algorithm starts from trained local models but does not say for how long; we use 5 epochs. After pre-training, every client sends its head to the server once, to initialise $g$.
+
+\subsection{Local training with irrelevant-class distillation}
+In every round, each client trains for 5 epochs with
+\begin{equation}
+\mathcal{L}_{\text{local}} = \mathrm{CE}\big(h_i(z), y\big) + T^2 \cdot \mathrm{KL}\big(\sigma(\bar{u}^{\,t}/T) \,\big\|\, \sigma(\bar{u}^{\,s}/T)\big),
+\label{eq:local}
+\end{equation}
+where $u^s$ are the logits of the current model (the student), $u^t$ those of the client's teacher, and the bar means that the entry of the true class $y$ has been removed before the softmax (we set it to $-10^4$). The teacher is the client's own best model from earlier rounds. The idea is to stop the client from forgetting what it already did well after the global distillation has pulled it toward $g$. Because the true class is removed, this term only transfers the ranking of the wrong classes and has zero gradient on the true-class logit, as the paper requires; learning the true class is left to cross-entropy. Section~\ref{sec:i-bug} describes a bug we had here at first.
+
+\subsection{Multi-prototypes}
+After local training, the client runs its extractor over its training images and, for every class $c$ it holds, clusters the features of that class:
+\begin{equation}
+\{P_{c,1}, \dots, P_{c,v}\} = \text{k-means++}\big(\{f_i(x) : (x, y) \in D_i,\; y = c\},\, v\big), \qquad v = 5,
+\label{eq:protos}
+\end{equation}
+with at most 100 Lloyd iterations. It uploads the centres with their labels: at most $5C$ vectors of 512 numbers. Five centres describe the spread of a class, not only its centre. If a client has five or fewer images of a class, our implementation sends those features themselves.
+
+\subsection{The global decision boundary}
+The server initialises $g$ once, after pre-training, as the sample-weighted average of the heads (Eq.~5 in \cite{zhang2025gdbd}):
+\begin{equation}
+\theta_g^{(0)} = \sum_{i=1}^{N} \frac{n_i}{n}\, \theta_{h_i}, \qquad n = \sum_i n_i .
+\label{eq:ginit}
+\end{equation}
+In every round it then trains $g$ with cross-entropy on the union $\mathcal{P}$ of all uploaded prototypes (Eq.~12 in \cite{zhang2025gdbd}):
+\begin{equation}
+\min_{g} \sum_{(P,\,c) \in \mathcal{P}} \mathrm{CE}\big(g(P),\, c\big),
+\label{eq:gtrain}
+\end{equation}
+using SGD with learning rate 0.01 and batch size 10 for 5 epochs, continuing from the previous round's $g$. Because every client's prototypes live in the same 512-dimensional space, $g$ sees all classes even though each client sees only a few.
+
+\subsection{Global distillation update}
+Finally, each client receives $g$, keeps it frozen, and trains for 5 epochs with (Eq.~13 in \cite{zhang2025gdbd})
+\begin{equation}
+\mathcal{L}_{\text{update}} = (1-\alpha)\,\mathrm{CE}\big(h_i(z), y\big) + \alpha\, T^2\, \mathrm{KL}\big(\sigma(g(z)/T) \,\big\|\, \sigma(h_i(z)/T)\big),
+\label{eq:update}
+\end{equation}
+with $\alpha = 0.7$ and $T = 20$. The client feeds its own features $z$ through both $g$ and its own head, and pulls the head's softened predictions toward $g$'s. Note the weights: the KD term carries $\alpha T^2 = 280$, against $0.3$ for cross-entropy.
+
+After the update the client is evaluated on its test set, and if this model beats its best so far it becomes the new IKD teacher. In total, a client sends its head once and $5C$ prototypes per round, and receives $g$ per round. Raw data and extractor weights never leave the client.
+
+\section{The stability fix made during reproduction (FedGDBD-S)}
+\label{sec:m-fix}
+
+Implemented exactly as in Eq.~\eqref{eq:update}, Fed-GDBD reached its best accuracy in the first one or two rounds and then degraded, and the per-client logs showed that the damage was confined to particular architectures: the CNN clients on CIFAR-100 and the ResNet18 clients on CIFAR-10 (Section~\ref{sec:res-collapse}). Our explanation, which fits the logs but which we have not proven, is the following. $g$ is fitted to four feature spaces at once, and on some architectures its logits come out much larger than those of the client's own head. With a KD weight of 280, a confident teacher that is partly wrong for that client overwhelms the cross-entropy term and drags the whole model, extractor included, toward $g$'s mistakes, round after round.
+
+We made two changes to the distillation step and kept $\alpha$ and $T$ as in the paper:
+\begin{enumerate}
+\item \textbf{Logit-scale matching.} Per image, $g$'s logits are rescaled to the spread of the student's logits:
+\begin{equation}
+\tilde{g}(z) = g(z) \cdot \frac{\mathrm{std}\big(h_i(\mathrm{sg}(z))\big)}{\mathrm{std}\big(g(z)\big)} .
+\label{eq:scale}
+\end{equation}
+A positive rescaling keeps $g$'s ranking of the classes, so its argmax is unchanged, but it can no longer be far more confident than the student.
+\item \textbf{Head-only distillation.} The KD term is computed on $h_i(\mathrm{sg}(z))$, so its gradient updates only the head. Cross-entropy still trains the whole model. $g$ is a decision boundary, and with this change it can move the client's boundary but not distort its features.
+\end{enumerate}
+The resulting loss is
+\begin{equation}
+\mathcal{L}_{\text{S}} = (1-\alpha)\,\mathrm{CE}\big(h_i(z), y\big) + \alpha\, T^2\, \mathrm{KL}\big(\sigma(\tilde{g}(z)/T) \,\big\|\, \sigma(h_i(\mathrm{sg}(z))/T)\big).
+\label{eq:fgs}
+\end{equation}
+We call this version FedGDBD-S. It is part of the reproduction, not our novelty, but it is the base on which the extension is built and the control it is compared with.
+
+\section{Agreement-gated distillation, per client (AGC)}
+\label{sec:m-agc}
+
+Our extension asks one question for each client: on this client's own features, does $g$ give the right label? $g(z)$ is already computed for the distillation and the client knows its labels, so answering it needs no communication.
+
+In AGC, before the update of each round, the client measures $g$'s accuracy on its own training data in one pass without gradients, and scales $\alpha$ by it:
+\begin{equation}
+\mathrm{acc}_i = \frac{1}{|D_i|} \sum_{(x,y) \in D_i} \mathbf{1}\big[\arg\max g(f_i(x)) = y\big], \qquad \alpha_i = \alpha \cdot \mathrm{acc}_i .
+\label{eq:agc}
+\end{equation}
+The update then uses Eq.~\eqref{eq:fgs} with $\alpha_i$ in place of $\alpha$. A client whose features $g$ reads well keeps a weight close to the paper's 0.7; on CIFAR-10, CNN clients have $\alpha_i \approx 0.7 \times 0.97 = 0.68$. A client that $g$ misreads leans more on its own labels; MobileNetV2 clients have $\alpha_i \approx 0.7 \times 0.53 = 0.37$. The extra cost is one forward pass over the client's data per round.
+
+\section{Agreement-gated distillation, per sample (AGS)}
+\label{sec:m-ags}
+
+AGS makes the same check for every image instead of once per client:
+\begin{equation}
+\begin{aligned}
+w &= \mathbf{1}\big[\arg\max \tilde{g}(z) = y\big],\\
+\mathcal{L}_{\text{AGS}} &= \operatorname{mean}\Big[(1-\alpha w)\,\mathrm{CE}\big(h_i(z), y\big) + \alpha w\, T^2\, \mathrm{KL}\big(\sigma(\tilde{g}(z)/T) \,\big\|\, \sigma(h_i(\mathrm{sg}(z))/T)\big)\Big].
+\end{aligned}
+\label{eq:ags}
+\end{equation}
+Where $g$ is right ($w=1$) the loss is exactly that of FedGDBD-S; where it is wrong ($w=0$) the image gets plain cross-entropy. The two gates differ in what they do with images $g$ gets wrong: AGC still distils them, at a lower weight, while AGS ignores $g$ on them. AGS costs nothing extra. Figure~\ref{fig:gate} shows the test both gates apply.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[font=\small,
+  box/.style={draw=ink!70, rounded corners=3pt, align=center, minimum height=0.9cm, fill=white},
+  arr/.style={-{Stealth[length=2mm]}, draw=ink!70}]
+\node[box, minimum width=2.4cm] (x) {image $x$\\$\to$ feature $z$};
+\node[box, fill=black!6, minimum width=1.6cm, right=0.7cm of x] (g) {$g(z)$};
+\node[draw=gold, line width=0.9pt, diamond, aspect=1.9, inner sep=1pt, align=center, right=0.7cm of g] (d) {$\arg\max g(z)$\\$= y$\,?};
+\node[box, draw=gold, line width=0.9pt, minimum width=3.4cm, above right=0.1cm and 1.0cm of d] (yes) {distil $g$ into the head\\$(1-\alpha)\mathrm{CE} + \alpha T^2 \mathrm{KL}$};
+\node[box, minimum width=3.4cm, below right=0.1cm and 1.0cm of d] (no) {cross-entropy only};
+\draw[arr] (x) -- (g); \draw[arr] (g) -- (d);
+\draw[arr] (d.north east) -- node[above left, font=\scriptsize]{yes} (yes.west);
+\draw[arr] (d.south east) -- node[below left, font=\scriptsize]{no} (no.west);
+\end{tikzpicture}
+\caption[The agreement test used by AGC and AGS]{The agreement test. AGS applies it to every image. AGC averages its answer over all of a client's training images and uses the result to scale $\alpha$.}
+\label{fig:gate}
+\end{figure}
+
+\section{One algorithm, four versions}
+\label{sec:m-alg}
+
+Algorithm~\ref{alg:server} gives the round structure shared by all versions, and Algorithm~\ref{alg:update} the client update, with each line marked by the versions that use it. It follows the \texttt{update()} function of our code line for line.
+
+\begin{algorithm}[H]
+\caption{Fed-GDBD round structure (server side)}
+\label{alg:server}
+\begin{algorithmic}[1]
+\Require clients $1,\dots,N$; rounds $R$
+\State each client pre-trains for 5 epochs with CE
+\State $g \gets \sum_i \frac{n_i}{n} h_i$ \Comment{Eq.~\ref{eq:ginit}}
+\For{$r = 0, 1, \dots, R$}
+  \State evaluate every client; a client's best model so far becomes its IKD teacher
+  \For{each client $i$} \textbf{in parallel}
+    \State train 5 epochs with Eq.~\ref{eq:local}; upload $5$ prototypes per class (Eq.~\ref{eq:protos})
+  \EndFor
+  \State train $g$ for 5 epochs on all prototypes \Comment{Eq.~\ref{eq:gtrain}}
+  \For{each client $i$} \textbf{in parallel}
+    \State $\textsc{Update}(i, g)$ \Comment{Algorithm~\ref{alg:update}}
+  \EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{$\textsc{Update}(i, g)$: the client distillation step in all four versions}
+\label{alg:update}
+\begin{algorithmic}[1]
+\State $\alpha \gets 0.7$ \Comment{all}
+\If{gate = client} $\alpha \gets \alpha \cdot \mathrm{acc}_i(g)$ \Comment{AGC, Eq.~\ref{eq:agc}}
+\EndIf
+\For{5 epochs, each batch $(x, y)$ of $D_i$} \Comment{all}
+  \State $z \gets f_i(x)$;\; $o \gets h_i(z)$;\; $q \gets g(z)$ without gradient \Comment{all}
+  \If{stable} \Comment{S, AGC, AGS}
+    \State $k \gets h_i(\mathrm{sg}(z))$;\; $q \gets q \cdot \mathrm{std}(k)/\mathrm{std}(q)$ per sample \Comment{Eq.~\ref{eq:scale}}
+  \Else \;\;$k \gets o$ \Comment{faithful}
+  \EndIf
+  \If{gate = sample} \Comment{AGS}
+    \State $w \gets [\arg\max q = y]$;\; $\mathcal{L} \gets \mathrm{mean}\big((1-\alpha w)\,\mathrm{CE}(o,y) + \alpha w T^2 \mathrm{KL}(q \| k)\big)$
+  \Else \;\;$\mathcal{L} \gets (1-\alpha)\,\mathrm{CE}(o,y) + \alpha T^2\, \mathrm{KL}(q \| k)$ \Comment{faithful, S, AGC}
+  \EndIf
+  \State SGD step on $\mathcal{L}$, gradient norm clipped at 10; skip if $\mathcal{L}$ is not finite \Comment{all}
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\section{Cost and communication}
+
+Table~\ref{tab:versions} summarises the four versions. None of our changes sends anything new. For CIFAR-100, a client uploads at most 500 prototypes of 512 floats per round (about 1 MB) and receives $g$ with $512 \times 100 + 100$ parameters (about 0.2 MB); for CIFAR-10 the figures are about 100 KB and 20 KB. For comparison, ResNet18 alone has about 11 million parameters. On the server, training one linear layer on at most $20 \times 5C$ prototypes is cheap. On a client, the update adds 5 epochs to the 5 epochs of local training, plus the k-means; AGC adds one forward pass.
+
+\begin{table}[htbp]
+\centering
+\caption[The four versions of the client update]{The four versions of the client update compared in this report.}
+\label{tab:versions}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.8cm}}
+\toprule
+Version & Distillation step & Role \\
+\midrule
+Fed-GDBD (faithful) & Eq.~\ref{eq:update}: fixed $\alpha=0.7$, KD trains the whole model & the paper's method \\
+FedGDBD-S & Eq.~\ref{eq:fgs}: logit-scale matching and head-only KD & our fix; the control \\
+FedGDBD-AGC & Eq.~\ref{eq:fgs} with $\alpha_i = 0.7\cdot\mathrm{acc}_i$ (Eq.~\ref{eq:agc}) & extension, per client \\
+FedGDBD-AGS & Eq.~\ref{eq:ags}: distil only where $g$'s top class is the label & extension, per sample \\
+\bottomrule
+\end{tabularx}
+\end{table}

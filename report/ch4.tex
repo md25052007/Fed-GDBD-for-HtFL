@@ -1,0 +1,118 @@
+\chapter{Implementation}
+\label{ch:impl}
+
+\section{Code base}
+
+We built on HtFLlib \cite{zhang2025htfllib}, which provides the training loop, the four heterogeneous models (its \texttt{HtFE-img-4} family), the baselines FedProto and LG-FedAvg, and evaluation; its data scripts come from PFLlib \cite{zhang2025pfllib}. HtFLlib does not include Fed-GDBD, so we wrote it ourselves. Table~\ref{tab:files} lists the files we added or changed. Clients and server exchange models, prototypes and $g$ through files, which is how HtFLlib simulates communication on one machine; the server code only reads what a real server would receive.
+
+\begin{table}[htbp]
+\centering
+\caption[Files we wrote or changed]{Files we wrote or changed. The \texttt{clients/} and \texttt{servers/} folders are in \texttt{system/flcore/}, and \texttt{main.py} is in \texttt{system/}. Line counts refer to the repository at commit \texttt{0009722}.}
+\label{tab:files}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.3cm}>{\raggedleft\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}X}
+\toprule
+File & Lines & Content \\
+\midrule
+\texttt{clients/clientgdbd.py} & 299 & IKD loss, pre-training, local training, k-means++, the update with the fix and both gates, teacher selection \\
+\texttt{servers/servergdbd.py} & 102 & initialisation and training of $g$, the round loop \\
+\texttt{main.py} (additions) & & dispatch for the four versions, \texttt{--gdbd\_*} and \texttt{--seed} flags, seeding \\
+\texttt{clients/clientbase.py} & & seeded model initialisation, loading fix for recent PyTorch \\
+\texttt{progress.py}, \texttt{analysis/*.py} & & results tables, figures and the numbers in this report, all from the logs \\
+\texttt{*.bat} & & Windows scripts to set up, launch and monitor runs \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Details the paper leaves out}
+
+Rebuilding the method from the paper required several decisions the paper does not specify. Table~\ref{tab:assumptions} lists them. We chose each one to be the simplest reading consistent with the text and kept them fixed across all runs.
+
+\begin{table}[htbp]
+\centering
+\caption[Assumptions where the paper gives no detail]{Assumptions made where the paper does not specify a detail.}
+\label{tab:assumptions}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.6cm}>{\raggedright\arraybackslash}X}
+\toprule
+Detail & Our choice \\
+\midrule
+Length of local pre-training & 5 epochs of cross-entropy \\
+Choice of the IKD teacher & the client's past model with the best accuracy (test accuracy in the reproduction; a 10\% validation slice in the extension runs) \\
+$g$ during distillation & frozen; only the client learns \\
+Optimiser for $g$ & SGD, learning rate 0.01, batch size 10, 5 epochs per round, warm-started from the previous round \\
+Masking in IKD & true-class logit set to $-10^4$ before the softmax \\
+FedProto weight $\lambda$ & 10 (HtFLlib default) \\
+Classes with $\le 5$ images on a client & their features are sent as prototypes \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{A bug in our first IKD loss}
+\label{sec:i-bug}
+
+Our first version of Eq.~\eqref{eq:local} computed a full softmax over all classes and then dropped the true class from the KL sum. That looks equivalent but is not: the true-class logit still enters the normalisation, so the loss gives it a positive gradient and pushes the correct class down at every step, fighting cross-entropy. On CIFAR-100 the loss became NaN at round 8 and the run crashed. The fix removes the true-class logit before the softmax, which gives exactly zero gradient on it. Figure~\ref{fig:ikdbug} in Chapter~\ref{ch:results} compares the two runs; the logs of the buggy runs are kept in \texttt{experiments/*/logs/old/}.
+
+\section{Experimental setup}
+
+Table~\ref{tab:setup} gives the setup, next to the paper's. Everything that defines the method and the benchmark (clients, models, split, hyper-parameters) is the same as in the paper. We reduced the scope in datasets, rounds and repeats to fit the compute we had: the paper's full grid amounts to roughly 1,500 GPU-hours, and we had two laptop GPUs.
+
+\begin{table}[htbp]
+\centering
+\caption[Experimental setup compared with the paper]{Experimental setup compared with the paper.}
+\label{tab:setup}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+ & Paper \cite{zhang2025gdbd} & Ours \\
+\midrule
+Datasets & CIFAR-10, CIFAR-100, Tiny-ImageNet, Flowers102 & CIFAR-10 and CIFAR-100 \cite{krizhevsky2009cifar}: 60,000 colour images of $32\times32$ pixels, 10 and 100 classes \\
+Split & Dirichlet $\beta=0.1$ (practical) and pathological & Dirichlet $\beta=0.1$ over 20 clients, then 75\% train / 25\% test per client \\
+Clients and models & 20; CNN, GoogLeNet, MobileNetV2, ResNet18 & same; client $i$ runs model $i \bmod 4$ \\
+Hyper-parameters & batch 10, lr 0.01, 5 local epochs, $v=5$, $\alpha=0.7$, $T=20$ & same \\
+Methods & Fed-GDBD, FedProto, FedTGP, LG-FedAvg, FedGH & Fed-GDBD, FedProto, LG-FedAvg, plus FedGDBD-S, AGC, AGS \\
+Rounds $\times$ repeats & 100 $\times$ 3 & reproduction 50 $\times$ 1; extension 20 $\times$ 2 seeds \\
+Metric & mean local test accuracy at the best round & same \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The reported metric is HtFLlib's averaged test accuracy: correct predictions over all 20 clients' test sets divided by the total number of test images, which is a sample-weighted mean of the clients' accuracies, taken at the best round as in the paper. Accuracy per architecture is the plain mean of the five clients that run it.
+
+Table~\ref{tab:env} lists the hardware and software. Each launcher started three runs at once on one GPU, so the times per round in Chapter~\ref{ch:results} are for a shared GPU.
+
+\begin{table}[htbp]
+\centering
+\caption[Hardware and software]{Hardware and software.}
+\label{tab:env}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+ & Laptop 1 & Laptop 2 \\
+\midrule
+GPU & NVIDIA RTX 3050, 6 GB & NVIDIA RTX 5060, 8 GB \\
+CPU & Intel Core i7-13650HX, 16 GB RAM & Intel Core Ultra 9 275HX \\
+Runs & CIFAR-10 reproduction; all seed-1 extension runs & CIFAR-100 reproduction; CIFAR-100 seed-0 extension runs \\
+Software & Windows, Python 3.13.7, PyTorch 2.11 (CUDA 12.8), torchvision 0.26 & Windows, Python 3.14, same installation script \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Evaluation protocols}
+\label{sec:protocols}
+
+We ran two sets of experiments with different protocols, and their numbers should not be compared with each other.
+
+\textbf{Reproduction (mid-evaluation).} Fed-GDBD (faithful), FedGDBD-S, FedProto and LG-FedAvg on both datasets, 50 rounds, one run each, with the IKD teacher chosen by test accuracy as the paper implies. These are the results we presented at the mid-term evaluation. The faithful runs were stopped after 9 and 10 rounds, once the collapse was clear.
+
+\textbf{Extension.} FedGDBD-S (control), FedGDBD-AGC and FedGDBD-AGS on both datasets, 20 rounds, seeds 0 and 1. Three things change from the reproduction protocol:
+\begin{itemize}
+\item The IKD teacher is chosen on a fixed 10\% validation slice of each client's training data, so no test data influences training. The clients train on the other 90\%.
+\item The seed controls model initialisation, the order of clients and the k-means initialisation; the data split stays fixed. The control changed by 0.23 pt (CIFAR-10) and 0.19 pt (CIFAR-100) between the two seeds, which gives a sense of the noise.
+\item Before running, we fixed the success criterion: a gate counts as an improvement only if it beats the control by at least 0.5 pt on both datasets.
+\end{itemize}
+We used 20 rounds because FedGDBD-S had converged by then in the 50-round runs (its best accuracy within the first 20 rounds was within 0.1 pt of its best over 50), and because 20 rounds made two seeds affordable: one launcher of three runs took 5 to 6.5 hours.
+
+\section{Reproducibility}
+
+The data split is generated with a fixed seed, so every run sees the same clients. The repository contains every log (per round and per client), the HtFLlib result files, the launchers with the exact commands, and the scripts that produce every table and figure in Chapter~\ref{ch:results} from the logs (\texttt{analysis/report\_assets.py} and \texttt{analysis/report\_tables.py}). GPU kernels are not bit-for-bit deterministic, so a rerun gives close but not identical numbers. Appendix~\ref{app:repro} lists the commands.

@@ -1,0 +1,187 @@
+\documentclass[12pt,a4paper,oneside,openany]{report}
+
+% ---------------------------------------------------------------- packages
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,left=3.0cm,right=2.0cm,top=2.2cm,bottom=2.2cm]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs,multirow,array,tabularx}
+\usepackage{float}
+\usepackage[font=small,labelfont=bf,skip=6pt]{caption}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,shapes.geometric,fit,calc,backgrounds}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+
+\setstretch{1.25}
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0.1em}
+\setlist{itemsep=0.05em,topsep=0.25em}
+
+% chapter headings as in the department template: "1  INTRODUCTION"
+\titleformat{\chapter}[hang]{\normalfont\Large}{\thechapter}{1em}{\MakeUppercase}
+\titlespacing*{\chapter}{0pt}{0pt}{1.2em}
+\titlespacing*{\section}{0pt}{1.1em plus 0.3em}{0.5em}
+\titlespacing*{\subsection}{0pt}{0.9em plus 0.2em}{0.4em}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+\renewcommand{\contentsname}{CONTENTS}
+\renewcommand{\listfigurename}{LIST OF FIGURES}
+\renewcommand{\listtablename}{LIST OF TABLES}
+\renewcommand{\bibname}{REFERENCES}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cfttoctitlefont}{\normalfont\Large}
+\renewcommand{\cftloftitlefont}{\normalfont\Large}
+\renewcommand{\cftlottitlefont}{\normalfont\Large}
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftbeforeloftitleskip}{0pt}
+\setlength{\cftbeforelottitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{1.6em}
+\setlength{\cftafterloftitleskip}{1.6em}
+\setlength{\cftafterlottitleskip}{1.6em}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\floatpagefraction}{0.8}
+\setlength{\cftbeforechapskip}{0.5em}
+\setlength{\cftbeforefigskip}{0.15em}
+\setlength{\cftbeforetabskip}{0.15em}
+
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\headrulewidth}{0pt}}
+\pagestyle{plain}
+
+\numberwithin{equation}{chapter}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\algrenewcommand\algorithmiccomment[1]{\hfill{\small\textit{// #1}}}
+
+\definecolor{gold}{HTML}{B8892B}
+\definecolor{violet}{HTML}{6250D6}
+\definecolor{ink}{HTML}{26292B}
+
+\input{tables.tex}
+
+\newcommand{\gdbd}{Fed-GDBD}
+\newcommand{\fgs}{FedGDBD-S}
+
+\begin{document}
+
+% ================================================================ cover page
+\begin{titlepage}
+\begin{spacing}{1.15}
+\centering
+\vspace*{0cm}
+{\normalsize Course Project Report on}\\[1.1cm]
+{\Large REPRODUCING FED-GDBD: GLOBAL DECISION\\[0.25em] BOUNDARY DISTILLATION FOR HETEROGENEOUS\\[0.25em] FEDERATED LEARNING, WITH\\[0.25em] AGREEMENT-GATED DISTILLATION\par}
+\vspace{1.0cm}
+{\small Submitted in partial fulfillment of the requirements for the degree of}\\[0.4em]
+{\normalsize BACHELOR OF TECHNOLOGY}\\[0.3em]
+{\small in}\\[0.3em]
+{\normalsize ARTIFICIAL INTELLIGENCE}\\[0.7em]
+{\small by}\\[0.6em]
+{\normalsize\bfseries D Maithreya (241AI013)\\ Maharshi Kundu (241AI022)\\ Siddhanth R Naik (241AI040)}\\[0.9em]
+{\small\itshape under the guidance of}\\[0.5em]
+{\large Dr. Nagamma Patil}\\[0.8cm]
+\includegraphics[width=3.2cm]{nitk_crest.png}\\[0.8cm]
+{\normalsize DEPARTMENT OF INFORMATION TECHNOLOGY\\
+NATIONAL INSTITUTE OF TECHNOLOGY KARNATAKA\\
+SURATHKAL, MANGALORE - 575025}\\[0.9em]
+{\normalsize NOVEMBER, 2026}
+\end{spacing}
+\end{titlepage}
+
+% ================================================================ declaration
+\pagenumbering{roman}
+\setcounter{page}{1}
+\thispagestyle{empty}
+\vspace*{0.4cm}
+\noindent\fbox{\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{%
+\vspace{0.6em}
+\centering{\large DECLARATION}\par\vspace{1em}
+\raggedright\setlength{\parindent}{0pt}
+\begin{spacing}{1.4}
+We hereby \textit{declare} that the Project Work Report entitled \textit{``Reproducing Fed-GDBD: Global Decision Boundary Distillation for Heterogeneous Federated Learning, with Agreement-Gated Distillation''}, which is being submitted to the \textbf{National Institute of Technology Karnataka, Surathkal}, for the award of the Degree of Bachelor of Technology in Artificial Intelligence, is a \textit{bonafide report} of the work carried out by us. The material contained in this Project Report has not been submitted to any University or Institution for the award of any degree.
+
+\vspace{1.2em}
+\textit{Name of the Student (Registration Number) with Signature}
+
+\vspace{0.8em}
+(1) D Maithreya (241AI013)\\[1.2em]
+(2) Maharshi Kundu (241AI022)\\[1.2em]
+(3) Siddhanth R Naik (241AI040)
+
+\vspace{1.4em}
+Department of Information Technology\\
+Place: NITK, Surathkal-575025\\
+Date: \quad / \quad / 2026
+\end{spacing}
+\vspace{0.4em}}}
+\clearpage
+
+% ================================================================ abstract
+\chapter*{ABSTRACT}
+\addcontentsline{toc}{chapter}{ABSTRACT}
+
+Federated learning lets many clients train a model together without sharing their data. It gets harder when the clients hold different classes and also run different neural networks, because there are then no common weights to average. Fed-GDBD (Zhang et al., 2025) handles this by having every client upload a few k-means prototypes per class; the server trains one linear classifier, the global decision boundary $g$, on all of them, and each client distils $g$ into its own classifier head. The authors did not release code, so we re-implemented the method from the paper's equations on the HtFLlib library and reproduced its main experiment on CIFAR-10 and CIFAR-100 with 20 clients running four architectures (a 4-layer CNN, GoogLeNet, MobileNetV2 and ResNet18) under a Dirichlet($\beta=0.1$) label split.
+
+The two baselines landed within 0.51 percentage points (pt) of the published numbers, except FedProto on CIFAR-100, which came out 4.13 pt higher. Implemented literally, the Fed-GDBD client update collapsed for particular architectures (CIFAR-100 CNN clients fell from 48.0\% to 3.9\%). During the reproduction we fixed this with two changes to the distillation step, per-sample logit-scale matching and head-only distillation. The fixed version, FedGDBD-S, reached 87.10\% on CIFAR-10 and 43.74\% on CIFAR-100, the best of the methods we ran and 0.80 and 1.35 pt below the paper's Fed-GDBD.
+
+Our extension starts from a measurement: on its own clients' features, $g$ is right about 97\% of the time for CNN clients but only about half the time for MobileNetV2 clients, yet Fed-GDBD distils it into both with the same weight. We gate the distillation by whether $g$ agrees with the client's labels, either per client (AGC, weight scaled by $g$'s accuracy on that client) or per image (AGS, distil only where $g$'s top class is the label). Over two seeds, AGC improved CIFAR-100 by 0.69 pt (0.86 and 0.52) and AGS improved CIFAR-10 by 0.39 pt (0.40 and 0.37), larger than the 0.19 to 0.23 pt the control moved between seeds. Neither gate met the success criterion we fixed before running (at least 0.5 pt on both datasets), and we report that plainly. The gate statistics single out MobileNetV2 as the architecture $g$ serves worst in every run. All code, logs and plotting scripts are public.
+
+\vspace{1em}
+\noindent\textbf{Keywords:} federated learning, heterogeneous models, knowledge distillation, prototypes, non-IID data, reproducibility
+
+% ================================================================ lists
+\clearpage
+\tableofcontents
+\clearpage
+\addcontentsline{toc}{chapter}{LIST OF FIGURES}
+\listoffigures
+\clearpage
+\addcontentsline{toc}{chapter}{LIST OF TABLES}
+\listoftables
+\clearpage
+\chapter*{LIST OF ABBREVIATIONS}
+\addcontentsline{toc}{chapter}{LIST OF ABBREVIATIONS}
+\begin{tabular}{@{}p{3.2cm}p{10.5cm}@{}}
+AGC & Agreement-gated distillation, per client (ours)\\
+AGS & Agreement-gated distillation, per sample (ours)\\
+CE & Cross-entropy loss\\
+FL & Federated learning\\
+FedGDBD-S & Fed-GDBD with our stability fix\\
+Fed-GDBD & Federated learning with global decision boundary distillation \cite{zhang2025gdbd}\\
+HtFL & Heterogeneous federated learning\\
+IKD & Irrelevant-class knowledge distillation (local self-distillation in Fed-GDBD)\\
+KD & Knowledge distillation\\
+KL & Kullback--Leibler divergence\\
+non-IID & Not independent and identically distributed\\
+pt & Percentage point\\
+SD & Standard deviation\\
+SGD & Stochastic gradient descent\\
+\end{tabular}
+
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{ch1}
+\input{ch2}
+\input{ch3}
+\input{ch4}
+\input{ch5}
+
+\clearpage
+\addcontentsline{toc}{chapter}{REFERENCES}
+\input{refs}
+
+\appendix
+\input{appendix}
+
+\end{document}
