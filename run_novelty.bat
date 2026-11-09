@@ -46,5 +46,5 @@ cd ..
 echo.
 echo Started 3 novelty runs on %DATA%, seed %SEED% (%ROUNDS% rounds each). Logs: %LOGDIR%\
 echo Do NOT close the 3 minimised windows. Keep the laptop plugged in and awake.
-echo Double-click check_novelty.bat (seed 0) or check_novelty_seed1.bat (seed 1) to see progress.
+echo Double-click check_novelty.bat (seed 0) or check_novelty_seed%SEED%.bat (other seeds) to see progress.
 pause
