@@ -1,0 +1,1121 @@
+==================================================
+goal = novelty_seed3
+device = cuda
+device_id = 0
+dataset = Cifar10
+num_classes = 10
+model_family = HtFE-img-4
+batch_size = 10
+local_learning_rate = 0.01
+learning_rate_decay = False
+learning_rate_decay_gamma = 0.99
+global_rounds = 20
+top_cnt = 100
+local_epochs = 5
+algorithm = FedGDBD-AGS
+join_ratio = 1.0
+random_join_ratio = False
+num_clients = 20
+prev = 0
+times = 1
+eval_gap = 1
+save_folder_name = temp
+auto_break = False
+feature_dim = 512
+vocab_size = 80
+max_len = 200
+models_folder_name = 
+few_shot = 0
+client_drop_rate = 0.0
+train_slow_rate = 0.0
+send_slow_rate = 0.0
+time_select = False
+time_threthold = 10000
+lamda = 1.0
+noise_dim = 512
+generator_learning_rate = 0.005
+hidden_dim = 512
+server_epochs = 100
+alpha = 1.0
+beta = 1.0
+mentee_learning_rate = 0.01
+T_start = 0.95
+T_end = 0.98
+server_learning_rate = 0.01
+margin_threthold = 100.0
+generator_path = stylegan/stylegan-xl-models/imagenet64.pkl
+stable_diffusion_prompt = a cat
+server_batch_size = 100
+gen_batch_size = 4
+mu = 50.0
+sub_feature_dim = 128
+meta_study_batches = 1
+meta_quiz_batches = 1
+warm_up_rounds = 50
+gdbd_T = 20.0
+gdbd_alpha = 0.7
+gdbd_v = 5
+gdbd_cluster_rounds = 100
+gdbd_update_epochs = 5
+gdbd_server_epochs = 5
+gdbd_pretrain_epochs = 5
+gdbd_teacher = val
+gdbd_val_frac = 0.1
+seed = 3
+==================================================
+
+============= Running time: 0th =============
+Creating server and clients ...
+FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600)
+torchvision.models.googlenet(pretrained=False, aux_logits=False, num_classes=args.num_classes)
+mobilenet_v2(pretrained=False, num_classes=args.num_classes)
+torchvision.models.resnet18(pretrained=False, num_classes=args.num_classes)
+
+Join ratio / total clients: 1.0 / 20
+Finished creating server and clients.
+
+Pre-training local models ...
+Pre-training done in 419.6s
+
+-------------Round number: 0-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.4458128078817734, AUC: 0.8835981082881031
+Client 1: Acc: 0.8524229074889867, AUC: 0.9878126880009315
+Client 2: Acc: 0.8448844884488449, AUC: 0.9764523206996166
+Client 3: Acc: 0.7865384615384615, AUC: 0.9792414529914529
+Client 4: Acc: 0.9945397815912637, AUC: 0.9989521161709704
+Client 5: Acc: 0.9080675422138836, AUC: 0.9959590128445663
+Client 6: Acc: 0.48333333333333334, AUC: 0.9162860082304527
+Client 7: Acc: 0.8399390243902439, AUC: 0.9819768738845926
+Client 8: Acc: 0.8911290322580645, AUC: 0.9862128810652483
+Client 9: Acc: 0.7898640296662547, AUC: 0.984693130044179
+Client 10: Acc: 0.5876288659793815, AUC: 0.9376837779431041
+Client 11: Acc: 0.5967413441955194, AUC: 0.9285938474344031
+Client 12: Acc: 0.8739159439626417, AUC: 0.972789360871075
+Client 13: Acc: 0.7984293193717278, AUC: 0.965120351842207
+Client 14: Acc: 0.9561290322580646, AUC: 0.9929506763787722
+Client 15: Acc: 0.6829944547134935, AUC: 0.9596438708962242
+Client 16: Acc: 0.8231420507996237, AUC: 0.9828646233264413
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9618488628026413, AUC: 0.9901751330045159
+Client 19: Acc: 0.9984962406015038, AUC: 0.9996444745950088
+Averaged Test Accuracy: 0.8468
+Averaged Test AUC: 0.9781
+Std Test Accuracy: 0.1621
+Std Test AUC: 0.0306
+Gate sample 14: kept=0.0041
+Gate sample 2: kept=0.0605
+Gate sample 1: kept=0.2690
+Gate sample 17: kept=0.4492
+Gate sample 4: kept=0.9949
+Gate sample 16: kept=0.8981
+Gate sample 6: kept=0.0878
+Gate sample 7: kept=0.9874
+Gate sample 15: kept=0.9827
+Gate sample 12: kept=0.8987
+Gate sample 9: kept=0.4838
+Gate sample 11: kept=0.9817
+Gate sample 19: kept=0.0672
+Gate sample 18: kept=0.0036
+Gate sample 13: kept=0.2272
+Gate sample 5: kept=0.9765
+Gate sample 0: kept=0.5571
+Gate sample 8: kept=0.8879
+Gate sample 3: kept=0.9071
+Gate sample 10: kept=0.0890
+------------------------- time cost ------------------------- 1010.7230117321014
+
+-------------Round number: 1-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5615763546798029, AUC: 0.9007397251409482
+Client 1: Acc: 0.8656387665198237, AUC: 0.96315235649397
+Client 2: Acc: 0.8448844884488449, AUC: 0.9758677737960815
+Client 3: Acc: 0.8076923076923077, AUC: 0.9329898093359632
+Client 4: Acc: 0.9945397815912637, AUC: 0.9958478786369345
+Client 5: Acc: 0.9193245778611632, AUC: 0.9572969308131528
+Client 6: Acc: 0.4638888888888889, AUC: 0.9193595679012346
+Client 7: Acc: 0.8307926829268293, AUC: 0.949666720371472
+Client 8: Acc: 0.9153225806451613, AUC: 0.9856062759342762
+Client 9: Acc: 0.8491965389369592, AUC: 0.9640760303881157
+Client 10: Acc: 0.5738831615120275, AUC: 0.9429007425252156
+Client 11: Acc: 0.6272912423625254, AUC: 0.8827710741756228
+Client 12: Acc: 0.8725817211474316, AUC: 0.9725577435088913
+Client 13: Acc: 0.725130890052356, AUC: 0.9332506418866441
+Client 14: Acc: 0.9561290322580646, AUC: 0.9949177014683779
+Client 15: Acc: 0.7541589648798521, AUC: 0.9204625134152504
+Client 16: Acc: 0.8701787394167451, AUC: 0.9827650139074612
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9618488628026413, AUC: 0.9935682710462568
+Client 19: Acc: 0.9984962406015038, AUC: 0.9999351762865811
+Averaged Test Accuracy: 0.8626
+Averaged Test AUC: 0.9660
+Std Test Accuracy: 0.1527
+Std Test AUC: 0.0339
+Gate sample 4: kept=0.9951
+Gate sample 9: kept=0.7460
+Gate sample 7: kept=0.9970
+Gate sample 6: kept=0.1293
+Gate sample 19: kept=0.1612
+Gate sample 0: kept=0.6369
+Gate sample 16: kept=0.9306
+Gate sample 11: kept=0.9976
+Gate sample 13: kept=0.4975
+Gate sample 8: kept=0.9130
+Gate sample 5: kept=0.9936
+Gate sample 10: kept=0.0456
+Gate sample 3: kept=0.9759
+Gate sample 1: kept=0.2652
+Gate sample 12: kept=0.9373
+Gate sample 15: kept=0.9948
+Gate sample 18: kept=0.0085
+Gate sample 2: kept=0.2262
+Gate sample 17: kept=0.2903
+Gate sample 14: kept=0.0500
+------------------------- time cost ------------------------- 1005.4148364067078
+
+-------------Round number: 2-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5467980295566502, AUC: 0.9127058274756593
+Client 1: Acc: 0.8876651982378855, AUC: 0.9631669114047968
+Client 2: Acc: 0.8448844884488449, AUC: 0.9781357673721167
+Client 3: Acc: 0.8076923076923077, AUC: 0.8842570677186061
+Client 4: Acc: 0.9945397815912637, AUC: 0.997321406116775
+Client 5: Acc: 0.9287054409005628, AUC: 0.945458504592262
+Client 6: Acc: 0.55, AUC: 0.925977366255144
+Client 7: Acc: 0.8307926829268293, AUC: 0.9282849783528324
+Client 8: Acc: 0.9139784946236559, AUC: 0.9844882115466143
+Client 9: Acc: 0.8405438813349815, AUC: 0.9417945924582479
+Client 10: Acc: 0.5773195876288659, AUC: 0.9425477839053494
+Client 11: Acc: 0.6476578411405295, AUC: 0.8418447649452996
+Client 12: Acc: 0.8652434956637759, AUC: 0.9739439862782042
+Client 13: Acc: 0.7382198952879581, AUC: 0.9118711719037915
+Client 14: Acc: 0.9561290322580646, AUC: 0.9950370216209966
+Client 15: Acc: 0.755083179297597, AUC: 0.8819227342320745
+Client 16: Acc: 0.8758231420507996, AUC: 0.9812574995911885
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9618488628026413, AUC: 0.9953303607116326
+Client 19: Acc: 0.9984962406015038, AUC: 0.9997118108554595
+Averaged Test Accuracy: 0.8658
+Averaged Test AUC: 0.9575
+Std Test Accuracy: 0.1434
+Std Test AUC: 0.0445
+Gate sample 12: kept=0.9618
+Gate sample 10: kept=0.0741
+Gate sample 9: kept=0.9871
+Gate sample 3: kept=0.9930
+Gate sample 11: kept=0.9998
+Gate sample 2: kept=0.2869
+Gate sample 13: kept=0.5623
+Gate sample 8: kept=0.9427
+Gate sample 0: kept=0.7358
+Gate sample 6: kept=0.2810
+Gate sample 7: kept=0.9992
+Gate sample 18: kept=0.0085
+Gate sample 17: kept=0.0743
+Gate sample 19: kept=0.0325
+Gate sample 14: kept=0.0658
+Gate sample 4: kept=0.9950
+Gate sample 5: kept=0.9958
+Gate sample 16: kept=0.9610
+Gate sample 15: kept=0.9981
+Gate sample 1: kept=0.2323
+------------------------- time cost ------------------------- 1002.5123991966248
+
+-------------Round number: 3-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5591133004926109, AUC: 0.9162686279426555
+Client 1: Acc: 0.8810572687224669, AUC: 0.9553767996877702
+Client 2: Acc: 0.8448844884488449, AUC: 0.9771312664819837
+Client 3: Acc: 0.7961538461538461, AUC: 0.8600505424063116
+Client 4: Acc: 0.9945397815912637, AUC: 0.9991714957209833
+Client 5: Acc: 0.9165103189493433, AUC: 0.933952720606727
+Client 6: Acc: 0.5166666666666667, AUC: 0.9267412551440328
+Client 7: Acc: 0.8246951219512195, AUC: 0.90375582490581
+Client 8: Acc: 0.9086021505376344, AUC: 0.9834988148918951
+Client 9: Acc: 0.8454882571075402, AUC: 0.9153892762186968
+Client 10: Acc: 0.570446735395189, AUC: 0.9467084968555192
+Client 11: Acc: 0.6435845213849287, AUC: 0.8234157353291587
+Client 12: Acc: 0.8799199466310874, AUC: 0.9790030751605756
+Client 13: Acc: 0.7303664921465969, AUC: 0.9082718858218432
+Client 14: Acc: 0.9561290322580646, AUC: 0.9940199329402243
+Client 15: Acc: 0.7661737523105361, AUC: 0.8673534022061942
+Client 16: Acc: 0.8936970837253058, AUC: 0.9830329661944512
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9611151870873074, AUC: 0.9948169013477994
+Client 19: Acc: 0.9984962406015038, AUC: 0.9996673387729977
+Averaged Test Accuracy: 0.8666
+Averaged Test AUC: 0.9522
+Std Test Accuracy: 0.1465
+Std Test AUC: 0.0511
+Gate sample 17: kept=0.0299
+Gate sample 11: kept=1.0000
+Gate sample 2: kept=0.2627
+Gate sample 9: kept=0.9943
+Gate sample 12: kept=0.9804
+Gate sample 6: kept=0.2852
+Gate sample 0: kept=0.8437
+Gate sample 8: kept=0.9664
+Gate sample 3: kept=0.9986
+Gate sample 4: kept=0.9953
+Gate sample 10: kept=0.1272
+Gate sample 19: kept=0.0293
+Gate sample 13: kept=0.6431
+Gate sample 18: kept=0.0094
+Gate sample 15: kept=1.0000
+Gate sample 16: kept=0.9764
+Gate sample 1: kept=0.2302
+Gate sample 14: kept=0.0717
+Gate sample 5: kept=0.9978
+Gate sample 7: kept=0.9999
+------------------------- time cost ------------------------- 1004.3838973045349
+
+-------------Round number: 4-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5591133004926109, AUC: 0.9130988106697296
+Client 1: Acc: 0.8942731277533039, AUC: 0.9575497939671512
+Client 2: Acc: 0.8448844884488449, AUC: 0.9773224847237201
+Client 3: Acc: 0.7923076923076923, AUC: 0.8587084976988825
+Client 4: Acc: 0.9945397815912637, AUC: 0.9989607696632358
+Client 5: Acc: 0.9277673545966229, AUC: 0.937243649388435
+Client 6: Acc: 0.5527777777777778, AUC: 0.9340672153635117
+Client 7: Acc: 0.8140243902439024, AUC: 0.8914866006510674
+Client 8: Acc: 0.9139784946236559, AUC: 0.9852268968153032
+Client 9: Acc: 0.8355995055624228, AUC: 0.879084003626962
+Client 10: Acc: 0.6288659793814433, AUC: 0.9551427645451099
+Client 11: Acc: 0.6435845213849287, AUC: 0.8193355022677947
+Client 12: Acc: 0.8892595063375583, AUC: 0.9822195599082213
+Client 13: Acc: 0.7356020942408377, AUC: 0.8662956973036192
+Client 14: Acc: 0.9561290322580646, AUC: 0.9941357382356342
+Client 15: Acc: 0.7467652495378928, AUC: 0.8461694548748373
+Client 16: Acc: 0.8936970837253058, AUC: 0.9839998560432482
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9523110785033015, AUC: 0.9922806453451544
+Client 19: Acc: 0.9984962406015038, AUC: 0.9996776402158278
+Averaged Test Accuracy: 0.8678
+Averaged Test AUC: 0.9477
+Std Test Accuracy: 0.1391
+Std Test AUC: 0.0575
+Gate sample 16: kept=0.9849
+Gate sample 10: kept=0.2336
+Gate sample 3: kept=0.9984
+Gate sample 6: kept=0.3012
+Gate sample 15: kept=1.0000
+Gate sample 8: kept=0.9813
+Gate sample 7: kept=1.0000
+Gate sample 19: kept=0.0394
+Gate sample 9: kept=0.9932
+Gate sample 2: kept=0.3637
+Gate sample 12: kept=0.9888
+Gate sample 4: kept=0.9926
+Gate sample 1: kept=0.1985
+Gate sample 17: kept=0.0256
+Gate sample 18: kept=0.0184
+Gate sample 14: kept=0.0524
+Gate sample 5: kept=0.9988
+Gate sample 13: kept=0.6324
+Gate sample 0: kept=0.9228
+Gate sample 11: kept=1.0000
+------------------------- time cost ------------------------- 1009.1177990436554
+
+-------------Round number: 5-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5467980295566502, AUC: 0.9160876399707722
+Client 1: Acc: 0.8964757709251101, AUC: 0.9566048029049445
+Client 2: Acc: 0.8382838283828383, AUC: 0.9646694042341529
+Client 3: Acc: 0.7903846153846154, AUC: 0.8640795529257069
+Client 4: Acc: 0.9945397815912637, AUC: 0.9991902224190892
+Client 5: Acc: 0.924953095684803, AUC: 0.931756421403152
+Client 6: Acc: 0.65, AUC: 0.9288340192043895
+Client 7: Acc: 0.8109756097560976, AUC: 0.8880014686198692
+Client 8: Acc: 0.918010752688172, AUC: 0.98615928623733
+Client 9: Acc: 0.8442521631644005, AUC: 0.8890542446780137
+Client 10: Acc: 0.6357388316151202, AUC: 0.9576895774862261
+Client 11: Acc: 0.6313645621181263, AUC: 0.8145054059746633
+Client 12: Acc: 0.8892595063375583, AUC: 0.9829927386176804
+Client 13: Acc: 0.7303664921465969, AUC: 0.8837857758528793
+Client 14: Acc: 0.9535483870967741, AUC: 0.994933795814545
+Client 15: Acc: 0.7421441774491682, AUC: 0.8375213400710445
+Client 16: Acc: 0.9012229539040452, AUC: 0.98597385316667
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9589141599413059, AUC: 0.9904867971565178
+Client 19: Acc: 0.9984962406015038, AUC: 0.9997027656861452
+Averaged Test Accuracy: 0.8703
+Averaged Test AUC: 0.9474
+Std Test Accuracy: 0.1333
+Std Test AUC: 0.0569
+Gate sample 19: kept=0.1008
+Gate sample 5: kept=0.9988
+Gate sample 6: kept=0.3678
+Gate sample 12: kept=0.9927
+Gate sample 2: kept=0.3593
+Gate sample 17: kept=0.0197
+Gate sample 3: kept=0.9987
+Gate sample 11: kept=1.0000
+Gate sample 18: kept=0.0335
+Gate sample 15: kept=1.0000
+Gate sample 1: kept=0.2290
+Gate sample 9: kept=0.9934
+Gate sample 14: kept=0.0886
+Gate sample 0: kept=0.9580
+Gate sample 13: kept=0.8122
+Gate sample 7: kept=1.0000
+Gate sample 8: kept=0.9898
+Gate sample 4: kept=0.9964
+Gate sample 16: kept=0.9887
+Gate sample 10: kept=0.3159
+------------------------- time cost ------------------------- 1004.2012574672699
+
+-------------Round number: 6-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5517241379310345, AUC: 0.9176231729314793
+Client 1: Acc: 0.8920704845814978, AUC: 0.9602187333561898
+Client 2: Acc: 0.8514851485148515, AUC: 0.907191379203927
+Client 3: Acc: 0.7923076923076923, AUC: 0.8613621794871794
+Client 4: Acc: 0.9945397815912637, AUC: 0.9990100540059044
+Client 5: Acc: 0.9193245778611632, AUC: 0.9243418826885628
+Client 6: Acc: 0.575, AUC: 0.8839969135802468
+Client 7: Acc: 0.8109756097560976, AUC: 0.8828458073071584
+Client 8: Acc: 0.9166666666666666, AUC: 0.9876691749849051
+Client 9: Acc: 0.8417799752781211, AUC: 0.8859257267293558
+Client 10: Acc: 0.6529209621993127, AUC: 0.9589137796882157
+Client 11: Acc: 0.639511201629328, AUC: 0.8130139754780435
+Client 12: Acc: 0.8905937291527685, AUC: 0.9845099213475107
+Client 13: Acc: 0.7172774869109948, AUC: 0.8581598031243052
+Client 14: Acc: 0.9496774193548387, AUC: 0.9868488842640768
+Client 15: Acc: 0.7393715341959335, AUC: 0.8321595107908535
+Client 16: Acc: 0.9012229539040452, AUC: 0.9880429364778051
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9552457813646368, AUC: 0.9852842008045374
+Client 19: Acc: 0.9984962406015038, AUC: 0.9997701019465959
+Averaged Test Accuracy: 0.8679
+Averaged Test AUC: 0.9427
+Std Test Accuracy: 0.1371
+Std Test AUC: 0.0601
+Gate sample 15: kept=1.0000
+Gate sample 13: kept=0.9208
+Gate sample 5: kept=0.9989
+Gate sample 0: kept=0.9727
+Gate sample 10: kept=0.4795
+Gate sample 6: kept=0.6435
+Gate sample 9: kept=0.9983
+Gate sample 11: kept=1.0000
+Gate sample 19: kept=0.0903
+Gate sample 17: kept=0.0175
+Gate sample 3: kept=0.9987
+Gate sample 1: kept=0.2846
+Gate sample 14: kept=0.0729
+Gate sample 7: kept=1.0000
+Gate sample 2: kept=0.2936
+Gate sample 8: kept=0.9961
+Gate sample 16: kept=0.9937
+Gate sample 18: kept=0.0419
+Gate sample 12: kept=0.9952
+Gate sample 4: kept=0.9964
+------------------------- time cost ------------------------- 1002.3708865642548
+
+-------------Round number: 7-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5517241379310345, AUC: 0.9189504180586225
+Client 1: Acc: 0.8942731277533039, AUC: 0.9592144445091331
+Client 2: Acc: 0.8514851485148515, AUC: 0.9209784564815117
+Client 3: Acc: 0.7903846153846154, AUC: 0.8603505095332018
+Client 4: Acc: 0.9945397815912637, AUC: 0.998985580848091
+Client 5: Acc: 0.924015009380863, AUC: 0.9291131769738825
+Client 6: Acc: 0.6333333333333333, AUC: 0.8746999314128945
+Client 7: Acc: 0.8094512195121951, AUC: 0.8798468586820015
+Client 8: Acc: 0.9153225806451613, AUC: 0.9878349777109751
+Client 9: Acc: 0.8417799752781211, AUC: 0.8686485933128693
+Client 10: Acc: 0.7010309278350515, AUC: 0.9267394364995952
+Client 11: Acc: 0.6354378818737271, AUC: 0.8115096401439995
+Client 12: Acc: 0.8885923949299533, AUC: 0.9855396889750678
+Client 13: Acc: 0.7094240837696335, AUC: 0.8708338282637236
+Client 14: Acc: 0.9419354838709677, AUC: 0.9794033067406637
+Client 15: Acc: 0.7365988909426987, AUC: 0.830869900449067
+Client 16: Acc: 0.9049858889934148, AUC: 0.9891956721329916
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.962582538517975, AUC: 0.9834376609793791
+Client 19: Acc: 0.9969924812030075, AUC: 0.9997190972418515
+Averaged Test Accuracy: 0.8702
+Averaged Test AUC: 0.9412
+Std Test Accuracy: 0.1303
+Std Test AUC: 0.0601
+Gate sample 2: kept=0.4417
+Gate sample 10: kept=0.5490
+Gate sample 17: kept=0.0164
+Gate sample 6: kept=0.8567
+Gate sample 3: kept=0.9990
+Gate sample 9: kept=0.9994
+Gate sample 18: kept=0.0357
+Gate sample 16: kept=0.9959
+Gate sample 4: kept=0.9969
+Gate sample 8: kept=0.9979
+Gate sample 5: kept=0.9991
+Gate sample 15: kept=1.0000
+Gate sample 13: kept=0.9728
+Gate sample 14: kept=0.0683
+Gate sample 12: kept=0.9975
+Gate sample 0: kept=0.9815
+Gate sample 19: kept=0.0546
+Gate sample 1: kept=0.2485
+Gate sample 7: kept=1.0000
+Gate sample 11: kept=1.0000
+------------------------- time cost ------------------------- 1001.5918378829956
+
+-------------Round number: 8-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5665024630541872, AUC: 0.9206045874552754
+Client 1: Acc: 0.8942731277533039, AUC: 0.9586915458609068
+Client 2: Acc: 0.8448844884488449, AUC: 0.9155420492544304
+Client 3: Acc: 0.7884615384615384, AUC: 0.8628591387245235
+Client 4: Acc: 0.9945397815912637, AUC: 0.9991983350680882
+Client 5: Acc: 0.9193245778611632, AUC: 0.9273971654422851
+Client 6: Acc: 0.65, AUC: 0.8974837105624143
+Client 7: Acc: 0.8003048780487805, AUC: 0.8822684806497455
+Client 8: Acc: 0.9166666666666666, AUC: 0.9883624953430711
+Client 9: Acc: 0.8380716934487021, AUC: 0.8816947236733296
+Client 10: Acc: 0.6735395189003437, AUC: 0.878096752649486
+Client 11: Acc: 0.6313645621181263, AUC: 0.8124521541630314
+Client 12: Acc: 0.8872581721147431, AUC: 0.9862805282834024
+Client 13: Acc: 0.7225130890052356, AUC: 0.8928178747536769
+Client 14: Acc: 0.9432258064516129, AUC: 0.9817843450109839
+Client 15: Acc: 0.7356746765249538, AUC: 0.8308969492382491
+Client 16: Acc: 0.90310442144873, AUC: 0.9898205663655866
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9603815113719736, AUC: 0.9905746564233168
+Client 19: Acc: 0.9984962406015038, AUC: 0.9997924636151783
+Averaged Test Accuracy: 0.8692
+Averaged Test AUC: 0.9430
+Std Test Accuracy: 0.1287
+Std Test AUC: 0.0592
+Gate sample 2: kept=0.4094
+Gate sample 19: kept=0.0854
+Gate sample 3: kept=0.9991
+Gate sample 13: kept=0.9946
+Gate sample 15: kept=1.0000
+Gate sample 11: kept=1.0000
+Gate sample 6: kept=0.9555
+Gate sample 16: kept=0.9973
+Gate sample 14: kept=0.0769
+Gate sample 8: kept=0.9987
+Gate sample 4: kept=0.9969
+Gate sample 7: kept=1.0000
+Gate sample 12: kept=0.9986
+Gate sample 0: kept=0.9870
+Gate sample 17: kept=0.0145
+Gate sample 1: kept=0.2457
+Gate sample 10: kept=0.6238
+Gate sample 9: kept=0.9994
+Gate sample 5: kept=0.9989
+Gate sample 18: kept=0.0416
+------------------------- time cost ------------------------- 1004.633171081543
+
+-------------Round number: 9-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5738916256157636, AUC: 0.9210953108948693
+Client 1: Acc: 0.8964757709251101, AUC: 0.9562986107068081
+Client 2: Acc: 0.8547854785478548, AUC: 0.9145496507846604
+Client 3: Acc: 0.7923076923076923, AUC: 0.8626746383957922
+Client 4: Acc: 0.9945397815912637, AUC: 0.9991614225151428
+Client 5: Acc: 0.9221388367729831, AUC: 0.9290435587282702
+Client 6: Acc: 0.6583333333333333, AUC: 0.897854938271605
+Client 7: Acc: 0.801829268292683, AUC: 0.880789532933439
+Client 8: Acc: 0.9153225806451613, AUC: 0.9888283889595458
+Client 9: Acc: 0.8430160692212608, AUC: 0.8750991667867788
+Client 10: Acc: 0.697594501718213, AUC: 0.8479876766269229
+Client 11: Acc: 0.6334012219959266, AUC: 0.8111971587235087
+Client 12: Acc: 0.8879252835223482, AUC: 0.9865730169036666
+Client 13: Acc: 0.7094240837696335, AUC: 0.8708041324403265
+Client 14: Acc: 0.9496774193548387, AUC: 0.9815451497282923
+Client 15: Acc: 0.7375231053604436, AUC: 0.8318229669086061
+Client 16: Acc: 0.9049858889934148, AUC: 0.990297177277528
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9596478356566398, AUC: 0.9858542991919639
+Client 19: Acc: 0.9984962406015038, AUC: 0.9997615592866879
+Averaged Test Accuracy: 0.8712
+Averaged Test AUC: 0.9412
+Std Test Accuracy: 0.1267
+Std Test AUC: 0.0618
+Gate sample 2: kept=0.3938
+Gate sample 5: kept=0.9992
+Gate sample 10: kept=0.7597
+Gate sample 8: kept=0.9992
+Gate sample 18: kept=0.0365
+Gate sample 14: kept=0.0688
+Gate sample 13: kept=0.9951
+Gate sample 16: kept=0.9987
+Gate sample 4: kept=0.9968
+Gate sample 19: kept=0.1020
+Gate sample 3: kept=0.9994
+Gate sample 17: kept=0.0154
+Gate sample 9: kept=0.9998
+Gate sample 6: kept=0.9819
+Gate sample 11: kept=1.0000
+Gate sample 12: kept=0.9992
+Gate sample 15: kept=1.0000
+Gate sample 1: kept=0.2431
+Gate sample 0: kept=0.9932
+Gate sample 7: kept=1.0000
+------------------------- time cost ------------------------- 996.5952806472778
+
+-------------Round number: 10-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5812807881773399, AUC: 0.9208142234301568
+Client 1: Acc: 0.8942731277533039, AUC: 0.9557972748894364
+Client 2: Acc: 0.8481848184818482, AUC: 0.912574535781411
+Client 3: Acc: 0.7923076923076923, AUC: 0.864457593688363
+Client 4: Acc: 0.9945397815912637, AUC: 0.9991368817519211
+Client 5: Acc: 0.9221388367729831, AUC: 0.932062614571881
+Client 6: Acc: 0.6666666666666666, AUC: 0.8784319272976681
+Client 7: Acc: 0.8033536585365854, AUC: 0.8808512418203449
+Client 8: Acc: 0.9153225806451613, AUC: 0.9894614904099382
+Client 9: Acc: 0.8442521631644005, AUC: 0.8777964694332013
+Client 10: Acc: 0.7044673539518901, AUC: 0.8276945241553595
+Client 11: Acc: 0.6334012219959266, AUC: 0.8145100148451718
+Client 12: Acc: 0.8885923949299533, AUC: 0.98677526178226
+Client 13: Acc: 0.7068062827225131, AUC: 0.8660200591479887
+Client 14: Acc: 0.9470967741935484, AUC: 0.9806867845993757
+Client 15: Acc: 0.7375231053604436, AUC: 0.8316302086951701
+Client 16: Acc: 0.9040451552210724, AUC: 0.9908783141641743
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9596478356566398, AUC: 0.988902728667199
+Client 19: Acc: 0.9984962406015038, AUC: 0.9997459814950911
+Averaged Test Accuracy: 0.8715
+Averaged Test AUC: 0.9410
+Std Test Accuracy: 0.1249
+Std Test AUC: 0.0637
+Gate sample 13: kept=0.9986
+Gate sample 17: kept=0.0229
+Gate sample 19: kept=0.1269
+Gate sample 0: kept=0.9965
+Gate sample 7: kept=1.0000
+Gate sample 15: kept=1.0000
+Gate sample 2: kept=0.3921
+Gate sample 9: kept=0.9995
+Gate sample 8: kept=0.9998
+Gate sample 1: kept=0.3316
+Gate sample 5: kept=0.9990
+Gate sample 3: kept=0.9991
+Gate sample 11: kept=1.0000
+Gate sample 18: kept=0.0441
+Gate sample 14: kept=0.0751
+Gate sample 16: kept=0.9992
+Gate sample 12: kept=0.9996
+Gate sample 6: kept=0.9889
+Gate sample 10: kept=0.8577
+Gate sample 4: kept=0.9971
+------------------------- time cost ------------------------- 1006.6485440731049
+
+-------------Round number: 11-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.583743842364532, AUC: 0.9210049854265924
+Client 1: Acc: 0.8986784140969163, AUC: 0.9512178686866725
+Client 2: Acc: 0.8448844884488449, AUC: 0.8991166443377011
+Client 3: Acc: 0.7903846153846154, AUC: 0.8635178336620645
+Client 4: Acc: 0.9945397815912637, AUC: 0.9992467405404484
+Client 5: Acc: 0.9183864915572233, AUC: 0.9239983870469386
+Client 6: Acc: 0.6666666666666666, AUC: 0.86463048696845
+Client 7: Acc: 0.8033536585365854, AUC: 0.8800059075285874
+Client 8: Acc: 0.9166666666666666, AUC: 0.9895935705476547
+Client 9: Acc: 0.8393077873918418, AUC: 0.8755682407553125
+Client 10: Acc: 0.7044673539518901, AUC: 0.8026331500310314
+Client 11: Acc: 0.6456211812627292, AUC: 0.8145501120185977
+Client 12: Acc: 0.8885923949299533, AUC: 0.9871114135389052
+Client 13: Acc: 0.7041884816753927, AUC: 0.8462959409616574
+Client 14: Acc: 0.9483870967741935, AUC: 0.9789315759047287
+Client 15: Acc: 0.7347504621072088, AUC: 0.8340023400524423
+Client 16: Acc: 0.9021636876763875, AUC: 0.9911182912490915
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9618488628026413, AUC: 0.9872571766337892
+Client 19: Acc: 0.9984962406015038, AUC: 0.999727137392353
+Averaged Test Accuracy: 0.8714
+Averaged Test AUC: 0.9385
+Std Test Accuracy: 0.1241
+Std Test AUC: 0.0672
+Gate sample 12: kept=1.0000
+Gate sample 3: kept=0.9993
+Gate sample 17: kept=0.0293
+Gate sample 18: kept=0.0378
+Gate sample 19: kept=0.0903
+Gate sample 8: kept=0.9998
+Gate sample 15: kept=1.0000
+Gate sample 9: kept=0.9995
+Gate sample 6: kept=0.9932
+Gate sample 16: kept=0.9995
+Gate sample 11: kept=1.0000
+Gate sample 10: kept=0.8685
+Gate sample 14: kept=0.0714
+Gate sample 5: kept=0.9988
+Gate sample 2: kept=0.3894
+Gate sample 1: kept=0.4010
+Gate sample 7: kept=1.0000
+Gate sample 13: kept=0.9988
+Gate sample 0: kept=0.9978
+Gate sample 4: kept=0.9972
+------------------------- time cost ------------------------- 1001.0422255992889
+
+-------------Round number: 12-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.583743842364532, AUC: 0.9214229092350377
+Client 1: Acc: 0.8920704845814978, AUC: 0.9487009472551594
+Client 2: Acc: 0.8448844884488449, AUC: 0.9062001909761934
+Client 3: Acc: 0.7884615384615384, AUC: 0.8670373109796188
+Client 4: Acc: 0.9945397815912637, AUC: 0.9992199687987519
+Client 5: Acc: 0.9202626641651032, AUC: 0.9259429067807781
+Client 6: Acc: 0.6555555555555556, AUC: 0.8687937242798355
+Client 7: Acc: 0.8094512195121951, AUC: 0.8820126082358384
+Client 8: Acc: 0.9139784946236559, AUC: 0.9896465631864957
+Client 9: Acc: 0.8393077873918418, AUC: 0.8862577964660379
+Client 10: Acc: 0.7079037800687286, AUC: 0.8122404474833
+Client 11: Acc: 0.6435845213849287, AUC: 0.816705219868472
+Client 12: Acc: 0.8872581721147431, AUC: 0.98743371968039
+Client 13: Acc: 0.6989528795811518, AUC: 0.8418103487660243
+Client 14: Acc: 0.9496774193548387, AUC: 0.9789752341311134
+Client 15: Acc: 0.7365988909426987, AUC: 0.8337371670104234
+Client 16: Acc: 0.90310442144873, AUC: 0.991018239340096
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9618488628026413, AUC: 0.9900525845785993
+Client 19: Acc: 0.9984962406015038, AUC: 0.9997361825616673
+Averaged Test Accuracy: 0.8711
+Averaged Test AUC: 0.9400
+Std Test Accuracy: 0.1249
+Std Test AUC: 0.0658
+Gate sample 1: kept=0.4105
+Gate sample 16: kept=0.9998
+Gate sample 18: kept=0.0386
+Gate sample 12: kept=1.0000
+Gate sample 17: kept=0.0141
+Gate sample 11: kept=1.0000
+Gate sample 5: kept=0.9990
+Gate sample 0: kept=0.9994
+Gate sample 3: kept=0.9994
+Gate sample 19: kept=0.1118
+Gate sample 14: kept=0.0673
+Gate sample 10: kept=0.9174
+Gate sample 8: kept=0.9999
+Gate sample 4: kept=0.9978
+Gate sample 13: kept=0.9990
+Gate sample 6: kept=0.9963
+Gate sample 15: kept=1.0000
+Gate sample 2: kept=0.3677
+Gate sample 7: kept=1.0000
+Gate sample 9: kept=0.9996
+------------------------- time cost ------------------------- 1002.608252286911
+
+-------------Round number: 13-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.6009852216748769, AUC: 0.9213986426913215
+Client 1: Acc: 0.8920704845814978, AUC: 0.9479333104767327
+Client 2: Acc: 0.8448844884488449, AUC: 0.9095682945632296
+Client 3: Acc: 0.7923076923076923, AUC: 0.8624289119000657
+Client 4: Acc: 0.9945397815912637, AUC: 0.9992842615420685
+Client 5: Acc: 0.9174484052532833, AUC: 0.9263207226530341
+Client 6: Acc: 0.6611111111111111, AUC: 0.8655658436213991
+Client 7: Acc: 0.8003048780487805, AUC: 0.8785241196543062
+Client 8: Acc: 0.9139784946236559, AUC: 0.9897822564586787
+Client 9: Acc: 0.8417799752781211, AUC: 0.8906232572068555
+Client 10: Acc: 0.7147766323024055, AUC: 0.818021621011666
+Client 11: Acc: 0.639511201629328, AUC: 0.8121747001584069
+Client 12: Acc: 0.8872581721147431, AUC: 0.9876900613553601
+Client 13: Acc: 0.6989528795811518, AUC: 0.8545970657480759
+Client 14: Acc: 0.9509677419354838, AUC: 0.9772675685050295
+Client 15: Acc: 0.7338262476894639, AUC: 0.8328246262806415
+Client 16: Acc: 0.90310442144873, AUC: 0.9910912010270488
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.962582538517975, AUC: 0.9899355385710257
+Client 19: Acc: 0.9954887218045113, AUC: 0.9996756301782025
+Averaged Test Accuracy: 0.8712
+Averaged Test AUC: 0.9401
+Std Test Accuracy: 0.1227
+Std Test AUC: 0.0653
+Gate sample 16: kept=0.9999
+Gate sample 13: kept=0.9998
+Gate sample 1: kept=0.4874
+Gate sample 9: kept=0.9996
+Gate sample 19: kept=0.2524
+Gate sample 4: kept=0.9982
+Gate sample 6: kept=0.9973
+Gate sample 8: kept=1.0000
+Gate sample 14: kept=0.0758
+Gate sample 18: kept=0.0398
+Gate sample 12: kept=1.0000
+Gate sample 3: kept=0.9991
+Gate sample 15: kept=1.0000
+Gate sample 17: kept=0.0233
+Gate sample 5: kept=0.9987
+Gate sample 10: kept=0.9736
+Gate sample 7: kept=1.0000
+Gate sample 0: kept=0.9996
+Gate sample 11: kept=1.0000
+Gate sample 2: kept=0.3146
+------------------------- time cost ------------------------- 1002.7576856613159
+
+-------------Round number: 14-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5935960591133005, AUC: 0.9209396005726904
+Client 1: Acc: 0.8898678414096917, AUC: 0.9465015385079814
+Client 2: Acc: 0.8448844884488449, AUC: 0.9050601429779941
+Client 3: Acc: 0.7923076923076923, AUC: 0.8646872945430637
+Client 4: Acc: 0.9945397815912637, AUC: 0.9993154276353061
+Client 5: Acc: 0.9193245778611632, AUC: 0.9304936129170788
+Client 6: Acc: 0.6555555555555556, AUC: 0.8442361111111112
+Client 7: Acc: 0.8048780487804879, AUC: 0.8776408305241589
+Client 8: Acc: 0.9153225806451613, AUC: 0.9900588619750518
+Client 9: Acc: 0.8442521631644005, AUC: 0.890936312725486
+Client 10: Acc: 0.711340206185567, AUC: 0.8122876835811259
+Client 11: Acc: 0.6456211812627292, AUC: 0.8148026781224752
+Client 12: Acc: 0.8879252835223482, AUC: 0.9878536374087555
+Client 13: Acc: 0.6963350785340314, AUC: 0.8438593605803935
+Client 14: Acc: 0.9458064516129032, AUC: 0.9797986356804255
+Client 15: Acc: 0.732902033271719, AUC: 0.8332033093291938
+Client 16: Acc: 0.9012229539040452, AUC: 0.9912336828119473
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.962582538517975, AUC: 0.988938045819714
+Client 19: Acc: 0.9804511278195489, AUC: 0.9988663387792791
+Averaged Test Accuracy: 0.8703
+Averaged Test AUC: 0.9395
+Std Test Accuracy: 0.1225
+Std Test AUC: 0.0672
+Gate sample 15: kept=1.0000
+Gate sample 9: kept=0.9996
+Gate sample 5: kept=0.9986
+Gate sample 10: kept=0.9846
+Gate sample 14: kept=0.0714
+Gate sample 19: kept=0.1223
+Gate sample 4: kept=0.9985
+Gate sample 1: kept=0.5705
+Gate sample 8: kept=1.0000
+Gate sample 0: kept=1.0000
+Gate sample 11: kept=1.0000
+Gate sample 7: kept=1.0000
+Gate sample 16: kept=1.0000
+Gate sample 13: kept=0.9990
+Gate sample 12: kept=1.0000
+Gate sample 3: kept=0.9996
+Gate sample 17: kept=0.0164
+Gate sample 6: kept=0.9979
+Gate sample 2: kept=0.3373
+Gate sample 18: kept=0.0399
+------------------------- time cost ------------------------- 1002.0697917938232
+
+-------------Round number: 15-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5886699507389163, AUC: 0.9208937637678932
+Client 1: Acc: 0.9008810572687225, AUC: 0.9512119389081877
+Client 2: Acc: 0.8481848184818482, AUC: 0.8990101430385063
+Client 3: Acc: 0.7903846153846154, AUC: 0.8675304076265615
+Client 4: Acc: 0.9945397815912637, AUC: 0.9992279462369342
+Client 5: Acc: 0.9230769230769231, AUC: 0.9294867883734402
+Client 6: Acc: 0.65, AUC: 0.8412560013717422
+Client 7: Acc: 0.8048780487804879, AUC: 0.8797154368266245
+Client 8: Acc: 0.9153225806451613, AUC: 0.9899741540447835
+Client 9: Acc: 0.8430160692212608, AUC: 0.9043362433575441
+Client 10: Acc: 0.7147766323024055, AUC: 0.8265346155309665
+Client 11: Acc: 0.6476578411405295, AUC: 0.8165522053675827
+Client 12: Acc: 0.8865910607071381, AUC: 0.9880554372497188
+Client 13: Acc: 0.6989528795811518, AUC: 0.8298033375059772
+Client 14: Acc: 0.9483870967741935, AUC: 0.9810229159440399
+Client 15: Acc: 0.7338262476894639, AUC: 0.8351037477663396
+Client 16: Acc: 0.9002822201317028, AUC: 0.9911022141118718
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.962582538517975, AUC: 0.9881886403649873
+Client 19: Acc: 0.9834586466165414, AUC: 0.998661314941489
+Averaged Test Accuracy: 0.8709
+Averaged Test AUC: 0.9404
+Std Test Accuracy: 0.1236
+Std Test AUC: 0.0667
+Gate sample 16: kept=0.9999
+Gate sample 14: kept=0.0675
+Gate sample 8: kept=0.9999
+Gate sample 10: kept=0.9921
+Gate sample 11: kept=1.0000
+Gate sample 18: kept=0.0390
+Gate sample 19: kept=0.1381
+Gate sample 17: kept=0.0140
+Gate sample 6: kept=0.9990
+Gate sample 9: kept=0.9997
+Gate sample 7: kept=1.0000
+Gate sample 1: kept=0.5816
+Gate sample 15: kept=1.0000
+Gate sample 2: kept=0.2936
+Gate sample 4: kept=0.9987
+Gate sample 5: kept=0.9989
+Gate sample 13: kept=0.9984
+Gate sample 3: kept=0.9996
+Gate sample 0: kept=1.0000
+Gate sample 12: kept=1.0000
+------------------------- time cost ------------------------- 1006.3048911094666
+
+-------------Round number: 16-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5862068965517241, AUC: 0.9208465788217784
+Client 1: Acc: 0.8964757709251101, AUC: 0.9496437820342807
+Client 2: Acc: 0.8514851485148515, AUC: 0.9034602030059993
+Client 3: Acc: 0.7961538461538461, AUC: 0.8706960880999343
+Client 4: Acc: 0.9945397815912637, AUC: 0.9992113153064864
+Client 5: Acc: 0.9202626641651032, AUC: 0.9384386974191578
+Client 6: Acc: 0.6583333333333333, AUC: 0.8475411522633745
+Client 7: Acc: 0.801829268292683, AUC: 0.8812225279264988
+Client 8: Acc: 0.9153225806451613, AUC: 0.9901437706350125
+Client 9: Acc: 0.8454882571075402, AUC: 0.9032072741607473
+Client 10: Acc: 0.7147766323024055, AUC: 0.8171674349093132
+Client 11: Acc: 0.6435845213849287, AUC: 0.8218473366950435
+Client 12: Acc: 0.8872581721147431, AUC: 0.9882247987923063
+Client 13: Acc: 0.693717277486911, AUC: 0.836267889830018
+Client 14: Acc: 0.9483870967741935, AUC: 0.9800241415192508
+Client 15: Acc: 0.7338262476894639, AUC: 0.8403011014266956
+Client 16: Acc: 0.9002822201317028, AUC: 0.991066814910655
+Client 17: Acc: 1.0, AUC: 0.9999999999999999
+Client 18: Acc: 0.9611151870873074, AUC: 0.9893125093114973
+Client 19: Acc: 0.9804511278195489, AUC: 0.9988593036475902
+Averaged Test Accuracy: 0.8705
+Averaged Test AUC: 0.9420
+Std Test Accuracy: 0.1234
+Std Test AUC: 0.0657
+Gate sample 15: kept=1.0000
+Gate sample 7: kept=1.0000
+Gate sample 9: kept=0.9994
+Gate sample 13: kept=0.9990
+Gate sample 2: kept=0.3627
+Gate sample 4: kept=0.9990
+Gate sample 0: kept=1.0000
+Gate sample 10: kept=0.9959
+Gate sample 16: kept=0.9999
+Gate sample 8: kept=1.0000
+Gate sample 6: kept=0.9965
+Gate sample 3: kept=0.9997
+Gate sample 17: kept=0.0199
+Gate sample 1: kept=0.5426
+Gate sample 18: kept=0.0410
+Gate sample 11: kept=1.0000
+Gate sample 12: kept=1.0000
+Gate sample 5: kept=0.9990
+Gate sample 14: kept=0.0651
+Gate sample 19: kept=0.1447
+------------------------- time cost ------------------------- 1000.3193595409393
+
+-------------Round number: 17-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5886699507389163, AUC: 0.9205890838301235
+Client 1: Acc: 0.8920704845814978, AUC: 0.9496189847787977
+Client 2: Acc: 0.8514851485148515, AUC: 0.8960571524699225
+Client 3: Acc: 0.7826923076923077, AUC: 0.868392094017094
+Client 4: Acc: 0.9945397815912637, AUC: 0.9991189663187151
+Client 5: Acc: 0.9212007504690432, AUC: 0.9333804234275566
+Client 6: Acc: 0.6527777777777778, AUC: 0.8465380658436215
+Client 7: Acc: 0.8048780487804879, AUC: 0.8787182831813074
+Client 8: Acc: 0.9139784946236559, AUC: 0.9898031323467067
+Client 9: Acc: 0.8417799752781211, AUC: 0.9111564056948263
+Client 10: Acc: 0.718213058419244, AUC: 0.8233291214479437
+Client 11: Acc: 0.6374745417515275, AUC: 0.8175196072873617
+Client 12: Acc: 0.8879252835223482, AUC: 0.988416362767776
+Client 13: Acc: 0.6963350785340314, AUC: 0.826624361539797
+Client 14: Acc: 0.9458064516129032, AUC: 0.9839852006012255
+Client 15: Acc: 0.7347504621072088, AUC: 0.8370904576047719
+Client 16: Acc: 0.8993414863593603, AUC: 0.9911206020302817
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9618488628026413, AUC: 0.9883588564802429
+Client 19: Acc: 0.9819548872180451, AUC: 0.9987196060326254
+Averaged Test Accuracy: 0.8698
+Averaged Test AUC: 0.9413
+Std Test Accuracy: 0.1238
+Std Test AUC: 0.0667
+Gate sample 15: kept=1.0000
+Gate sample 8: kept=1.0000
+Gate sample 0: kept=1.0000
+Gate sample 6: kept=0.9992
+Gate sample 13: kept=0.9994
+Gate sample 16: kept=0.9999
+Gate sample 5: kept=0.9990
+Gate sample 11: kept=1.0000
+Gate sample 19: kept=0.1496
+Gate sample 2: kept=0.2975
+Gate sample 14: kept=0.0701
+Gate sample 1: kept=0.5485
+Gate sample 3: kept=0.9997
+Gate sample 9: kept=0.9995
+Gate sample 10: kept=0.9979
+Gate sample 7: kept=1.0000
+Gate sample 4: kept=0.9992
+Gate sample 17: kept=0.0239
+Gate sample 12: kept=1.0000
+Gate sample 18: kept=0.0409
+------------------------- time cost ------------------------- 1007.3048493862152
+
+-------------Round number: 18-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5985221674876847, AUC: 0.9205108916337047
+Client 1: Acc: 0.9008810572687225, AUC: 0.9515612567680336
+Client 2: Acc: 0.8514851485148515, AUC: 0.8952487107896707
+Client 3: Acc: 0.7846153846153846, AUC: 0.8736070019723867
+Client 4: Acc: 0.9945397815912637, AUC: 0.9991878562297979
+Client 5: Acc: 0.9202626641651032, AUC: 0.9340743080904615
+Client 6: Acc: 0.6555555555555556, AUC: 0.839167524005487
+Client 7: Acc: 0.8094512195121951, AUC: 0.87939320799458
+Client 8: Acc: 0.9139784946236559, AUC: 0.989985394907568
+Client 9: Acc: 0.8405438813349815, AUC: 0.909717436835871
+Client 10: Acc: 0.7285223367697594, AUC: 0.825499357720281
+Client 11: Acc: 0.6435845213849287, AUC: 0.8200060929268126
+Client 12: Acc: 0.8885923949299533, AUC: 0.9886149978967026
+Client 13: Acc: 0.7015706806282722, AUC: 0.8237636638859193
+Client 14: Acc: 0.944516129032258, AUC: 0.9817691756272401
+Client 15: Acc: 0.7375231053604436, AUC: 0.8400645906104067
+Client 16: Acc: 0.9002822201317028, AUC: 0.9912333878186037
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9633162142333089, AUC: 0.9870800824956051
+Client 19: Acc: 0.9804511278195489, AUC: 0.9983296587332994
+Averaged Test Accuracy: 0.8714
+Averaged Test AUC: 0.9414
+Std Test Accuracy: 0.1212
+Std Test AUC: 0.0665
+Gate sample 0: kept=1.0000
+Gate sample 13: kept=0.9996
+Gate sample 7: kept=1.0000
+Gate sample 9: kept=0.9998
+Gate sample 14: kept=0.0702
+Gate sample 11: kept=1.0000
+Gate sample 6: kept=0.9996
+Gate sample 19: kept=0.2272
+Gate sample 15: kept=1.0000
+Gate sample 18: kept=0.0390
+Gate sample 8: kept=0.9999
+Gate sample 5: kept=0.9987
+Gate sample 4: kept=0.9994
+Gate sample 16: kept=0.9999
+Gate sample 10: kept=0.9995
+Gate sample 1: kept=0.5608
+Gate sample 12: kept=1.0000
+Gate sample 2: kept=0.2442
+Gate sample 3: kept=0.9997
+Gate sample 17: kept=0.0327
+------------------------- time cost ------------------------- 1001.5256299972534
+
+-------------Round number: 19-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5960591133004927, AUC: 0.9204994324325053
+Client 1: Acc: 0.9008810572687225, AUC: 0.948384512712367
+Client 2: Acc: 0.8514851485148515, AUC: 0.9004067623484021
+Client 3: Acc: 0.7846153846153846, AUC: 0.879801117685733
+Client 4: Acc: 0.9945397815912637, AUC: 0.9992824361960437
+Client 5: Acc: 0.9183864915572233, AUC: 0.9335831181229982
+Client 6: Acc: 0.6527777777777778, AUC: 0.8323688271604939
+Client 7: Acc: 0.8048780487804879, AUC: 0.879853571782669
+Client 8: Acc: 0.9139784946236559, AUC: 0.9900873655913979
+Client 9: Acc: 0.8454882571075402, AUC: 0.9100846489219873
+Client 10: Acc: 0.7250859106529209, AUC: 0.8270410914687671
+Client 11: Acc: 0.6435845213849287, AUC: 0.8239369985836941
+Client 12: Acc: 0.8899266177451635, AUC: 0.9887000989813137
+Client 13: Acc: 0.7015706806282722, AUC: 0.839518440344898
+Client 14: Acc: 0.9458064516129032, AUC: 0.9779211469534052
+Client 15: Acc: 0.7393715341959335, AUC: 0.8431055388707234
+Client 16: Acc: 0.9002822201317028, AUC: 0.9911967103128985
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9633162142333089, AUC: 0.9875436014320882
+Client 19: Acc: 0.9894736842105263, AUC: 0.9987203597967349
+Averaged Test Accuracy: 0.8718
+Averaged Test AUC: 0.9421
+Std Test Accuracy: 0.1224
+Std Test AUC: 0.0648
+Gate sample 3: kept=0.9994
+Gate sample 8: kept=1.0000
+Gate sample 13: kept=0.9975
+Gate sample 9: kept=0.9986
+Gate sample 18: kept=0.0387
+Gate sample 5: kept=0.9992
+Gate sample 17: kept=0.0306
+Gate sample 14: kept=0.0762
+Gate sample 4: kept=0.9997
+Gate sample 15: kept=1.0000
+Gate sample 1: kept=0.5452
+Gate sample 11: kept=1.0000
+Gate sample 0: kept=1.0000
+Gate sample 10: kept=0.9987
+Gate sample 6: kept=0.9996
+Gate sample 12: kept=1.0000
+Gate sample 2: kept=0.3151
+Gate sample 7: kept=1.0000
+Gate sample 16: kept=0.9999
+Gate sample 19: kept=0.2459
+------------------------- time cost ------------------------- 998.6756579875946
+
+-------------Round number: 20-------------
+
+Evaluate heterogeneous models
+Client 0: Acc: 0.5985221674876847, AUC: 0.9204953880085526
+Client 1: Acc: 0.8964757709251101, AUC: 0.9513688085026554
+Client 2: Acc: 0.8481848184818482, AUC: 0.8972758662004815
+Client 3: Acc: 0.7884615384615384, AUC: 0.8793704799474029
+Client 4: Acc: 0.9945397815912637, AUC: 0.999304543164566
+Client 5: Acc: 0.924015009380863, AUC: 0.9324651194989364
+Client 6: Acc: 0.6416666666666667, AUC: 0.8288674554183812
+Client 7: Acc: 0.8094512195121951, AUC: 0.8826043938793047
+Client 8: Acc: 0.9139784946236559, AUC: 0.9900578583265888
+Client 9: Acc: 0.8417799752781211, AUC: 0.9127844981154701
+Client 10: Acc: 0.711340206185567, AUC: 0.8290223833498005
+Client 11: Acc: 0.6374745417515275, AUC: 0.8244518094195172
+Client 12: Acc: 0.8872581721147431, AUC: 0.9885046285644238
+Client 13: Acc: 0.6963350785340314, AUC: 0.8172770300521732
+Client 14: Acc: 0.944516129032258, AUC: 0.9848851890391952
+Client 15: Acc: 0.7393715341959335, AUC: 0.8423489320378766
+Client 16: Acc: 0.9002822201317028, AUC: 0.9912764568467511
+Client 17: Acc: 1.0, AUC: 1.0
+Client 18: Acc: 0.9633162142333089, AUC: 0.9840474724731055
+Client 19: Acc: 0.9969924812030075, AUC: 0.9995070382723726
+Averaged Test Accuracy: 0.8714
+Averaged Test AUC: 0.9417
+Std Test Accuracy: 0.1248
+Std Test AUC: 0.0667
+Gate sample 7: kept=1.0000
+Gate sample 1: kept=0.5500
+Gate sample 3: kept=0.9999
+Gate sample 5: kept=0.9990
+Gate sample 18: kept=0.0402
+Gate sample 6: kept=0.9998
+Gate sample 4: kept=0.9997
+Gate sample 17: kept=0.0157
+Gate sample 9: kept=0.9994
+Gate sample 19: kept=0.4714
+Gate sample 2: kept=0.3242
+Gate sample 14: kept=0.0716
+Gate sample 8: kept=1.0000
+Gate sample 16: kept=0.9999
+Gate sample 11: kept=1.0000
+Gate sample 15: kept=0.9996
+Gate sample 12: kept=1.0000
+Gate sample 10: kept=0.9992
+Gate sample 0: kept=1.0000
+Gate sample 13: kept=0.9967
+------------------------- time cost ------------------------- 938.7275493144989
+
+Best accuracy.
+0.8718427190936354
+
+Average time cost per round.
+999.9402901172638
+File path: ../results/Cifar10_FedGDBD-AGS_novelty_seed3_0.h5
+Deleted.
+
+Average time cost: 21434.6s.
+Length:  21
+std for best accuracy: 0.0
+mean for best accuracy: 0.8718427190936354
+All done!

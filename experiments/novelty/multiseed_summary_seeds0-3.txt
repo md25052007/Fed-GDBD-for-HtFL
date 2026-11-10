@@ -1,0 +1,68 @@
+==============================================================================
+CIFAR10
+==============================================================================
+
+  best-round accuracy (%)
+  method           seed 0    seed 1    seed 2    seed 3     mean +- SD
+  control             86.96     86.73     86.84     86.77   86.82 +- 0.10
+  AGC                 86.92     87.18     86.98     86.98   87.02 +- 0.11
+  AGS                 87.36     87.10     86.82     87.18   87.11 +- 0.22
+  matched-alpha       86.80     86.46     87.06     87.23   86.89 +- 0.34
+
+  paired comparisons, best-round (gap = first - second, in pt)
+  AGC vs control:             -0.04 +0.45 +0.14 +0.21
+      mean +0.19  SD 0.20  95% CI [-0.13, +0.51]  t-test p (two-sided) 0.158  p (one-sided, >0) 0.079  wins 3/4
+  AGC vs matched-alpha:       +0.12 +0.72 -0.08 -0.25
+      mean +0.13  SD 0.42  95% CI [-0.55, +0.80]  t-test p (two-sided) 0.589  p (one-sided, >0) 0.295  wins 2/4
+  AGS vs control:             +0.40 +0.37 -0.02 +0.41
+      mean +0.29  SD 0.21  95% CI [-0.04, +0.62]  t-test p (two-sided) 0.068  p (one-sided, >0) 0.034  wins 3/4
+
+  last-round accuracy (%)
+  method           seed 0    seed 1    seed 2    seed 3     mean +- SD
+  control             86.79     86.65     86.80     86.68   86.73 +- 0.08
+  AGC                 86.89     87.10     86.68     86.92   86.90 +- 0.17
+  AGS                 87.35     87.10     86.72     87.14   87.08 +- 0.26
+  matched-alpha       86.64     86.30     86.73     87.14   86.70 +- 0.35
+
+  paired comparisons, last-round (gap = first - second, in pt)
+  AGC vs control:             +0.10 +0.45 -0.12 +0.24
+      mean +0.17  SD 0.24  95% CI [-0.21, +0.55]  t-test p (two-sided) 0.257  p (one-sided, >0) 0.128  wins 3/4
+  AGC vs matched-alpha:       +0.25 +0.80 -0.05 -0.22
+      mean +0.20  SD 0.45  95% CI [-0.52, +0.91]  t-test p (two-sided) 0.448  p (one-sided, >0) 0.224  wins 2/4
+  AGS vs control:             +0.56 +0.45 -0.08 +0.46
+      mean +0.35  SD 0.29  95% CI [-0.11, +0.81]  t-test p (two-sided) 0.096  p (one-sided, >0) 0.048  wins 3/4
+
+==============================================================================
+CIFAR100
+==============================================================================
+
+  best-round accuracy (%)
+  method           seed 0    seed 1    seed 2    seed 3     mean +- SD
+  control             42.07     42.26     41.85     42.20   42.09 +- 0.18
+  AGC                 42.93     42.78     41.94     42.22   42.47 +- 0.47
+  AGS                 42.24     42.12     41.60     41.87   41.96 +- 0.28
+  matched-alpha       42.04     42.59     42.12     42.52   42.32 +- 0.28
+
+  paired comparisons, best-round (gap = first - second, in pt)
+  AGC vs control:             +0.86 +0.52 +0.09 +0.02
+      mean +0.37  SD 0.39  95% CI [-0.25, +1.00]  t-test p (two-sided) 0.154  p (one-sided, >0) 0.077  wins 4/4
+  AGC vs matched-alpha:       +0.89 +0.19 -0.18 -0.30
+      mean +0.15  SD 0.54  95% CI [-0.70, +1.00]  t-test p (two-sided) 0.615  p (one-sided, >0) 0.307  wins 2/4
+  AGS vs control:             +0.17 -0.14 -0.25 -0.33
+      mean -0.14  SD 0.22  95% CI [-0.49, +0.21]  t-test p (two-sided) 0.299  p (one-sided, >0) 0.851  wins 1/4
+
+  last-round accuracy (%)
+  method           seed 0    seed 1    seed 2    seed 3     mean +- SD
+  control             41.35     41.98     41.34     42.13   41.70 +- 0.41
+  AGC                 42.64     41.95     41.10     41.97   41.91 +- 0.63
+  AGS                 41.63     41.10     41.18     41.54   41.36 +- 0.26
+  matched-alpha       41.51     42.09     41.77     42.31   41.92 +- 0.35
+
+  paired comparisons, last-round (gap = first - second, in pt)
+  AGC vs control:             +1.29 -0.03 -0.24 -0.16
+      mean +0.21  SD 0.72  95% CI [-0.93, +1.36]  t-test p (two-sided) 0.593  p (one-sided, >0) 0.297  wins 1/4
+  AGC vs matched-alpha:       +1.13 -0.14 -0.67 -0.34
+      mean -0.01  SD 0.79  95% CI [-1.26, +1.25]  t-test p (two-sided) 0.991  p (one-sided, >0) 0.505  wins 1/4
+  AGS vs control:             +0.28 -0.88 -0.16 -0.59
+      mean -0.34  SD 0.51  95% CI [-1.14, +0.47]  t-test p (two-sided) 0.275  p (one-sided, >0) 0.862  wins 1/4
+

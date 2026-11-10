@@ -73,4 +73,5 @@ All numbers come from `python analysis/multiseed_summary.py`, which reads the lo
 
 ## Decision log
 
-(Add the seed 4 decision here, with the date, before running the analysis on seeds 2 and 3.)
+- 2026-11-10: Decided to run seed 4. The decision was made on time alone and stated before any analysis of seeds 2 and 3 was run; this entry was written into the file afterwards, on the same day. The paper draft submitted on 2026-11-10 uses seeds 0 to 3. The final version will use seeds 0 to 4, with every seed 4 run reported.
+- 2026-11-10: Seeds 0 to 3 analysed with `analysis/multiseed_summary.py`; output saved in `experiments/novelty/multiseed_summary_seeds0-3.txt` (all seeds) and `experiments/novelty/multiseed_summary_seeds2-3.txt` (new seeds only).
