@@ -3,7 +3,7 @@
 This guide rebuilds every number in the README and the final presentation:
 
 - **Part A, reproduction (mid-evaluation):** FedProto, LG-FedAvg, Fed-GDBD (faithful) and FedGDBD-S, 50 rounds, 1 run.
-- **Part B, novelty:** FedGDBD-S (control), FedGDBD-AGC and FedGDBD-AGS, 20 rounds, seeds 0 and 1.
+- **Part B, novelty:** FedGDBD-S (control), FedGDBD-AGC, FedGDBD-AGS and the matched-α control, 20 rounds, seeds 0 to 3 (seed 4 running), with the analysis fixed in [PROTOCOL.md](PROTOCOL.md).
 
 If you only want to **see** our results without training anything, jump to [Step 0](#step-0-see-our-results-without-training-1-minute).
 
@@ -27,6 +27,13 @@ python analysis\novelty_summary.py experiments\novelty\run1_seed0\cifar10\logs
 python analysis\novelty_summary.py experiments\novelty\run2_seed1\cifar10\logs
 python analysis\novelty_summary.py experiments\novelty\run1_seed0\cifar100\logs
 python analysis\novelty_summary.py experiments\novelty\run2_seed1\cifar100\logs
+
+:: all seeds: mean ± SD and the paired tests of PROTOCOL.md
+python analysis\multiseed_summary.py
+python analysis\multiseed_summary.py --seeds 2 3
+
+:: every figure and results table of the paper (needs matplotlib)
+python analysis\paper_figures.py
 ```
 
 The first command prints, for example:
@@ -158,18 +165,21 @@ A 50-round run therefore takes about 5 to 9 hours. The **faithful Fed-GDBD colla
 
 ---
 
-## Step 5 (Part B): novelty runs, 20 rounds × 2 seeds
+## Step 5 (Part B): novelty runs, 20 rounds × 4 seeds
 
 ```bat
-:: seed 0
-run_novelty_cifar10.bat
-run_novelty_cifar100.bat
-:: seed 1
-run_novelty_cifar10_seed1.bat
-run_novelty_cifar100_seed1.bat
+:: control, AGC and AGS, one seed per launcher (seed 0 has no suffix)
+run_novelty_cifar10.bat          run_novelty_cifar100.bat
+run_novelty_cifar10_seed1.bat    run_novelty_cifar100_seed1.bat
+run_novelty_cifar10_seed2.bat    run_novelty_cifar100_seed2.bat
+run_novelty_cifar10_seed3.bat    run_novelty_cifar100_seed3.bat
+
+:: matched-alpha control for seeds 0 to 3 (two windows, two seeds each)
+run_amatch.bat Cifar10
+run_amatch.bat Cifar100
 ```
 
-Each launcher starts three runs in parallel: FedGDBD-S (control), FedGDBD-AGC and FedGDBD-AGS. Logs go to `logs_novelty\` (seed 0) or `logs_novelty_seed1\` (seed 1). Check progress with `check_novelty.bat` or `check_novelty_seed1.bat`.
+In PowerShell, type `.\` before a launcher name (for example `.\run_amatch.bat Cifar10`). Each `run_novelty_*` launcher starts three runs in parallel: FedGDBD-S (control), FedGDBD-AGC and FedGDBD-AGS. Logs go to `logs_novelty\` (seed 0) or `logs_novelty_seed<N>\`; check progress with `check_novelty.bat` or `check_novelty_seed<N>.bat`. `run_amatch.bat` runs FedGDBD-S with `--gdbd_alpha 0.58` (CIFAR-10) or `0.49` (CIFAR-100) and writes `<Data>_FedGDBD-S-amatch.log` into the same folders. Do not start it while a seed launcher is still running on a 6 GB GPU. For seed 4: `run_novelty_cifar10_seed4.bat`, `run_novelty_cifar100_seed4.bat`, then `run_amatch.bat Cifar10 4` and `run_amatch.bat Cifar100 4`.
 
 What each run executes:
 
@@ -177,25 +187,28 @@ What each run executes:
 python -u main.py -data Cifar100 -ncl 100 -m HtFE-img-4 -fd 512 -nc 20 -jr 1 -lbs 10 -lr 0.01 -ls 5 -gr 20 -t 1 -go novelty_seed1 -did 0 --gdbd_teacher val --seed 1 -algo FedGDBD-AGC
 ```
 
-The two flags that differ from Part A:
+The flags that differ from Part A:
 
 - `--gdbd_teacher val`: the IKD teacher (the client's best past model) is chosen on a 10 % validation slice of the client's training data instead of its test data, so no test data influences training. These runs therefore train on 90 % of the training data, and their numbers are compared **only with each other**, not with Part A.
 - `--seed N`: seeds the model initialisation, the client order and k-means. The data split stays the same.
+- `--gdbd_alpha A` (matched-α control only): one distillation weight for every client.
 
 **Expected results (best round, %):**
 
-| Run | CIFAR-10 seed 0 | CIFAR-10 seed 1 | CIFAR-100 seed 0 | CIFAR-100 seed 1 |
-|---|---|---|---|---|
-| FedGDBD-S (control) | 86.96 | 86.73 | 42.07 | 42.26 |
-| FedGDBD-AGC | 86.92 | 87.18 | 42.93 | 42.78 |
-| FedGDBD-AGS | 87.36 | 87.10 | 42.24 | 42.12 |
+| Run | CIFAR-10 seeds 0 / 1 / 2 / 3 | CIFAR-100 seeds 0 / 1 / 2 / 3 |
+|---|---|---|
+| FedGDBD-S (control) | 86.96 / 86.73 / 86.84 / 86.77 | 42.07 / 42.26 / 41.85 / 42.20 |
+| Matched α | 86.80 / 86.46 / 87.06 / 87.23 | 42.04 / 42.59 / 42.12 / 42.52 |
+| FedGDBD-AGC | 86.92 / 87.18 / 86.98 / 86.98 | 42.93 / 42.78 / 41.94 / 42.22 |
+| FedGDBD-AGS | 87.36 / 87.10 / 86.82 / 87.18 | 42.24 / 42.12 / 41.60 / 41.87 |
 
 Each round takes 14–18 minutes with three runs on one GPU, plus about 7 minutes of pre-training, so one launcher finishes in about 5 to 6.5 hours.
 
-Then summarise:
+Then copy the logs into `experiments/novelty/` and summarise:
 
 ```bat
-python analysis\novelty_summary.py logs_novelty_seed1
+python analysis\collect_logs.py 0 1 2 3
+python analysis\multiseed_summary.py
 ```
 
 ---
@@ -203,7 +216,7 @@ python analysis\novelty_summary.py logs_novelty_seed1
 ## Step 6: check your results
 
 1. Run `python progress.py <log folder>` or `python analysis\novelty_summary.py <log folder>` (Step 0) on your own log folder.
-2. Compare with the expected tables above. Expect close but not identical numbers: GPU kernels are not bit-for-bit deterministic, and the Part A runs were made before the client order was seeded. Between our two seeds the control moved by about 0.2 pt.
+2. Compare with the expected tables above. Expect close but not identical numbers: GPU kernels are not bit-for-bit deterministic, and the Part A runs were made before the client order was seeded. Across our four seeds the control's best-round accuracy had a standard deviation of 0.10 pt (CIFAR-10) and 0.18 pt (CIFAR-100).
 3. The HtFLlib accuracy curves are saved as `.h5` files in `results\` (copies of ours are in `experiments\...\results\`).
 
 Each log contains, per round: every client's test accuracy and AUC, the sample-weighted average (`Averaged Test Accuracy`), the standard deviation, and for AGC / AGS one gate line per client (`Gate client i: g_acc=… alpha=…` or `Gate sample i: kept=…`). The end of a log shows `Best accuracy.` followed by the number we report.
@@ -230,6 +243,6 @@ Each log contains, per round: every client's test accuracy and AUC, the sample-w
 |---|---|
 | `experiments/cifar10/logs`, `experiments/cifar100/logs` | Part A logs (50 rounds; faithful Fed-GDBD 9–10 rounds) |
 | `experiments/cifar10/results`, `experiments/cifar100/results` | Part A `.h5` accuracy curves |
-| `experiments/novelty/run1_seed0/` | Part B, seed 0, both datasets, logs + `.h5` |
-| `experiments/novelty/run2_seed1/` | Part B, seed 1, both datasets, logs + `.h5` |
+| `experiments/novelty/run1_seed0/` to `run4_seed3/` | Part B, seeds 0 to 3, both datasets, logs + `.h5` (control, AGC, AGS, matched α) |
+| `experiments/novelty/multiseed_summary_*.txt` | output of `analysis/multiseed_summary.py` for seeds 0 to 3 and for seeds 2 and 3 |
 | `experiments/*/logs/old/` | the earlier run with our IKD masking bug (diverged on CIFAR-100) |

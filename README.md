@@ -6,7 +6,7 @@ An independent re-implementation and partial reproduction of
 
 The authors did not release code. Fed-GDBD is written from the paper's equations on top of [HtFLlib](https://github.com/TsingZ0/HtFLlib) (Apache-2.0), whose heterogeneous-model setup, Dirichlet partitioning and baselines match the paper's experiments.
 
-**TL;DR:** 20 clients, 4 different model architectures, no raw data or feature-extractor weights shared — each client distils a single server-side decision boundary into its model once per round (FedGDBD-S: into its classifier head only). See [Architecture](#architecture) for the diagram.
+**TL;DR:** 20 clients, 4 different model architectures, no raw data or feature-extractor weights shared: each client distils a single server-side decision boundary into its model once per round (FedGDBD-S: into its classifier head only). See [Architecture](#architecture) for the diagram.
 
 IT307 Machine Learning project, NIT Karnataka.
 
@@ -43,39 +43,46 @@ Hardware: CIFAR-10 on an RTX 3050 6 GB laptop, CIFAR-100 on an RTX 5060 8 GB lap
 
    It shows no downward trend over 50 rounds (from round 3 on it stays within 0.53 pt of its best on CIFAR-10 and 1.1 pt on CIFAR-100) and restores the collapsed clients (CIFAR-100 CNN: 3.9 → 45.6 %). It adds no communication.
 
-## Novelty: agreement-gated distillation (2 seeds)
+## Novelty: agreement-gated distillation (4 seeds)
 
 **Idea.** In FedGDBD-S every client distils the global learner *g* with the same weight α = 0.7, even where *g* reads that client's features badly. Agreement gating lets *g* influence a client only as much as it has earned on that client's own data. Both variants sit on top of FedGDBD-S:
 
 - **FedGDBD-AGC (per client):** α_i = 0.7 × (accuracy of *g* on client *i*'s training features), measured each round before distillation.
 - **FedGDBD-AGS (per image):** distil only on images where *g*'s top class is correct; the rest get cross-entropy only.
 
-All runs below pick the IKD teacher on a 10 % validation slice of each client's training data (`--gdbd_teacher val`) instead of the test set, train on the remaining 90 % and run 20 rounds, so compare them **only with each other**, not with the 50-round results above. Two seeds (`--seed 0`, `--seed 1`: different model initialisation, client order and k-means seeding; same data split). The success bar fixed before running: ≥ +0.5 pt over the control on **both** datasets.
+All runs below pick the IKD teacher on a 10 % validation slice of each client's training data (`--gdbd_teacher val`), train on the remaining 90 % and run 20 rounds, so compare them **only with each other**, not with the 50-round results above. Seeds 0 to 3 (`--seed N`: model initialisation, client order and k-means seeding; same data split). The paper runs 100 rounds and averages 3 runs; we ran 20 rounds per seed because of compute.
 
-**Best-round test accuracy, %** (gap to the control in brackets):
+**Matched-α control.** AGC lowers the average distillation weight, so a gain could come just from a lower α. The control runs FedGDBD-S with one α for every client equal to the mean α_i that AGC used in seeds 0 and 1: 0.58 (CIFAR-10) and 0.49 (CIFAR-100).
 
-| Run | CIFAR-10 seed 0 | CIFAR-10 seed 1 | **CIFAR-10 mean** | CIFAR-100 seed 0 | CIFAR-100 seed 1 | **CIFAR-100 mean** |
-|---|---|---|---|---|---|---|
-| FedGDBD-S (control) | 86.96 | 86.73 | **86.85** | 42.07 | 42.26 | **42.17** |
-| FedGDBD-AGC | 86.92 (−0.04) | 87.18 (+0.45) | **87.05 (+0.21)** | 42.93 (+0.86) | 42.78 (+0.52) | **42.86 (+0.69)** |
-| FedGDBD-AGS | 87.36 (+0.40) | 87.10 (+0.37) | **87.23 (+0.39)** | 42.24 (+0.17) | 42.12 (−0.14) | **42.18 (+0.02)** |
+**Fixed in advance.** After seeds 0 and 1, and before seeds 2 and 3 and the matched-α runs, we committed [PROTOCOL.md](PROTOCOL.md): the seeds, the matched α values, three hypotheses and the tests. The success bar from before the first runs stays: ≥ +0.5 pt over the control on **both** datasets.
 
-**Verdict.** Neither variant clears the pre-registered bar on both datasets, so we do not claim a general improvement. The gains are, however, consistent per dataset across both seeds:
+**Best-round test accuracy, %, mean ± SD over seeds 0 to 3:**
 
-- **AGC helps on CIFAR-100**: +0.86 and +0.52 (mean +0.69), where *g* is right on only 42–80 % of a client's images and scaling α per client matters.
-- **AGS helps on CIFAR-10**: +0.40 and +0.37 (mean +0.39), where *g* is right on most images and dropping just the disagreeing ones is enough.
-- The control itself moved 0.19–0.23 pt between seeds, so these per-dataset gains are larger than the seed noise we can see; with two seeds they are evidence, not proof.
+| Method | CIFAR-10 | CIFAR-100 |
+|---|---|---|
+| FedGDBD-S (control) | 86.82 ± 0.10 | 42.09 ± 0.18 |
+| Matched α | 86.89 ± 0.34 | 42.32 ± 0.28 |
+| FedGDBD-AGC | 87.02 ± 0.11 | **42.47 ± 0.47** |
+| FedGDBD-AGS | **87.11 ± 0.22** | 41.96 ± 0.28 |
 
-**What the gate found.** Accuracy of *g* on each architecture's own training features (AGC, mean over rounds; seed 0 / seed 1):
+- AGC has higher mean accuracy than the control on both datasets, and AGS on CIFAR-10. AGC and AGS both have higher mean accuracy than the matched-α control on CIFAR-10; on CIFAR-100 only AGC does.
+- The gaps are small (0.2 to 0.4 pt) and smaller than the spread across seeds.
+- Paired tests fixed in advance (one-sided): **H3** AGS > control on CIFAR-10: +0.29 pt, p = 0.034 (Holm-adjusted for 3 hypotheses: 0.10). **H1** AGC > control on CIFAR-100: +0.37 pt, p = 0.077; per seed +0.86, +0.52, +0.09, +0.02. **H2** AGC > matched α on CIFAR-100: +0.15 pt, p = 0.31, not supported.
+- On CIFAR-100 the matched-α control alone is +0.22 pt above the control (descriptive, not a protocol test), so much of AGC's gain there comes from a lower α.
+- Neither gate meets the +0.5 pt bar on both datasets.
+
+Full output: `experiments/novelty/multiseed_summary_seeds0-3.txt` (all seeds) and `..._seeds2-3.txt` (new seeds only).
+
+**What the gate found.** Accuracy of *g* on each architecture's own training features (AGC, mean over rounds and seeds 0 to 3):
 
 | | CNN | GoogLeNet | MobileNetV2 | ResNet18 |
 |---|---|---|---|---|
-| CIFAR-10 | 0.97 / 0.96 | 0.91 / 0.90 | **0.53 / 0.49** | 0.94 / 0.93 |
-| CIFAR-100 | 0.75 / 0.76 | 0.81 / 0.80 | **0.42 / 0.44** | 0.80 / 0.79 |
+| CIFAR-10 | 0.96 | 0.90 | **0.53** | 0.93 |
+| CIFAR-100 | 0.76 | 0.80 | **0.43** | 0.80 |
 
-Without being told about architectures, the gate singles out MobileNetV2 as the one *g* misreads, in every run. Averaged over both seeds, MobileNetV2 clients gain +0.95 (AGC) / +1.15 (AGS) pt on CIFAR-10 and +0.85 (AGC) pt on CIFAR-100; the other architectures move by under 1 point.
+Without being told about architectures, the gate singles out MobileNetV2 as the one *g* misreads, in every run of every seed.
 
-Logs and `.h5` curves: `experiments/novelty/run1_seed0/` and `experiments/novelty/run2_seed1/`. Summary: `python analysis/novelty_summary.py experiments/novelty/run2_seed1/cifar100/logs`. Launch: `run_novelty_cifar10.bat` / `run_novelty_cifar100.bat` (seed 0) and `run_novelty_cifar10_seed1.bat` / `run_novelty_cifar100_seed1.bat` (seed 1).
+Logs and `.h5` curves: `experiments/novelty/run1_seed0/` to `run4_seed3/`. Tests: `python analysis/multiseed_summary.py`. Paper figures and tables: `python analysis/paper_figures.py`. Launch: `run_novelty_cifar10_seed<N>.bat` / `run_novelty_cifar100_seed<N>.bat` and `run_amatch.bat Cifar10|Cifar100`. Seed 4 is running and will be added.
 
 ## Architecture
 
@@ -142,9 +149,14 @@ system/main.py                        HtFLlib entry point, + FedGDBD / FedGDBD-S
 dataset/generate_Cifar10.py, ..100    Dirichlet split from PFLlib (data itself is NOT in the repo)
 experiments/cifar10|cifar100/logs     full per-round, per-client logs of every run
 experiments/cifar10|cifar100/results  HtFLlib .h5 accuracy curves
-experiments/novelty/run1_seed0|run2_seed1/  novelty runs (control, AGC, AGS), two seeds, both datasets
+experiments/novelty/run<k>_seed<s>/   novelty runs (control, AGC, AGS, matched α), seeds 0 to 3, both datasets
 analysis/summarize_logs.py            parses logs → best/last accuracy, per-architecture curves (JSON)
-analysis/novelty_summary.py           novelty runs → best/last, per-architecture accuracy, gate statistics
+analysis/novelty_summary.py           novelty runs of one seed → best/last, per-architecture accuracy, gate statistics
+analysis/multiseed_summary.py         all seeds → mean ± SD and the paired tests fixed in PROTOCOL.md
+analysis/paper_figures.py             every figure and results table of the paper, from the logs
+PROTOCOL.md                           seeds, hypotheses and tests fixed before seeds 2 and 3
+paper/                                IEEE paper draft (LaTeX source, figures, PDF)
+report/                               course project report (LaTeX source, figures, PDF and Word)
 REPRODUCTION.md                       step-by-step guide to reproduce every result
 presentation/                         final slides (.pptx) and the pptxgenjs script that builds them
 *.bat, progress.py                    Windows setup / launch / progress-monitor scripts
