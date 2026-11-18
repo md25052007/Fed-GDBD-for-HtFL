@@ -4,10 +4,11 @@ REM  Fixed-alpha control (see PROTOCOL.md): FedGDBD-S with one smaller alpha
 REM  for every client, matched to the average alpha that AGC used.
 REM     Cifar10  -> alpha 0.58      Cifar100 -> alpha 0.49
 REM  Usage: run_amatch.bat Cifar10        (seeds 0, 1, 2, 3)
-REM         run_amatch.bat Cifar10 4      (also seed 4, only if seed 4 was run)
+REM         run_amatch.bat Cifar10 4      (seed 4 only, if seed 4 is run later)
 REM  Starts 2 windows, each runs its seeds one after the other:
-REM     window A: seed 0, then seed 2 (then seed 4 if asked)
+REM     window A: seed 0, then seed 2
 REM     window B: seed 1, then seed 3
+REM  With the extra argument 4, only seed 4 is started (one window).
 REM  Logs: logs_novelty\<Data>_FedGDBD-S-amatch.log for seed 0,
 REM        logs_novelty_seed<N>\<Data>_FedGDBD-S-amatch.log for the others.
 REM ============================================================
@@ -39,15 +40,15 @@ set R4=python -u main.py %BASE% -go novelty_seed4_amatch --seed 4 ^> ..\logs_nov
 
 cd system
 if "%EXTRA%"=="4" (
-  start "amatch-A-%DATA%" /min cmd /c "%R0% & %R2% & %R4%"
+  start "amatch-seed4-%DATA%" /min cmd /c "%R4%"
 ) else (
   start "amatch-A-%DATA%" /min cmd /c "%R0% & %R2%"
+  start "amatch-B-%DATA%" /min cmd /c "%R1% & %R3%"
 )
-start "amatch-B-%DATA%" /min cmd /c "%R1% & %R3%"
 cd ..
 
 echo.
-echo Started the fixed-alpha control on %DATA% (alpha %ALPHA%) in 2 minimised windows.
+echo Started the fixed-alpha control on %DATA% (alpha %ALPHA%) in minimised windows.
 echo Do NOT close them. Keep the laptop plugged in and awake.
 echo Progress: check_novelty.bat (seed 0) or check_novelty_seed1/2/3.bat
 pause
