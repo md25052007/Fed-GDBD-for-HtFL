@@ -150,7 +150,7 @@ setup.bat                             one-time setup: .venv, PyTorch with CUDA, 
 scripts/run_reproduction.bat          Part A runs: FedGDBD, FedProto, LG-FedAvg, FedGDBD-S (50 rounds)
 scripts/run_novelty.bat               Part B runs for one seed: control, AGC, AGS (20 rounds)
 scripts/run_amatch.bat                Part B matched-alpha control
-scripts/check_progress.bat, progress.py   rounds done, best/last accuracy and time left for a log folder
+scripts/check_progress.bat            rounds done, best/last accuracy and time left (runs progress.py)
 experiments/cifar10|cifar100/logs     full per-round, per-client logs of every run
 experiments/cifar10|cifar100/results  HtFLlib .h5 accuracy curves
 experiments/novelty/run<k>_seed<s>/   novelty runs (control, AGC, AGS, matched α), seeds 0 to 4, both datasets
@@ -158,6 +158,8 @@ analysis/summarize_logs.py            parses logs → best/last accuracy, per-ar
 analysis/novelty_summary.py           novelty runs of one seed → best/last, per-architecture accuracy, gate statistics
 analysis/multiseed_summary.py         all seeds → mean ± SD and the paired tests fixed in PROTOCOL.md
 analysis/paper_figures.py             every figure and results table of the paper, from the logs
+analysis/alpha_matched.py             the matched α values (mean α_i of AGC, seeds 0 and 1)
+analysis/collect_logs.py              copies finished novelty logs into experiments/novelty/
 REPRODUCTION.md                       step-by-step guide to reproduce every result
 PROTOCOL.md                           seeds, hypotheses and tests fixed before seeds 2 and 3
 DATASET.md                            which data we used and exactly how it is split
@@ -179,7 +181,7 @@ Run everything from the repo folder. In PowerShell, start each command with `.\`
 1. `setup.bat`: creates `.venv` and installs PyTorch (CUDA 12.8 build) and the requirements.
 2. `scripts\run_reproduction.bat Cifar10` (or `Cifar100`): downloads CIFAR, builds the 20-client Dir(0.1) split, and starts FedGDBD, FedProto and LG-FedAvg in parallel.
 3. `scripts\run_reproduction.bat Cifar10 FedGDBD-S`: runs the stabilised FedGDBD-S. Any single method can be named this way.
-4. `scripts\run_novelty.bat Cifar10 <seed>` and `scripts\run_amatch.bat Cifar10 <seed>`: the extension runs (control, AGC, AGS, and the matched-α control) for one seed.
+4. `scripts\run_novelty.bat Cifar10 <seed>` and `scripts\run_amatch.bat Cifar10 <seed>`: the extension runs (control, AGC, AGS, and the matched-α control) for one seed. We ran seeds 0 to 4 on both datasets; [REPRODUCTION.md](REPRODUCTION.md#step-5-part-b-novelty-runs-20-rounds--5-seeds) lists all 20 commands.
 5. `scripts\check_progress.bat` (Part A) or `scripts\check_progress.bat novelty <seed>`: shows rounds done, best and last accuracy, and time left for every run.
 
 On Linux or macOS, from `dataset/`, run `python generate_Cifar10.py noniid - dir`. Then from `system/`:
@@ -188,7 +190,7 @@ On Linux or macOS, from `dataset/`, run `python generate_Cifar10.py noniid - dir
 python main.py -data Cifar10 -ncl 10 -m HtFE-img-4 -fd 512 -nc 20 -jr 1 -lbs 10 -lr 0.01 -ls 5 -gr 50 -go practical -algo FedGDBD-S
 ```
 
-`-algo` can be `FedGDBD`, `FedGDBD-S`, `FedProto` (add `-lam 10`) or `LG-FedAvg`. The Fed-GDBD defaults follow the paper (Sec. 5.1): `--gdbd_v 5 --gdbd_alpha 0.7 --gdbd_T 20 --gdbd_cluster_rounds 100`, with 5 update and 5 server epochs.
+`-algo` can be `FedGDBD`, `FedGDBD-S`, `FedProto` (add `-lam 10`), `LG-FedAvg`, `FedGDBD-AGC` or `FedGDBD-AGS`. The extension runs use `-gr 20 --gdbd_teacher val --seed <N>` (and `--gdbd_alpha 0.58` / `0.49` for the matched-α control); REPRODUCTION.md gives the exact commands. The Fed-GDBD defaults follow the paper (Sec. 5.1): `--gdbd_v 5 --gdbd_alpha 0.7 --gdbd_T 20 --gdbd_cluster_rounds 100`, with 5 update and 5 server epochs.
 
 ## Reproduction scope vs the paper
 

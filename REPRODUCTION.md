@@ -1,19 +1,19 @@
 # Reproducing our results, step by step
 
-This guide rebuilds every number in the README and the final presentation:
+This guide rebuilds every number in the README, the paper and the final presentation:
 
 - **Part A, reproduction (mid-evaluation):** FedProto, LG-FedAvg, Fed-GDBD (faithful) and FedGDBD-S, 50 rounds, 1 run.
 - **Part B, novelty:** FedGDBD-S (control), FedGDBD-AGC, FedGDBD-AGS and the matched-α control, 20 rounds, seeds 0 to 4, with the analysis fixed in [PROTOCOL.md](PROTOCOL.md).
 
 If you only want to **see** our results without training anything, jump to [Step 0](#step-0-see-our-results-without-training-1-minute).
 
-Everything below was run on Windows laptops: an RTX 3050 6 GB (CIFAR-10) and an RTX 5060 8 GB (CIFAR-100), with three runs sharing one GPU. Linux and macOS commands are given at the end of each step.
+Everything below was run on Windows laptops: an RTX 3050 6 GB (CIFAR-10) and an RTX 5060 8 GB (CIFAR-100), with three runs sharing one GPU. All commands are run from the repo folder; in PowerShell, start a script name with `.\` (for example `.\scripts\run_novelty.bat Cifar10 0`). On Linux or macOS, set up as in Step 1 and run the `python` commands shown under "What each run executes" from the `system/` folder.
 
 ---
 
 ## Step 0: see our results without training (1 minute)
 
-The full logs of every run are in `experiments/`. Two scripts read them and need only plain Python (no PyTorch, no GPU).
+The full logs of every run are in `experiments/`. These scripts read them and need only plain Python (no PyTorch, no GPU; the figures need matplotlib).
 
 ```bat
 cd Fed-GDBD-for-HtFL
@@ -84,7 +84,7 @@ pip install -r requirements.txt
 
 ## Step 2: get the data
 
-The launchers download CIFAR automatically through torchvision. If the download stalls (it did for us), download the archives yourself and drop them in place; the generator will find and use them.
+The run scripts download CIFAR automatically through torchvision. If the download stalls (it did for us), download the archives yourself and drop them in place; the generator will find and use them.
 
 | Dataset | File | Put it in |
 |---|---|---|
@@ -99,7 +99,7 @@ The data is never committed to the repo (`.gitignore`).
 
 ## Step 3: build the federated split
 
-The launchers do this for you. To do it by hand:
+The run scripts in `scripts\` do this for you. To do it by hand:
 
 ```bat
 call .venv\Scripts\activate.bat
@@ -128,7 +128,7 @@ scripts\run_reproduction.bat Cifar100
 scripts\run_reproduction.bat Cifar100 FedGDBD-S
 ```
 
-In PowerShell, start each command with `.\` (for example `.\scripts\run_reproduction.bat Cifar10`). Naming one method as the second argument runs only that method, which is also how to restart a single run; its old log is moved to `logs\old\` first.
+Naming one method as the second argument runs only that method, which is also how to restart a single run; its old log is moved to `logs\old\` first.
 
 Each run opens in its own minimised window. Do not close them, and keep the laptop plugged in and awake. Logs go to `logs\<Dataset>_<Method>.log`. Check progress at any time:
 
@@ -169,25 +169,43 @@ A 50-round run therefore takes about 5 to 9 hours. The **faithful Fed-GDBD colla
 
 ## Step 5 (Part B): novelty runs, 20 rounds × 5 seeds
 
-```bat
-:: control, AGC and AGS for one seed (0 to 4; 0 if left out)
-scripts\run_novelty.bat Cifar10 0
-scripts\run_novelty.bat Cifar100 0
-:: ... and the same with seeds 1, 2, 3, 4
+Each dataset needs two scripts per seed. These are all the runs behind the paper's extension results:
 
-:: matched-alpha control for one seed
+```bat
+:: control, AGC and AGS (three runs in parallel, one window each)
+scripts\run_novelty.bat Cifar10 0
+scripts\run_novelty.bat Cifar10 1
+scripts\run_novelty.bat Cifar10 2
+scripts\run_novelty.bat Cifar10 3
+scripts\run_novelty.bat Cifar10 4
+scripts\run_novelty.bat Cifar100 0
+scripts\run_novelty.bat Cifar100 1
+scripts\run_novelty.bat Cifar100 2
+scripts\run_novelty.bat Cifar100 3
+scripts\run_novelty.bat Cifar100 4
+
+:: matched-alpha control (one run)
 scripts\run_amatch.bat Cifar10 0
+scripts\run_amatch.bat Cifar10 1
+scripts\run_amatch.bat Cifar10 2
+scripts\run_amatch.bat Cifar10 3
+scripts\run_amatch.bat Cifar10 4
 scripts\run_amatch.bat Cifar100 0
-:: without a seed it runs seeds 0 to 3 in two windows, two seeds each, as we did
-scripts\run_amatch.bat Cifar10
+scripts\run_amatch.bat Cifar100 1
+scripts\run_amatch.bat Cifar100 2
+scripts\run_amatch.bat Cifar100 3
+scripts\run_amatch.bat Cifar100 4
 ```
 
-Each `run_novelty.bat` call starts three runs in parallel: FedGDBD-S (control), FedGDBD-AGC and FedGDBD-AGS. Logs go to `logs_novelty\` (seed 0) or `logs_novelty_seed<N>\`; check progress with `scripts\check_progress.bat novelty <N>`. `run_amatch.bat` runs FedGDBD-S with `--gdbd_alpha 0.58` (CIFAR-10) or `0.49` (CIFAR-100) and writes `<Data>_FedGDBD-S-amatch.log` into the same folders. Do not start it while a `run_novelty.bat` of the same laptop is still running on a 6 GB GPU.
+On one GPU, start one script at a time and wait until it finishes before starting the next: the three runs of a `run_novelty.bat` call already fill a 6 GB GPU. We ran CIFAR-10 on one laptop and CIFAR-100 on the other. Without a seed, `scripts\run_amatch.bat Cifar10` runs seeds 0 to 3 in two windows (0 then 2, and 1 then 3), which is how we ran them; seed 4 came later.
 
-What each run executes:
+Each `run_novelty.bat` call starts FedGDBD-S (control), FedGDBD-AGC and FedGDBD-AGS. `run_amatch.bat` runs FedGDBD-S with one `--gdbd_alpha` for every client: 0.58 on CIFAR-10 and 0.49 on CIFAR-100 (see [PROTOCOL.md](PROTOCOL.md)). Logs go to `logs_novelty\` for seed 0 and `logs_novelty_seed<N>\` for the others, as `<Data>_FedGDBD-S.log`, `_FedGDBD-AGC.log`, `_FedGDBD-AGS.log` and `_FedGDBD-S-amatch.log`. Check progress with `scripts\check_progress.bat novelty <N>`.
+
+What each run executes (from `system\`), for example AGC and the matched-α control on CIFAR-100, seed 1:
 
 ```bat
 python -u main.py -data Cifar100 -ncl 100 -m HtFE-img-4 -fd 512 -nc 20 -jr 1 -lbs 10 -lr 0.01 -ls 5 -gr 20 -t 1 -go novelty_seed1 -did 0 --gdbd_teacher val --seed 1 -algo FedGDBD-AGC
+python -u main.py -data Cifar100 -ncl 100 -m HtFE-img-4 -fd 512 -nc 20 -jr 1 -lbs 10 -lr 0.01 -ls 5 -gr 20 -t 1 -did 0 --gdbd_teacher val --gdbd_alpha 0.49 -algo FedGDBD-S -go novelty_seed1_amatch --seed 1
 ```
 
 The flags that differ from Part A:
@@ -207,7 +225,7 @@ The flags that differ from Part A:
 
 Each round takes 14–18 minutes with three runs on one GPU, plus about 7 minutes of pre-training, so one `run_novelty.bat` call finishes in about 5 to 6.5 hours.
 
-Then copy the logs into `experiments/novelty/` and summarise:
+Then copy the logs and `.h5` files into `experiments/novelty/run<N+1>_seed<N>/` and summarise:
 
 ```bat
 python analysis\collect_logs.py 0 1 2 3 4
@@ -234,7 +252,7 @@ Each log contains, per round: every client's test accuracy and AUC, the sample-w
 | `CUDA available: False` | Update the NVIDIA driver, then rerun `setup.bat`. A very new GPU may need the cu130 build, which `setup.bat` tries automatically. |
 | `CUDA out of memory` | Run fewer methods at once: `scripts\run_reproduction.bat Cifar10 FedProto` starts a single run. A 6 GB GPU fits three CIFAR runs. |
 | A window closes immediately | Open the log in `logs\` and read its last lines; usually `.venv` is missing (run `setup.bat`) or the split was not built. |
-| `Run setup.bat first` | The launcher could not find `.venv`; run `setup.bat` from the repo folder. |
+| `Run setup.bat first` | The script could not find `.venv`; run `setup.bat` from the repo folder. |
 | A run stops progressing | `scripts\check_progress.bat` marks a run `STOPPED` after 45 minutes without a new round. Keep the laptop awake and plugged in (Windows power settings: never sleep). |
 | The faithful Fed-GDBD accuracy drops | Expected: this is the Eq. 13 instability we report. Use FedGDBD-S. |
 
