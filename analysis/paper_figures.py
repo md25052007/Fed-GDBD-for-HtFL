@@ -5,9 +5,9 @@ Usage (from the repo root):
 
 Reads   experiments/cifar10|cifar100/logs           (reproduction, 50 rounds)
         experiments/novelty/run*_seed*/<dataset>/logs (extension, 20 rounds, every seed found)
-Writes  paper/figures/*.pdf           every plot in the paper
-        paper/generated.tex           \\newcommand tables and numbers used in the text
-        paper/tables_repro.tex        reproduction tables (copied from report/tables.tex)
+Writes  docs/paper/figures/*.pdf           every plot in the paper
+        docs/paper/generated.tex           \\newcommand tables and numbers used in the text
+        docs/paper/tables_repro.tex   reproduction tables (copied from docs/report/tables.tex)
 
 Only seeds with all four extension runs finished enter the extension results, so adding
 seed 4 later means: copy its logs into experiments/novelty/run5_seed4/ and rerun this script.
@@ -31,7 +31,7 @@ from report_assets import parse            # noqa: E402  same log parser as the 
 from multiseed_summary import paired       # noqa: E402  same paired statistics as PROTOCOL.md
 
 EXP = os.path.join(ROOT, 'experiments')
-OUT = os.path.join(ROOT, 'paper')
+OUT = os.path.join(ROOT, 'docs', 'paper')
 FIG = os.path.join(OUT, 'figures')
 ARCH = ['CNN', 'GoogLeNet', 'MobileNetV2', 'ResNet18']
 DS = [('Cifar10', 'CIFAR-10', 'Ten'), ('Cifar100', 'CIFAR-100', 'Hun')]
@@ -466,14 +466,14 @@ def main():
     fig_repro(R)
     gains = fig_ext(N, seeds)
     tables(N, seeds, gains)
-    src = os.path.join(ROOT, 'report', 'tables.tex')
+    src = os.path.join(ROOT, 'docs', 'report', 'tables.tex')
     if os.path.exists(src):   # keep only the reproduction tables; the extension tables above replace the 2-seed ones
         txt = open(src).read()
         keep = ['TabReproMain', 'TabReproRuns', 'TabCollapse', 'TabArchMethods', 'TabClientsTen', 'TabClientsHundred']
         blocks = re.split(r'(?=\\newcommand\{\\)', txt)
         out = [b for b in blocks if any(b.startswith('\\newcommand{\\' + k + '}') for k in keep)]
         open(os.path.join(OUT, 'tables_repro.tex'), 'w').write('% reproduction tables, copied from report/tables.tex\n' + ''.join(out))
-    print('wrote paper/figures/*.pdf, paper/generated.tex, paper/tables_repro.tex')
+    print('wrote docs/paper/figures/*.pdf, docs/paper/generated.tex, docs/paper/tables_repro.tex')
 
 
 if __name__ == '__main__':

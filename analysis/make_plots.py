@@ -4,7 +4,7 @@ Usage (from the repo root):
     python analysis/make_plots.py
 
 Reads the reproduction logs in experiments/cifar10/logs and experiments/cifar100/logs
-and writes, to presentation/figures/ (PNG at 300 dpi + PDF):
+and writes, to docs/presentation/figures/ (PNG at 300 dpi + PDF):
   collapse_per_arch  CIFAR-100 accuracy per client architecture: faithful Eq. 13 at its
                      best round and at its last round, and FedGDBD-S at round 50
   convergence        averaged test accuracy vs round for the four methods, both datasets;
@@ -21,7 +21,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(ROOT, 'presentation', 'figures')
+OUT = os.path.join(ROOT, 'docs', 'presentation', 'figures')
 ARCH = ['CNN', 'GoogLeNet', 'MobileNetV2', 'ResNet18']
 
 # colours of the slide deck
@@ -61,7 +61,7 @@ def save(fig, name):
     for ext in ('png', 'pdf'):
         fig.savefig(os.path.join(OUT, f'{name}.{ext}'), dpi=300, bbox_inches='tight')
     plt.close(fig)
-    print('wrote', os.path.join('presentation', 'figures', name + '.png/.pdf'))
+    print('wrote', os.path.join('docs', 'presentation', 'figures', name + '.png/.pdf'))
 
 
 def collapse_per_arch():

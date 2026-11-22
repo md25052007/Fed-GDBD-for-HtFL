@@ -224,8 +224,8 @@ pres.addSection({ title: "Implementation" });
     "│   └─ clientlg.py         LG-FedAvg",
     "├─ system/flcore/servers/",
     "│   └─ servergdbd.py       NEW · 102 lines",
-    "├─ setup.bat · run_cifar10/100.bat",
-    "└─ check_progress.bat · progress.py",
+    "├─ setup.bat · scripts/run_reproduction.bat",
+    "└─ scripts/check_progress.bat · progress.py",
   ], 0.5, 1.58, 4.4, 2.75, 10.5);
   txt(s, "Server loop (servergdbd.py)", { x: 5.1, y: 1.25, w: 4.4, h: 0.28, fontSize: 12, bold: true, color: NAVY });
   code(s, [
@@ -319,8 +319,8 @@ pres.addSection({ title: "Implementation" });
 // =====================================================================
 // 9. Results table
 // =====================================================================
-const R10 = JSON.parse(require("fs").readFileSync("../analysis/summary_cifar10.json", "utf8"));
-const R100 = JSON.parse(require("fs").readFileSync("../analysis/summary_cifar100.json", "utf8"));
+const R10 = JSON.parse(require("fs").readFileSync("../../analysis/summary_cifar10.json", "utf8"));
+const R100 = JSON.parse(require("fs").readFileSync("../../analysis/summary_cifar100.json", "utf8"));
 pres.addSection({ title: "Results Analysis" });
 {
   const s = content("Results Analysis", "RESULTS ANALYSIS · ACCURACY", "Test Accuracy: Ours vs Paper (Practical, β = 0.1)", "RESULTS ANALYSIS");

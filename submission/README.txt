@@ -5,10 +5,16 @@ Authors: D Maithreya, Maharshi Kundu, Siddhanth R Naik, Rufsina A, Nagamma Patil
 GitHub:  https://github.com/md25052007/Fed-GDBD-for-HtFL
 
 1_Source_Code
-    Fed-GDBD-for-HtFL.zip   The full repository at the submitted commit: training code
-                            (system/), data split scripts (dataset/), run scripts (*.bat),
-                            analysis scripts (analysis/), logs and results (experiments/).
+    Fed-GDBD-for-HtFL.zip   The code, at the submitted commit:
+                              system/       training code (HtFLlib + Fed-GDBD, FedGDBD-S, AGC, AGS)
+                              dataset/      scripts that build the 20-client split
+                              scripts/      run and progress-check scripts (Windows)
+                              analysis/     scripts that make every number, table and figure
+                              experiments/  logs and result files of every run (read by analysis/)
+                              setup.bat, requirements.txt
                             Start with README.md, then REPRODUCTION.md for every run step by step.
+                            The paper, report and slides (docs/ in the GitHub repo) are in
+                            3_Paper and 4_Additional instead.
 
 2_Dataset
     DATASET.md              Which datasets we used, where to get them, and exactly how they
@@ -27,6 +33,4 @@ GitHub:  https://github.com/md25052007/Fed-GDBD-for-HtFL
 
 4_Additional
     Course report (PDF for print, soft-copy PDF and Word), presentation slides,
-    PROTOCOL.md (the analysis plan we committed before the extra seeds),
-    README.md and REPRODUCTION.md, all logs and result files (experiments.zip),
-    and the plagiarism / AI-check reports.
+    and the plagiarism / AI-check reports (Check_Reports/).

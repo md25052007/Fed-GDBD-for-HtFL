@@ -1,4 +1,4 @@
-"""Summarise all runs in logs/: rounds done, best/last accuracy, speed, ETA.
+"""Summarise all runs in a log folder (default logs/, relative to the repo root): rounds done, best/last accuracy, speed, ETA.
 Works while runs are still going, so partial results are usable."""
 import glob
 import os
@@ -14,7 +14,7 @@ PAPER = {  # Table 1, practical setting
     ('Cifar10', 'FedGDBD-AGS'): 87.90, ('Cifar100', 'FedGDBD-AGS'): 45.09,
 }
 
-here = os.path.dirname(os.path.abspath(__file__))
+here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # repo root
 logdir = sys.argv[1] if len(sys.argv) > 1 else 'logs'   # e.g. logs_novelty
 logs = sorted(glob.glob(os.path.join(here, logdir, '*.log')))
 if not logs:

@@ -624,7 +624,7 @@ We thank the authors of HtFLlib and PFLlib for making their code available.
 \appendices
 
 \section{Reproducing the Results}
-All runs are started by Windows batch scripts in the repository, and \texttt{REPRODUCTION.md} gives the steps. \texttt{setup.bat} installs the environment. \texttt{run\_cifar10.bat} and \texttt{run\_cifar100.bat} start the reproduction runs; \texttt{run\_novelty\_cifar10\_seed}\textit{N}\texttt{.bat} and \texttt{run\_novelty\_cifar100\_seed}\textit{N}\texttt{.bat} start the control, AGC and AGS for seed $N$; \texttt{run\_amatch.bat} starts the matched-$\alpha$ control. The protocol of the extension runs is in \texttt{PROTOCOL.md}. Without any training, \texttt{python analysis/paper\_figures.py} regenerates every figure and results table in this paper from the logs, and \texttt{python analysis/multiseed\_summary.py} prints the paired tests.
+All runs are started by Windows batch scripts in the repository, and \texttt{REPRODUCTION.md} gives the steps. \texttt{setup.bat} installs the environment. Three scripts in \texttt{scripts/} take the dataset (and, for the extension, the seed) as arguments: \texttt{run\_reproduction.bat} starts the reproduction runs, \texttt{run\_novelty.bat} starts the control, AGC and AGS for one seed, and \texttt{run\_amatch.bat} starts the matched-$\alpha$ control. The protocol of the extension runs is in \texttt{PROTOCOL.md}. Without any training, \texttt{python analysis/paper\_figures.py} regenerates every figure and results table in this paper from the logs, and \texttt{python analysis/multiseed\_summary.py} prints the paired tests.
 
 \section{Additional Tables}
 

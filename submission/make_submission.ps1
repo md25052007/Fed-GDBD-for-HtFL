@@ -17,9 +17,11 @@ foreach ($d in $dirs) { New-Item -ItemType Directory -Path (Join-Path $out $d) -
 
 Copy-Item submission\README.txt $out
 
-# 1. Source code: exactly the files of the current commit (no .venv, caches or lock files)
+# 1. Source code: only the code, run scripts, logs and the guides, taken from the
+#    current commit (no paper, report, slides, .venv, caches or lock files)
 $srcZip = Join-Path (Join-Path $out '1_Source_Code') 'Fed-GDBD-for-HtFL.zip'
-git archive --format=zip --prefix=Fed-GDBD-for-HtFL/ -o $srcZip HEAD
+$code = 'system','dataset','analysis','scripts','experiments','setup.bat','requirements.txt','LICENSE','.gitignore','README.md','REPRODUCTION.md','DATASET.md','PROTOCOL.md'
+git archive --format=zip --prefix=Fed-GDBD-for-HtFL/ -o $srcZip HEAD -- @code
 if ($LASTEXITCODE -ne 0) { throw 'git archive failed' }
 
 # 2. Dataset
@@ -38,16 +40,14 @@ foreach ($ds in 'Cifar10','Cifar100') {
 }
 
 # 3. Paper
-Copy-Item paper\Fed-GDBD_Paper_Draft.pdf "$out\3_Paper\Fed-GDBD_Paper.pdf"
-Copy-Item paper\Fed-GDBD_Paper_LaTeX.zip "$out\3_Paper"
-Copy-Item paper\full\Fed-GDBD_Paper_Full.pdf "$out\3_Paper\Full_Version"
-Copy-Item paper\full\Fed-GDBD_Paper_Full_LaTeX.zip "$out\3_Paper\Full_Version"
+Copy-Item docs\paper\Fed-GDBD_Paper_Draft.pdf "$out\3_Paper\Fed-GDBD_Paper.pdf"
+Copy-Item docs\paper\Fed-GDBD_Paper_LaTeX.zip "$out\3_Paper"
+Copy-Item docs\paper\full\Fed-GDBD_Paper_Full.pdf "$out\3_Paper\Full_Version"
+Copy-Item docs\paper\full\Fed-GDBD_Paper_Full_LaTeX.zip "$out\3_Paper\Full_Version"
 
 # 4. Additional documents
-Copy-Item report\Fed-GDBD_Project_Report.pdf, report\Fed-GDBD_Project_Report_SoftCopy.pdf, report\Fed-GDBD_Project_Report_SoftCopy.docx "$out\4_Additional"
-Copy-Item presentation\*.pptx "$out\4_Additional"
-Copy-Item PROTOCOL.md, README.md, REPRODUCTION.md "$out\4_Additional"
-Compress-Archive -Path experiments -DestinationPath "$out\4_Additional\experiments.zip"
+Copy-Item docs\report\Fed-GDBD_Project_Report.pdf, docs\report\Fed-GDBD_Project_Report_SoftCopy.pdf, docs\report\Fed-GDBD_Project_Report_SoftCopy.docx "$out\4_Additional"
+Copy-Item docs\presentation\*.pptx "$out\4_Additional"
 
 Write-Host ''
 Write-Host "Done: $out"

@@ -81,7 +81,7 @@ Full output: `experiments/novelty/multiseed_summary_seeds0-4.txt` (all seeds) an
 
 Without being told about architectures, the gate singles out MobileNetV2 as the one *g* misreads, in every run of every seed.
 
-Logs and `.h5` curves: `experiments/novelty/run1_seed0/` to `run5_seed4/`. Tests: `python analysis/multiseed_summary.py`. Paper figures and tables: `python analysis/paper_figures.py`. Launch: `run_novelty_cifar10_seed<N>.bat` / `run_novelty_cifar100_seed<N>.bat` and `run_amatch.bat Cifar10|Cifar100`.
+Logs and `.h5` curves: `experiments/novelty/run1_seed0/` to `run5_seed4/`. Tests: `python analysis/multiseed_summary.py`. Paper figures and tables: `python analysis/paper_figures.py`. Launch: `scripts\run_novelty.bat Cifar10|Cifar100 <seed>` and `scripts\run_amatch.bat Cifar10|Cifar100 <seed>`.
 
 ## Architecture
 
@@ -142,12 +142,15 @@ flowchart TB
 ## Repository layout
 
 ```
-system/flcore/clients/clientgdbd.py   Fed-GDBD client (IKD, k-means++ prototypes, GDBD update, FedGDBD-S)
+system/flcore/clients/clientgdbd.py   Fed-GDBD client (IKD, k-means++ prototypes, GDBD update, FedGDBD-S, AGC, AGS)
 system/flcore/servers/servergdbd.py   Fed-GDBD server (g init by Eq. 5, training by Eq. 12)
 system/main.py                        HtFLlib entry point, + FedGDBD / FedGDBD-S and --gdbd_* flags
-dataset/generate_Cifar10.py, ..100    Dirichlet split from PFLlib (data itself is NOT in the repo)
-DATASET.md                            which data we used and exactly how it is split
-submission/                           course submission README and make_submission.ps1
+dataset/generate_Cifar10.py, ..100    Dirichlet split from PFLlib (data itself is NOT in the repo; see DATASET.md)
+setup.bat                             one-time setup: .venv, PyTorch with CUDA, requirements
+scripts/run_reproduction.bat          Part A runs: FedGDBD, FedProto, LG-FedAvg, FedGDBD-S (50 rounds)
+scripts/run_novelty.bat               Part B runs for one seed: control, AGC, AGS (20 rounds)
+scripts/run_amatch.bat                Part B matched-alpha control
+scripts/check_progress.bat, progress.py   rounds done, best/last accuracy and time left for a log folder
 experiments/cifar10|cifar100/logs     full per-round, per-client logs of every run
 experiments/cifar10|cifar100/results  HtFLlib .h5 accuracy curves
 experiments/novelty/run<k>_seed<s>/   novelty runs (control, AGC, AGS, matched α), seeds 0 to 4, both datasets
@@ -155,24 +158,29 @@ analysis/summarize_logs.py            parses logs → best/last accuracy, per-ar
 analysis/novelty_summary.py           novelty runs of one seed → best/last, per-architecture accuracy, gate statistics
 analysis/multiseed_summary.py         all seeds → mean ± SD and the paired tests fixed in PROTOCOL.md
 analysis/paper_figures.py             every figure and results table of the paper, from the logs
-PROTOCOL.md                           seeds, hypotheses and tests fixed before seeds 2 and 3
-paper/                                IEEE paper, 8-page version (LaTeX source, figures, PDF)
-paper/full/                           full 13-page version with all appendix tables
-report/                               course project report (LaTeX source, figures, PDF and Word)
 REPRODUCTION.md                       step-by-step guide to reproduce every result
-presentation/                         final slides (.pptx) and the pptxgenjs script that builds them
-*.bat, progress.py                    Windows setup / launch / progress-monitor scripts
+PROTOCOL.md                           seeds, hypotheses and tests fixed before seeds 2 and 3
+DATASET.md                            which data we used and exactly how it is split
+docs/paper/                           IEEE paper, 8-page version (LaTeX source, figures, PDF)
+docs/paper/full/                      full 13-page version with all appendix tables
+docs/report/                          course project report (LaTeX source, figures, PDF and Word)
+docs/presentation/                    final slides (.pptx) and the pptxgenjs script that builds them
+submission/                           course submission README and make_submission.ps1
 ```
+
+The course report (Appendix A) names the launch scripts we had at the time, one small `.bat` per dataset and seed. They were later merged into the four scripts in `scripts/`, which run the same commands with the dataset and seed as arguments.
 
 ## How to run (Windows)
 
-For a full step-by-step guide to every run (data download, expected numbers, run times, troubleshooting), see **[REPRODUCTION.md](REPRODUCTION.md)**. To view our results without training, run `python progress.py experiments\cifar10\logs`.
+For a full step-by-step guide to every run (data download, expected numbers, run times, troubleshooting), see **[REPRODUCTION.md](REPRODUCTION.md)**. To view our results without training, run `python scripts\progress.py experiments\cifar10\logs`.
 
+Run everything from the repo folder. In PowerShell, start each command with `.\` (for example `.\scripts\run_novelty.bat Cifar10 2`).
 
 1. `setup.bat`: creates `.venv` and installs PyTorch (CUDA 12.8 build) and the requirements.
-2. `run_cifar10.bat` or `run_cifar100.bat`: downloads CIFAR, builds the 20-client Dir(0.1) split, and starts FedGDBD, FedProto and LG-FedAvg in parallel.
-3. `start_fedgdbd_s_cifar10.bat` / `..._cifar100.bat`: runs the stabilised FedGDBD-S.
-4. `check_progress.bat`: shows rounds done, best and last accuracy, and time left for every run.
+2. `scripts\run_reproduction.bat Cifar10` (or `Cifar100`): downloads CIFAR, builds the 20-client Dir(0.1) split, and starts FedGDBD, FedProto and LG-FedAvg in parallel.
+3. `scripts\run_reproduction.bat Cifar10 FedGDBD-S`: runs the stabilised FedGDBD-S. Any single method can be named this way.
+4. `scripts\run_novelty.bat Cifar10 <seed>` and `scripts\run_amatch.bat Cifar10 <seed>`: the extension runs (control, AGC, AGS, and the matched-α control) for one seed.
+5. `scripts\check_progress.bat` (Part A) or `scripts\check_progress.bat novelty <seed>`: shows rounds done, best and last accuracy, and time left for every run.
 
 On Linux or macOS, from `dataset/`, run `python generate_Cifar10.py noniid - dir`. Then from `system/`:
 

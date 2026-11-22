@@ -3,7 +3,7 @@
 Usage (from the repo root):
     python analysis/report_assets.py
 
-Writes report/figures/*.pdf (+ .png) and report/data.json. Every value in the
+Writes docs/report/figures/*.pdf (+ .png) and docs/report/data.json. Every value in the
 report's tables comes from data.json, and data.json comes from experiments/.
 """
 import json
@@ -18,7 +18,7 @@ from matplotlib.ticker import MaxNLocator
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXP = os.path.join(ROOT, 'experiments')
-OUT = os.path.join(ROOT, 'report', 'figures')
+OUT = os.path.join(ROOT, 'docs', 'report', 'figures')
 ARCH = ['CNN', 'GoogLeNet', 'MobileNetV2', 'ResNet18']
 INK, GREY, LIGHT, GRID = '#26292B', '#6E7377', '#AEB3B6', '#E4E6E5'
 GOLD, PURPLE, TEAL = '#B8892B', '#6250D6', '#3E8E7E'
@@ -245,8 +245,8 @@ def main():
         v.pop('per', None)
     for k, v in data['novelty'].items():
         v.pop('per', None)
-    json.dump(data, open(os.path.join(ROOT, 'report', 'data.json'), 'w'), indent=1)
-    print('figures in report/figures, numbers in report/data.json')
+    json.dump(data, open(os.path.join(ROOT, 'docs', 'report', 'data.json'), 'w'), indent=1)
+    print('figures in docs/report/figures, numbers in docs/report/data.json')
 
 
 if __name__ == '__main__':

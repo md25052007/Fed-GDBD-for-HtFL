@@ -16,7 +16,7 @@ python generate_Cifar10.py noniid - dir
 python generate_Cifar100.py noniid - dir
 ```
 
-All the `run_*.bat` scripts run this command first.
+The run scripts in `scripts/` run this command first.
 
 The generator does the following:
 

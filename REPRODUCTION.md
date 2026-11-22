@@ -19,8 +19,8 @@ The full logs of every run are in `experiments/`. Two scripts read them and need
 cd Fed-GDBD-for-HtFL
 
 :: reproduction (mid-evaluation) results
-python progress.py experiments\cifar10\logs
-python progress.py experiments\cifar100\logs
+python scripts\progress.py experiments\cifar10\logs
+python scripts\progress.py experiments\cifar100\logs
 
 :: novelty results: best/last accuracy, per-architecture accuracy, gate statistics
 python analysis\novelty_summary.py experiments\novelty\run1_seed0\cifar10\logs
@@ -119,19 +119,21 @@ These are the results presented at the mid-evaluation and in the README's main t
 
 ```bat
 :: CIFAR-10: starts Fed-GDBD (faithful), FedProto and LG-FedAvg in parallel
-run_cifar10.bat
+scripts\run_reproduction.bat Cifar10
 :: then the stabilised FedGDBD-S (can run at the same time if memory allows)
-start_fedgdbd_s_cifar10.bat
+scripts\run_reproduction.bat Cifar10 FedGDBD-S
 
 :: CIFAR-100: same pattern
-run_cifar100.bat
-start_fedgdbd_s_cifar100.bat
+scripts\run_reproduction.bat Cifar100
+scripts\run_reproduction.bat Cifar100 FedGDBD-S
 ```
+
+In PowerShell, start each command with `.\` (for example `.\scripts\run_reproduction.bat Cifar10`). Naming one method as the second argument runs only that method, which is also how to restart a single run; its old log is moved to `logs\old\` first.
 
 Each run opens in its own minimised window. Do not close them, and keep the laptop plugged in and awake. Logs go to `logs\<Dataset>_<Method>.log`. Check progress at any time:
 
 ```bat
-check_progress.bat
+scripts\check_progress.bat
 ```
 
 What each run executes (from `system\`):
@@ -168,19 +170,19 @@ A 50-round run therefore takes about 5 to 9 hours. The **faithful Fed-GDBD colla
 ## Step 5 (Part B): novelty runs, 20 rounds × 5 seeds
 
 ```bat
-:: control, AGC and AGS, one seed per launcher (seed 0 has no suffix)
-run_novelty_cifar10.bat          run_novelty_cifar100.bat
-run_novelty_cifar10_seed1.bat    run_novelty_cifar100_seed1.bat
-run_novelty_cifar10_seed2.bat    run_novelty_cifar100_seed2.bat
-run_novelty_cifar10_seed3.bat    run_novelty_cifar100_seed3.bat
-run_novelty_cifar10_seed4.bat    run_novelty_cifar100_seed4.bat
+:: control, AGC and AGS for one seed (0 to 4; 0 if left out)
+scripts\run_novelty.bat Cifar10 0
+scripts\run_novelty.bat Cifar100 0
+:: ... and the same with seeds 1, 2, 3, 4
 
-:: matched-alpha control for seeds 0 to 3 (two windows, two seeds each)
-run_amatch.bat Cifar10
-run_amatch.bat Cifar100
+:: matched-alpha control for one seed
+scripts\run_amatch.bat Cifar10 0
+scripts\run_amatch.bat Cifar100 0
+:: without a seed it runs seeds 0 to 3 in two windows, two seeds each, as we did
+scripts\run_amatch.bat Cifar10
 ```
 
-In PowerShell, type `.\` before a launcher name (for example `.\run_amatch.bat Cifar10`). Each `run_novelty_*` launcher starts three runs in parallel: FedGDBD-S (control), FedGDBD-AGC and FedGDBD-AGS. Logs go to `logs_novelty\` (seed 0) or `logs_novelty_seed<N>\`; check progress with `check_novelty.bat` or `check_novelty_seed<N>.bat`. `run_amatch.bat` runs FedGDBD-S with `--gdbd_alpha 0.58` (CIFAR-10) or `0.49` (CIFAR-100) and writes `<Data>_FedGDBD-S-amatch.log` into the same folders. Do not start it while a seed launcher is still running on a 6 GB GPU. For seed 4: `run_novelty_cifar10_seed4.bat`, `run_novelty_cifar100_seed4.bat`, then `run_amatch.bat Cifar10 4` and `run_amatch.bat Cifar100 4`.
+Each `run_novelty.bat` call starts three runs in parallel: FedGDBD-S (control), FedGDBD-AGC and FedGDBD-AGS. Logs go to `logs_novelty\` (seed 0) or `logs_novelty_seed<N>\`; check progress with `scripts\check_progress.bat novelty <N>`. `run_amatch.bat` runs FedGDBD-S with `--gdbd_alpha 0.58` (CIFAR-10) or `0.49` (CIFAR-100) and writes `<Data>_FedGDBD-S-amatch.log` into the same folders. Do not start it while a `run_novelty.bat` of the same laptop is still running on a 6 GB GPU.
 
 What each run executes:
 
@@ -203,7 +205,7 @@ The flags that differ from Part A:
 | FedGDBD-AGC | 86.92 / 87.18 / 86.98 / 86.98 / 86.84 | 42.93 / 42.78 / 41.94 / 42.22 / 42.24 |
 | FedGDBD-AGS | 87.36 / 87.10 / 86.82 / 87.18 / 87.11 | 42.24 / 42.12 / 41.60 / 41.87 / 41.35 |
 
-Each round takes 14–18 minutes with three runs on one GPU, plus about 7 minutes of pre-training, so one launcher finishes in about 5 to 6.5 hours.
+Each round takes 14–18 minutes with three runs on one GPU, plus about 7 minutes of pre-training, so one `run_novelty.bat` call finishes in about 5 to 6.5 hours.
 
 Then copy the logs into `experiments/novelty/` and summarise:
 
@@ -216,7 +218,7 @@ python analysis\multiseed_summary.py
 
 ## Step 6: check your results
 
-1. Run `python progress.py <log folder>` or `python analysis\novelty_summary.py <log folder>` (Step 0) on your own log folder.
+1. Run `python scripts\progress.py <log folder>` or `python analysis\novelty_summary.py <log folder>` (Step 0) on your own log folder.
 2. Compare with the expected tables above. Expect close but not identical numbers: GPU kernels are not bit-for-bit deterministic, and the Part A runs were made before the client order was seeded. Across our five seeds the control's best-round accuracy had a standard deviation of 0.13 pt (CIFAR-10) and 0.17 pt (CIFAR-100).
 3. The HtFLlib accuracy curves are saved as `.h5` files in `results\` (copies of ours are in `experiments\...\results\`).
 
@@ -230,10 +232,10 @@ Each log contains, per round: every client's test accuracy and AUC, the sample-w
 |---|---|
 | CIFAR download stalls or fails | Download the `.tar.gz` yourself (Step 2) and place it in `rawdata\`. |
 | `CUDA available: False` | Update the NVIDIA driver, then rerun `setup.bat`. A very new GPU may need the cu130 build, which `setup.bat` tries automatically. |
-| `CUDA out of memory` | Run fewer methods at once: start one launcher, or edit it to start one run. A 6 GB GPU fits three CIFAR runs. |
+| `CUDA out of memory` | Run fewer methods at once: `scripts\run_reproduction.bat Cifar10 FedProto` starts a single run. A 6 GB GPU fits three CIFAR runs. |
 | A window closes immediately | Open the log in `logs\` and read its last lines; usually `.venv` is missing (run `setup.bat`) or the split was not built. |
 | `Run setup.bat first` | The launcher could not find `.venv`; run `setup.bat` from the repo folder. |
-| A run stops progressing | `check_progress.bat` marks a run `STOPPED` after 45 minutes without a new round. Keep the laptop awake and plugged in (Windows power settings: never sleep). |
+| A run stops progressing | `scripts\check_progress.bat` marks a run `STOPPED` after 45 minutes without a new round. Keep the laptop awake and plugged in (Windows power settings: never sleep). |
 | The faithful Fed-GDBD accuracy drops | Expected: this is the Eq. 13 instability we report. Use FedGDBD-S. |
 
 ---
