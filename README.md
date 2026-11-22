@@ -146,6 +146,8 @@ system/flcore/clients/clientgdbd.py   Fed-GDBD client (IKD, k-means++ prototypes
 system/flcore/servers/servergdbd.py   Fed-GDBD server (g init by Eq. 5, training by Eq. 12)
 system/main.py                        HtFLlib entry point, + FedGDBD / FedGDBD-S and --gdbd_* flags
 dataset/generate_Cifar10.py, ..100    Dirichlet split from PFLlib (data itself is NOT in the repo)
+DATASET.md                            which data we used and exactly how it is split
+submission/                           course submission README and make_submission.ps1
 experiments/cifar10|cifar100/logs     full per-round, per-client logs of every run
 experiments/cifar10|cifar100/results  HtFLlib .h5 accuracy curves
 experiments/novelty/run<k>_seed<s>/   novelty runs (control, AGC, AGS, matched α), seeds 0 to 4, both datasets
